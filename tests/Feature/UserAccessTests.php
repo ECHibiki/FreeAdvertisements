@@ -2,15 +2,15 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Http\File;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Foundation\Testing\WithFaker;
 
 class UserAccessTests extends TestCase
 {
 
-    use RefershDatabase;
+    use RefreshDatabase;
 
     /**
      * A basic feature test example.
@@ -24,94 +24,81 @@ class UserAccessTests extends TestCase
         $response->assertStatus(200);
     }
 
-    //jwt token generation and user session
-    public function a_user_is_sucessfuly_created(){
-        unlink('user/data/test.json');
-
-	$response = $this->call('POST', 'user/register.php', ['name'=>'test', 'password'=>'hashedtestpass', 'email'=>'adtest10080@gmail.com']);
+    // user creation
+    public function test_a_user_is_sucessfuly_created(){
+	$response = $this->call('POST', 'create', ['name'=>'test', 'pass'=>'hashedtestpass']);
+	
 	$response
 		->assertStatus(200)
 		->assertJson([
-                'created' => '1'
+			'created' => '1'
             ]);
 	
 	//check db for user
-	$this->assertDatabaseHas('users', [
-        	'email' => 'adtest10080@gmail.com', 'password'=>'hashedtestpass', 'name'=>'test'
+	$this->assertDatabaseHas('free_ad_users', [
+        	'name'=>'test', 'pass'=>'hashedtestpass'
     	    ]);
-	$this->assertFileExists(public_path('user/data/test.json'));
-	$this->assertEquals(json_decode(file_get_contents(public_path('user/data/test.json')) == json_decode("{[]}")));
+	$this->assertTrue(file_exists("resources/user-json/test.json"), "no usr json");
+	$this->assertTrue(file_get_contents('resources/user-json/test.json') == "[{}]", "json malformated");
+	unlink("resources/user-json/test.json");
+
     }   
 
-    public function a_duplicate_user_is_created(){
-    	$response = $this->call('POST', 'user/register.php', ['name'=>'test', 'password'=>'hashedtestpass', 'email'=>'adtest10080@gmail.com']);
+    public function test_a_duplicate_user_creation_fails(){
+	$this->test_a_user_is_sucessfuly_created();
+
+    	$response = $this->call('POST', 'create', ['name'=>'test', 'pass'=>'hashedtestpass2']);
 	$response
-		->assertStatus(400)
+		->assertStatus(401)
 		->assertJson([
                 'created' => "0",
             ]);
 
 	//check db for user
-	$this->assertDatabaseMissing('users', [
-            'email' => 'adtest10080@gmail.com', 'password'=>'hashedtestpass', 'name'=>'test'
+	$this->assertDatabaseMissing('free_ad_users', [
+            'password'=>'hashedtestpass2', 'name'=>'test'
 	]);
-    	$this->assertFalse(file_exists(public_path('user/data/test.json')));
     }
 
-    public function email_field_does_not_exist_and_user_is_created(){
-        $response = $this->call('POST', 'user/register.php', ['name'=>'test', 'password'=>'hashedtestpass', 'email'=>'']);
+    public function test_password_field_does_not_exist_and_user_is_not_created(){   
+	$response = $this->call('POST', 'create', ['name'=>'test', 'password'=>'']);
 	$response
-		->assertStatus(400)
-		->assertJson([
-                'created' => "-3",
-            ]);
-
-	//check db for user
-	$this->assertDatabaseMissing('users', [
-            'password'=>'hashedtestpass', 'name'=>'test'
-	]);
-        $this->assertFalse(file_exists(public_path('user/data/test.json')));
-
-    }
-
-    public function password_field_does_not_exist_and_user_is_created(){
-        $response = $this->call('POST', 'user/register.php', ['name'=>'test', 'password'=>'', 'email'=>'test10080@gmail.com']);
-	$response
-		->assertStatus(400)
+		->assertStatus(401)
 		->assertJson([
                 'created' => "-2",
             ]);
 
 	//check db for user
-	$this->assertDatabaseMissing('users', [
-            'email' => 'adtest10080@gmail.com', 'name'=>'test'
+	$this->assertDatabaseMissing('free_ad_users', [
+            'name'=>'test', 'password'=>''
 	]);
-	$this->assertFalse(file_exists(public_path('user/data/test.json')));
+	$this->assertFalse(file_exists("resources/user-json/test.json"));
     }
-    public function name_field_does_not_exist_and_user_is_created(){
-        $response = $this->call('POST', 'user/register.php', ['name'=>'', 'password'=>'hashedtestpass', 'email'=>'adtest10080@gmail.com']);
+    public function test_name_field_does_not_exist_and_user_is_not_created(){  
+	$response = $this->call('POST', 'create', ['name'=>'', 'password'=>'hashedtestpass']);
 	$response
-		->assertStatus(400)
+		->assertStatus(401)
 		->assertJson([
                 'created' => "-1",
             ]);
 
 	//check db for user
-	$this->assertDatabaseMissing('users', [
-            'email' => 'adtest10080@gmail.com', 'password'=>'hashedtestpass'
+	$this->assertDatabaseMissing('free_ad_users', [
+            'name' => '', 'password'=>'hashedtestpass'
 	]);
     }
 
 
+	// TODO: include jwt testing
     public function an_existing_user_logs_in(){
 	//redundant but easy    
         unlink('user/data/test.json');
 
-	$response = $this->call('POST', 'user/register.php', ['name'=>'test', 'password'=>'hashedtestpass', 'email'=>'adtest10080@gmail.com']);
+	$response = $this->call('POST', 'user/register.php', ['name'=>'test', 'password'=>'hashedtestpass']);
 	$response
 		->assertStatus(200)
 		->assertJson([
-                'created' => '1',
+                'created' => '1'
             ]);
 
         $this->assertFileExists(public_path('user/data/test.json'));
@@ -130,7 +117,8 @@ class UserAccessTests extends TestCase
 
     public function a_non_existing_user_tries_to_log_in(){
   	//redundant but easy    
-	$response = $this->call('POST', 'user/register.php', ['name'=>'test', 'password'=>'hashedtestpass', 'email'=>'adtest10080@gmail.com']);
+	unlink('user/data/test.json');    
+	$response = $this->call('POST', 'user/register.php', ['name'=>'test', 'password'=>'hashedtestpass']);
 	$response
 		->assertStatus(200)
 		->assertJson([
@@ -145,7 +133,8 @@ class UserAccessTests extends TestCase
     }
 
     public function an_existing_user_logs_out(){
-        //redundant but easy    
+	unlink('user/data/test.json');    
+	//redundant but easy    
         $token = an_existing_user_logs_in();
     	//evaluate token as needed
 	$response = $this->call('POST', 'user/logout.php', ['jwt'=>$token]);
@@ -159,7 +148,8 @@ class UserAccessTests extends TestCase
     }
 
     public function a_non_existing_user_logs_out(){
-        $token = "garbage~.^data.inzide";
+	unlink('user/data/test.json');    
+	$token = "garbage~.^data.inzide";
     	//evaluate token as needed
 	$response = $this->call('POST', 'user/logout.php', ['jwt'=>$token]);
         $response
@@ -169,7 +159,8 @@ class UserAccessTests extends TestCase
     }
 
     public function a_legitimate_token_is_used_to_access_private_page(){
-        //redundant but easy    
+	unlink('user/data/test.json');    
+	//redundant but easy    
         $token = an_existing_user_logs_in();
     	//evaluate token as needed
         $response = $this->call('POST', 'user/user-data.php', ['jwt'=>$token]);
@@ -178,7 +169,8 @@ class UserAccessTests extends TestCase
     }
 
     public function a_token_is_expired_when_used_on_private_page(){
-            //redundant but easy    
+	unlink('user/data/test.json');
+        //redundant but easy    
         $token = an_existing_user_logs_in();
     	//evaluate token as needed
         $response = $this->call('POST', 'user/user-data.php', ['jwt'=>$token]);
