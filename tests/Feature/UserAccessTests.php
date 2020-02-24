@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\WithFaker;
 
+use Auth;
+
 class UserAccessTests extends TestCase
 {
 
@@ -24,9 +26,10 @@ class UserAccessTests extends TestCase
         $response->assertStatus(200);
     }
 
-    // user creation
+    // user creation tests
+  
     public function test_a_user_is_sucessfuly_created(){
-	$response = $this->call('POST', 'create', ['name'=>'test', 'pass'=>'hashedtestpass']);
+	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass']);
 	
 	$response
 		->assertStatus(200)
@@ -35,9 +38,7 @@ class UserAccessTests extends TestCase
             ]);
 	
 	//check db for user
-	$this->assertDatabaseHas('free_ad_users', [
-        	'name'=>'test', 'pass'=>'hashedtestpass'
-    	    ]);
+	$this->assertTrue(Auth::attempt(['name'=>'test', 'password'=>'hashedtestpass']) != false);
 	$this->assertTrue(file_exists("resources/user-json/test.json"), "no usr json");
 	$this->assertTrue(file_get_contents('resources/user-json/test.json') == "[{}]", "json malformated");
 	unlink("resources/user-json/test.json");
@@ -47,7 +48,7 @@ class UserAccessTests extends TestCase
     public function test_a_duplicate_user_creation_fails(){
 	$this->test_a_user_is_sucessfuly_created();
 
-    	$response = $this->call('POST', 'create', ['name'=>'test', 'pass'=>'hashedtestpass2']);
+    	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass2']);
 	$response
 		->assertStatus(401)
 		->assertJson([
@@ -55,13 +56,11 @@ class UserAccessTests extends TestCase
             ]);
 
 	//check db for user
-	$this->assertDatabaseMissing('free_ad_users', [
-            'password'=>'hashedtestpass2', 'name'=>'test'
-	]);
+	$this->assertTrue(Auth::attempt(['name'=>'test', 'password'=>'hashedtestpass2']) == false);
     }
 
     public function test_password_field_does_not_exist_and_user_is_not_created(){   
-	$response = $this->call('POST', 'create', ['name'=>'test', 'password'=>'']);
+	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'']);
 	$response
 		->assertStatus(401)
 		->assertJson([
@@ -69,13 +68,13 @@ class UserAccessTests extends TestCase
             ]);
 
 	//check db for user
-	$this->assertDatabaseMissing('free_ad_users', [
+	$this->assertDatabaseMissing('users', [
             'name'=>'test', 'password'=>''
 	]);
 	$this->assertFalse(file_exists("resources/user-json/test.json"));
     }
     public function test_name_field_does_not_exist_and_user_is_not_created(){  
-	$response = $this->call('POST', 'create', ['name'=>'', 'password'=>'hashedtestpass']);
+	$response = $this->call('POST', 'api/create', ['name'=>'', 'pass'=>'hashedtestpass']);
 	$response
 		->assertStatus(401)
 		->assertJson([
@@ -83,100 +82,56 @@ class UserAccessTests extends TestCase
             ]);
 
 	//check db for user
-	$this->assertDatabaseMissing('free_ad_users', [
-            'name' => '', 'password'=>'hashedtestpass'
-	]);
+	$this->assertTrue(Auth::attempt(['name'=>'', 'password'=>'hashedtestpass']) == false);
     }
 
+// login tests
 
-	// TODO: include jwt testing
-    public function an_existing_user_logs_in(){
+     public function test_an_existing_user_logs_in(){
 	//redundant but easy    
-        unlink('user/data/test.json');
 
-	$response = $this->call('POST', 'user/register.php', ['name'=>'test', 'password'=>'hashedtestpass']);
-	$response
-		->assertStatus(200)
-		->assertJson([
-                'created' => '1'
-            ]);
-
-        $this->assertFileExists(public_path('user/data/test.json'));
-        $this->assertEquals(json_decode(file_get_contents(public_path('user/data/test.json')) == json_decode("{[]}")));
-
-
-	$response = $this->call('POST', 'user/login.php', ['name'=>'test', 'password'=>'hashedtestpass']);
+	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
         $response
 		->assertStatus(200)
-		->assertJsonCount(1, 'jwt');
+		->assertJson(['access_token'=>true]);
 
-        $token = $this->response->getOriginalContent()->getData();
+	$token = $response->getOriginalContent()['access_token'];
+	$this->assertFalse($token == '' || is_null($token));
+	//unlink("resources/user-json/test.json");
+
     	return $token;
 	//evaluate token as needed
     }
 
-    public function a_non_existing_user_tries_to_log_in(){
-  	//redundant but easy    
-	unlink('user/data/test.json');    
-	$response = $this->call('POST', 'user/register.php', ['name'=>'test', 'password'=>'hashedtestpass']);
-	$response
-		->assertStatus(200)
-		->assertJson([
-                'created' => '1',
-            ]);
-
-	$response = $this->call('POST', 'user/login.php', ['name'=>'test', 'password'=>'hashedtestpass']);
+    public function test_a_bad_pass_for_existing_user_tries_to_log_in(){
+  	//redundant but easy     
+	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hash']);
         $response
 		->assertStatus(401)
-		->assertJson(['log'=>'-1']); //login error
+		->assertJson(['log'=>'-1'])
+		->assertJsonMissing(['access_token']); //login error
 
     }
 
-    public function an_existing_user_logs_out(){
-	unlink('user/data/test.json');    
+    
+// jwt auth tests
+
+    public function test_a_legitimate_token_is_used_to_access_private_page(){
 	//redundant but easy    
-        $token = an_existing_user_logs_in();
+	$token = $this->test_an_existing_user_logs_in();
     	//evaluate token as needed
-	$response = $this->call('POST', 'user/logout.php', ['jwt'=>$token]);
-        $response
-		->assertStatus(200)
-		->assertJson(['log'=>'1']); //success
-	$response = $this->call('POST', 'user/logout.php', ['jwt'=>$token]);
-        $response
-		->assertStatus(401)
-		->assertJson(['log'=>'-2']); //invalid token error
+	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token])->get('api/details');
+	$response->assertStatus(200);
     }
 
-    public function a_non_existing_user_logs_out(){
-	unlink('user/data/test.json');    
-	$token = "garbage~.^data.inzide";
-    	//evaluate token as needed
-	$response = $this->call('POST', 'user/logout.php', ['jwt'=>$token]);
-        $response
-		->assertStatus(400)
-		->assertJson(['log'=>'-2']); //invalid token error
-
-    }
-
-    public function a_legitimate_token_is_used_to_access_private_page(){
-	unlink('user/data/test.json');    
-	//redundant but easy    
-        $token = an_existing_user_logs_in();
-    	//evaluate token as needed
-        $response = $this->call('POST', 'user/user-data.php', ['jwt'=>$token]);
-	$response
-		->assertStatus(200);
-    }
-
-    public function a_token_is_expired_when_used_on_private_page(){
-	unlink('user/data/test.json');
+    public function test_a_token_is_expired_when_used_on_private_page(){
         //redundant but easy    
-        $token = an_existing_user_logs_in();
+        //$token = $this->test_an_existing_user_logs_in();
     	//evaluate token as needed
-        $response = $this->call('POST', 'user/user-data.php', ['jwt'=>$token]);
-	$response
-		->assertStatus(401)
-		->assertJson(['access'=>'-1']);
+	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer agarbage'])->get('api/details');
+	$response->assertStatus(401);
 
     }
 

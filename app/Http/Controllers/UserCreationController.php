@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\FreeAdUser;
+use App\User;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class UserCreationController extends Controller
 {
+
+
+
 	public function createNewUser(Request $request){
 		$validator = Validator::make($request->all(), [
 			'name' => 'required',
@@ -36,8 +40,8 @@ class UserCreationController extends Controller
 	}
 	
 	public static function addNewUserToDB(string $name, string $hashedpass){
-		if(!FreeAdUser::where('name', $name)->exists()){
-			$user = new FreeAdUser (['name' => $name, 'pass' => $hashedpass]);
+		if(!User::where('name', $name)->exists()){
+			$user = new User (['name' => $name, 'pass' => bcrypt($hashedpass)]);
 			$user->save();
 			return 1;
 		}

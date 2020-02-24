@@ -13,9 +13,10 @@ class CreateFreeAdUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('free_ad_users', function (Blueprint $table) {
-            $table->string('name',30)->primary();
-	    $table->string('pass',30);
+    Schema::create('users', function (Blueprint $table) {
+	    $table->bigIncrements('id');
+            $table->string('name',30)->unique();
+	    $table->string('pass',100);
 	    $table->date('updated_at');
 	    $table->date('created_at');
         });
