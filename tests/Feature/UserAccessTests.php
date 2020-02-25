@@ -6,6 +6,8 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 use Auth;
 
@@ -29,6 +31,7 @@ class UserAccessTests extends TestCase
     // user creation tests
   
     public function test_a_user_is_sucessfuly_created(){
+	Storage::fake('local');
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass']);
 	
 	$response
@@ -39,13 +42,12 @@ class UserAccessTests extends TestCase
 	
 	//check db for user
 	$this->assertTrue(Auth::attempt(['name'=>'test', 'password'=>'hashedtestpass']) != false);
-	$this->assertTrue(file_exists("resources/user-json/test.json"), "no usr json");
-	$this->assertTrue(file_get_contents('resources/user-json/test.json') == "[{}]", "json malformated");
-	unlink("resources/user-json/test.json");
-
+	Storage::disk('local')->assertExists("test.json");
+	$this->assertTrue(Storage::get('test.json') == "[]", "json malformated");
     }   
 
     public function test_a_duplicate_user_creation_fails(){
+	Storage::fake('local');
 	$this->test_a_user_is_sucessfuly_created();
 
     	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass2']);
@@ -60,6 +62,7 @@ class UserAccessTests extends TestCase
     }
 
     public function test_password_field_does_not_exist_and_user_is_not_created(){   
+	Storage::fake('local');
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'']);
 	$response
 		->assertStatus(401)
@@ -71,7 +74,7 @@ class UserAccessTests extends TestCase
 	$this->assertDatabaseMissing('users', [
             'name'=>'test', 'password'=>''
 	]);
-	$this->assertFalse(file_exists("resources/user-json/test.json"));
+	Storage::disk('local')->assertMissing("test.json");
     }
     public function test_name_field_does_not_exist_and_user_is_not_created(){  
 	$response = $this->call('POST', 'api/create', ['name'=>'', 'pass'=>'hashedtestpass']);
@@ -89,6 +92,7 @@ class UserAccessTests extends TestCase
 
      public function test_an_existing_user_logs_in(){
 	//redundant but easy    
+	Storage::fake('local');
 
 	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
@@ -105,7 +109,8 @@ class UserAccessTests extends TestCase
     }
 
     public function test_a_bad_pass_for_existing_user_tries_to_log_in(){
-  	//redundant but easy     
+	    //redundant but easy     
+	Storage::fake('local');
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hash']);
         $response

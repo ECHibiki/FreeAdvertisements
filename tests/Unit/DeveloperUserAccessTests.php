@@ -35,10 +35,10 @@ class DeveloperUserAccessTests extends TestCase
 
 
 
-    public function test_make_user_json_file(){
+	public function test_make_user_json_file(){
+	    Storage::fake('local');
 	    App\Http\Controllers\PageGenerationController::CreateUserFile("test");
-	    $this->assertTrue(file_exists("resources/user-json/test.json"));
-	    unlink("resources/user-json/test.json");
+	    Storage::disk('local')->assertExists("test.json");
     }
 
     public function test_add_user_data(){

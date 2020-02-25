@@ -15,4 +15,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('banner', 'PageGenerationController@GenerateAdPage');
 

@@ -20,4 +20,5 @@ use Illuminate\Http\Request;
 	Route::post("login", "UserSignInController@loginUser");
 
 	Route::get("details", "ConfidentialInfoController@accessInfo");
-
+	Route::post("details", "ConfidentialInfoController@createInfo");
+	Route::post("removal", "ConfidentialInfoController@removeInfo");
