@@ -2,6 +2,7 @@ import { APICalls } from '../../../resources/js/components/api';
 import { InMemoryLocalStore } from '../../../resources/js/components/api';
 import axios from 'axios';
 import polyfill from "babel-polyfill";
+import Cookies from 'js-cookie';
 
 const adapter = require('axios/lib/adapters/http')
 
@@ -13,13 +14,7 @@ describe("Aux API functions", function(){
 	test("Token stored and get", function(){
 		InMemoryLocalStore.storeAuthToken("token");
 		expect(InMemoryLocalStore.getAuthToken()).toBe("token");
-		expect(window.localStorage.getItem("freeadstoken")).toBe("token");
-	});
-	test("encrypted uname:pwrd stored", function(){
-		InMemoryLocalStore.storeConfidential("test", "pass");
-		expect(InMemoryLocalStore.getConfidential()).toEqual({"name":"test", "pass":"21b3dc15bcbaa285b2a9ca5254ca0ae8a18e660e6e55bce163f4b9f893df4704"});
-		expect(JSON.parse(window.localStorage.getItem("freeadsconfidential"))).toEqual({"name":"test", "pass":"21b3dc15bcbaa285b2a9ca5254ca0ae8a18e660e6e55bce163f4b9f893df4704"});
-
+		expect(Cookies.get("freeadstoken")).toBe("token");
 	});
 });
 /*

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { sha256 } from 'js-sha256'
+import Cookies from 'js-cookie';
 
 var host_addr = "http://localhost:8000";
 
@@ -104,21 +105,15 @@ export class APICalls{
 
 export class InMemoryLocalStore{
 	static getAuthToken(){
-		if(window.localStorage != undefined && this.token == undefined){
-			this.token = window.localStorage.getItem("freeadstoken");
+		if(Cookies.get("freeadstoken") != undefined && this.token == undefined){
+			this.token = Cookies.get("freeadstoken");
 		}
 		return this.token;
 	}
 	static storeAuthToken(token){
 		this.token = token;
-		if(window.localStorage != undefined){
-			window.localStorage.setItem("freeadstoken", token)
+		if(this.token != undefined){
+			Cookies.set("freeadstoken", token)
 		}
-	}
-	static getConfidential(){
-		return this.confidential;
-	}
-	static storeConfidential(name, pass){
-		this.confidential  = {"name": name, "pass": pass};
 	}
 }
