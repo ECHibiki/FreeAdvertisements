@@ -1,5 +1,5 @@
 import { APICalls } from '../../../resources/js/components/api';
-import { InMemoryLocalStore } from '../../../resources/js/components/api';
+import { DataStore } from '../../../resources/js/components/api';
 import axios from 'axios';
 import polyfill from "babel-polyfill";
 import Cookies from 'js-cookie';
@@ -12,11 +12,13 @@ describe("Aux API functions", function(){
 		expect(APICalls.hashPass("zest", "ssap")).toBe("07cd5364c7426eb6cd596d128ee92ed84a40a2a0c70aea033be24d066343090f");
 	});	
 	test("Token stored and get", function(){
-		InMemoryLocalStore.storeAuthToken("token");
-		expect(InMemoryLocalStore.getAuthToken()).toBe("token");
+		DataStore.storeAuthToken("token");
+		expect(DataStore.getAuthToken()).toBe("token");
 		expect(Cookies.get("freeadstoken")).toBe("token");
 	});
 });
+
+//These test are placed in the component folder since jest mock isn't as deep as browser tests for api integration
 /*
 describe("API functionality utests", function(){
 	test("Creation of user", async ()=>{

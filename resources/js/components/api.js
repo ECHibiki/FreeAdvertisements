@@ -103,7 +103,7 @@ export class APICalls{
 	}	
 }
 
-export class InMemoryLocalStore{
+export class DataStore{
 	static getAuthToken(){
 		if(Cookies.get("freeadstoken") != undefined && this.token == undefined){
 			this.token = Cookies.get("freeadstoken");

@@ -1,5 +1,5 @@
 import { APICalls } from '../../../resources/js/components/api';
-import { InMemoryLocalStore } from '../../../resources/js/components/api';
+import { DataStore } from '../../../resources/js/components/api';
 import axios from 'axios';
 import polyfill from "babel-polyfill";
 
@@ -28,19 +28,19 @@ async function case2(){
 }; 
 
 async function case3(){
-	InMemoryLocalStore.storeAuthToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvYXBpXC9sb2dpbiIsImlhdCI6MTU4Mjc4ODQyNCwiZXhwIjoxNTgyNzkyMDI0LCJuYmYiOjE1ODI3ODg0MjQsImp0aSI6InhYYXh5dXd1M3lEUURWQnkiLCJzdWIiOjMsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.S8PP48Vq1MnULHYxzLJHZqMe96IlfTex92HiyxHHu0Q");
+	DataStore.storeAuthToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvYXBpXC9sb2dpbiIsImlhdCI6MTU4Mjc4ODQyNCwiZXhwIjoxNTgyNzkyMDI0LCJuYmYiOjE1ODI3ODg0MjQsImp0aSI6InhYYXh5dXd1M3lEUURWQnkiLCJzdWIiOjMsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.S8PP48Vq1MnULHYxzLJHZqMe96IlfTex92HiyxHHu0Q");
 	var create_re = await APICalls.callCreateNewAd(null, "https://test.com");
 	console.log("Create new ad: " + (create_re['message'] == 'Successfully Logged In'));
 	console.log("    " + JSON.stringify(create_re));
 }
 async function case4(){
-	InMemoryLocalStore.storeAuthToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvYXBpXC9sb2dpbiIsImlhdCI6MTU4Mjc4ODQyNCwiZXhwIjoxNTgyNzkyMDI0LCJuYmYiOjE1ODI3ODg0MjQsImp0aSI6InhYYXh5dXd1M3lEUURWQnkiLCJzdWIiOjMsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.S8PP48Vq1MnULHYxzLJHZqMe96IlfTex92HiyxHHu0Q");
+	DataStore.storeAuthToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvYXBpXC9sb2dpbiIsImlhdCI6MTU4Mjc4ODQyNCwiZXhwIjoxNTgyNzkyMDI0LCJuYmYiOjE1ODI3ODg0MjQsImp0aSI6InhYYXh5dXd1M3lEUURWQnkiLCJzdWIiOjMsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.S8PP48Vq1MnULHYxzLJHZqMe96IlfTex92HiyxHHu0Q");
 	var create_re = await APICalls.callRetrieveUserAds();
 	console.log("get info: " + (create_re == 'Successfully Logged In'));
 	console.log("    " + JSON.stringify(create_re));
 }
 async function case5(){
-	InMemoryLocalStore.storeAuthToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvYXBpXC9sb2dpbiIsImlhdCI6MTU4Mjc4ODQyNCwiZXhwIjoxNTgyNzkyMDI0LCJuYmYiOjE1ODI3ODg0MjQsImp0aSI6InhYYXh5dXd1M3lEUURWQnkiLCJzdWIiOjMsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.S8PP48Vq1MnULHYxzLJHZqMe96IlfTex92HiyxHHu0Q");
+	DataStore.storeAuthToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvYXBpXC9sb2dpbiIsImlhdCI6MTU4Mjc4ODQyNCwiZXhwIjoxNTgyNzkyMDI0LCJuYmYiOjE1ODI3ODg0MjQsImp0aSI6InhYYXh5dXd1M3lEUURWQnkiLCJzdWIiOjMsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.S8PP48Vq1MnULHYxzLJHZqMe96IlfTex92HiyxHHu0Q");
 	var create_re = await APICalls.callRemoveUserAds("asd", "https://ki.com");
 	console.log("get info: " + (create_re == 'Successfully Logged In'));
 	console.log("    " + JSON.stringify(create_re));
