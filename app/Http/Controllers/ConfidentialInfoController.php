@@ -35,14 +35,15 @@ class ConfidentialInfoController extends Controller
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
 		$this->addUserJSON($name, $fname, $request->input('url'));
 		$this->addAdSQL($name, $fname, $request->input('url'));
-		return ['created'=>1, 'fname'=>$fname];
+		return ['log'=>'Ad Created', 'fname'=>$fname];
 	}
 
 	public function removeInfo(Request $request){
 		$name = auth()->user()->name;
 		$this->removeAdSQL($name, $request->input('uri'), $request->input('url'));
 		$this->removeUserJSON($name, $request->input('uri'), $request->input('url'));
-		return ['removed'=>1];
+		PageGenerationController::RemoveAdImage($request->input('uri'));
+		return ['log'=>'Ad Removed'];
 	}
 	
 	public static function addUserJSON(string $name, string $uri, string $url){

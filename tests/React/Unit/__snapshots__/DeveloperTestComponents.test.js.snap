@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Is Button Component Button DeleteAd 1`] = `"<div id=\\"ad-remove\\"><button type=\\"button\\" class=\\"btn btn-danger btn-sm\\">Remove</button></div>"`;
+
+exports[`Is Button Component Button Signin 1`] = `"<div id=\\"sign-in-start\\"><button type=\\"button\\" class=\\"btn btn-primary\\">Sign In</button></div>"`;
+
+exports[`Is Button Component Button create 1`] = `ShallowWrapper {}`;
+
+exports[`Is Button Component Button createAd 1`] = `"<div id=\\"ad-create\\"><button type=\\"button\\" class=\\"btn btn-outline-primary\\">New Banner</button></div>"`;
+
+exports[`Is Button Component Button createUser 1`] = `"<div id=\\"create-finish\\"><button type=\\"button\\" class=\\"btn btn-outline-secondary\\">Create</button></div>"`;
+
+exports[`Is Button Component Button signinUser 1`] = `"<div id=\\"sign-in-finish\\"><button type=\\"button\\" class=\\"btn btn-outline-secondary\\">Sign In</button></div>"`;
+
+exports[`Is Form Component Form Signin 1`] = `"<div style=\\"visibility:hidden;height:10em\\" id=\\"sign-form\\"><form><div class=\\"form-group\\"><label for=\\"name-si\\">UserName</label><input class=\\"form-control\\" id=\\"name-si\\" placeholder=\\"insert username\\" required=\\"\\"/></div><div class=\\"form-group\\"><label for=\\"pass-si\\">Password</label><input type=\\"password\\" class=\\"form-control\\" id=\\"pass-si\\" placeholder=\\"\\" required=\\"\\"/></div><div id=\\"sign-in-finish\\"><button type=\\"button\\" class=\\"btn btn-outline-secondary\\">Sign In</button></div></form></div>"`;
+
+exports[`Is Form Component Form ad create 1`] = `"<div style=\\"display:none;height:10em\\" id=\\"ad-create-form\\"><form><div class=\\"form-group\\"><label for=\\"image-ad-c\\">Image</label><input type=\\"file\\" class=\\"form-control-file\\" id=\\"image-ad-c\\" required=\\"\\"/><small class=\\"form-text text-muted\\">Must be 300x100</small></div><div class=\\"form-group\\"><label for=\\"ad-url-c\\">URL</label><input type=\\"url\\" pattern=\\"https://.*\\" class=\\"formui-control\\" id=\\"ad-url-c\\" placeholder=\\"https://.*\\" required=\\"\\"/></div><div id=\\"ad-create\\"><button type=\\"button\\" class=\\"btn btn-outline-primary\\">New Banner</button></div></form></div>"`;
+
+exports[`Is Form Component Form ad remove 1`] = `"<div style=\\"display:none;height:10em\\" id=\\"ad-create-form\\"><form><input type=\\"hidden\\" id=\\"r-uri\\" required=\\"\\"/><input type=\\"hidden\\" id=\\"r-url\\" required=\\"\\"/><small class=\\"form-text text-muted text-danger\\">Confirm Delete for this Ad</small><div id=\\"ad-remove\\"><button type=\\"button\\" class=\\"btn btn-danger btn-sm\\">Remove</button></div></form></div>"`;
+
+exports[`Is Form Component Form create 1`] = `"<div style=\\"visibility:hidden;height:10em\\" id=\\"create-form\\"><form><div class=\\"form-group\\"><label for=\\"name-c\\">UserName</label><input class=\\"form-control\\" id=\\"name-c\\" placeholder=\\"insert username\\" required=\\"\\"/></div><div class=\\"form-group\\"><label for=\\"pass-c\\">Password</label><input type=\\"password\\" class=\\"form-control\\" id=\\"pass-c\\" placeholder=\\"\\" required=\\"\\"/></div><div class=\\"form-group\\"><label for=\\"pass-c-conf\\">Password</label><input type=\\"password\\" class=\\"form-control\\" id=\\"pass-c-conf\\" placeholder=\\"\\" required=\\"\\"/></div><div id=\\"create-finish\\"><button type=\\"button\\" class=\\"btn btn-outline-secondary\\">Create</button></div></form></div>"`;
+
+exports[`Is Static Component Static Header 1`] = `"<div id=\\"top-head\\"><h1>Custom<br/> Banners</h1></div>"`;
+
+exports[`Is Static Component Static banner 1`] = `"<div id=\\"sample-banner\\"><iframe src=\\"/banner\\" scroll=\\"no\\" width=\\"300\\" height=\\"100\\"></iframe></div>"`;
+
+exports[`Is Static Component Static patreon 1`] = `"<div id=\\"patreon\\"><a href=\\"\\"><img src=\\"https://abdullahsameer-8c5e.kxcdn.com/blog/wp-content/uploads/2018/11/support-my-work-on-patreon-banner-image-600px.png\\"/></a></div>"`;
+
+exports[`Is Table Component Ad Entry 1`] = `"<tr id=\\"\\" class=\\"\\"><td><div id=\\"ad-remove\\"><button type=\\"button\\" class=\\"btn btn-danger btn-sm\\">Remove</button></div></td><td><img src=\\"\\"/></td><td><a href=\\"\\"></a></td></tr>"`;
+
+exports[`Is Table Component Empty Table 1`] = `"<div id=\\"details-table\\" class=\\"table table-striped table-responsive\\"><table class=\\"\\"><caption><div id=\\"sample-banner\\"><iframe src=\\"/banner\\" scroll=\\"no\\" width=\\"300\\" height=\\"100\\"></iframe></div></caption><thead class=\\"thead-dark\\"><tr><th>Remove</th><th>Image</th><th>URL</th></tr></thead><tbody class=\\"\\"></tbody></table></div>"`;

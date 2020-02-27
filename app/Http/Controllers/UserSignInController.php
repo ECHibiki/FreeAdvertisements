@@ -23,15 +23,21 @@ class UserSignInController extends Controller
 	}
 
 	public function loginUser(Request $request){
+		$request->validate([
+			'name'=>'required',
+			'pass'=>'required'
+		]);
+
 		$token = $this->returnJWT($request->input("name"), $request->input("pass"));
 		if(!$token){
-			return response()->json(['log'=>'-1'], 401);
+			return response()->json(['warn'=>'Username or Password Incorrect'], 401);
 		}
 		else{
 			$token_arr = [           
 		       		'access_token' => $token,
             			'token_type' => 'bearer',
-				'expires_in' => auth()->factory()->getTTL() * 60
+				'expires_in' => auth()->factory()->getTTL() * 60,
+				'log' => "Successfully Logged In"
 			];
 
 			return response()->json($token_arr);

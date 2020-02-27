@@ -12,13 +12,13 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
-            <directory suffix="Tests.php">./tests/Unit</directory>
+            <directory suffix="Test.php">./tests/PHP/Unit</directory>
+            <directory suffix="Tests.php">./tests/PHP/Unit</directory>
 	</testsuite>
 
         <testsuite name="Feature">
-            <directory suffix="Test.php">./tests/Feature</directory>
-            <directory suffix="Tests.php">./tests/Feature</directory>
+            <directory suffix="Test.php">./tests/PHP/Feature</directory>
+            <directory suffix="Tests.php">./tests/PHP/Feature</directory>
         </testsuite>
     </testsuites>
     <filter>

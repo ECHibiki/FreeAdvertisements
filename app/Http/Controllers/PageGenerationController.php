@@ -16,7 +16,7 @@ class PageGenerationController extends Controller
 	}
 
 	public static function StoreAdImage($img){
-		$fname = Storage::putFile('image', $img, 'public');
+		$fname = Storage::putFile('public/image', $img);
 		return $fname;
 	}
 	public static function RemoveAdImage($uri){
@@ -25,10 +25,10 @@ class PageGenerationController extends Controller
 	public function GenerateAdPage(){
 		$rand_ad = $this->GetRandomAdEntry();
 		if($rand_ad == null){
-			return "asdf";
+			return "asdf no ads";
 		}
 		else
-			return view('banner', ['url'=>$rand_ad->url, 'uri'=>$rand_ad->uri, 'name'=>$rand_ad->fk_name]);
+			return view('banner', ['url'=>$rand_ad->url, 'uri'=>str_replace('public','storage',$rand_ad->uri), 'name'=>$rand_ad->fk_name]);
 	}
 
 	public static function GetRandomAdEntry(){

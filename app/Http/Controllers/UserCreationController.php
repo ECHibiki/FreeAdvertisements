@@ -14,29 +14,21 @@ class UserCreationController extends Controller
 
 
 	public function createNewUser(Request $request){
-		$validator = Validator::make($request->all(), [
+		$request->validate([
 			'name' => 'required',
 			'pass' => 'required'
 		]);
                   		
-		if($validator->fails()){
-			$failed = $validator->failed();
-			if(isset($failed['name']))
-				return response(json_encode(["created"=>-1]), 401)->header('Content-Type', 'text/plain');
-			else
-				return response(json_encode(["created"=>-2]), 401)->header('Content-Type', 'text/plain');
 
+		$code = UserCreationController::addNewUserToDB($request->input('name'), $request->input('pass'));
+		if($code == 1){
+			PageGenerationController::CreateUserFile($request->input('name'));
+			return response(json_encode(["log"=>"Successfully Created"]), 200)->header('Content-Type', 'text/plain');
 		}
 		else{
-			$code = UserCreationController::addNewUserToDB($request->input('name'), $request->input('pass'));
-			if($code == 1){
-				PageGenerationController::CreateUserFile($request->input('name'));
-				return response(json_encode(["created"=>1]), 200)->header('Content-Type', 'text/plain');
-			}
-			else{
-			 	return response(json_encode(["created"=>0]), 401)->header('Content-Type', 'text/plain');
-			}
+			return response(json_encode(["warn"=>"Username Already Exists"]), 401)->header('Content-Type', 'text/plain');
 		}
+	
 	}
 	
 	public static function addNewUserToDB(string $name, string $hashedpass){
