@@ -116,16 +116,9 @@ export class InMemoryLocalStore{
 		}
 	}
 	static getConfidential(){
-		if(window.localStorage != undefined && this.confidential == undefined){
-			this.confidential = JSON.parse(window.localStorage.getItem("freeadsconfidential"));
-		}
 		return this.confidential;
 	}
 	static storeConfidential(name, pass){
-		this.confidential  = {"name": name, "pass": APICalls.hashPass(name, pass)};
-		if(window.localStorage != undefined){
-			window.localStorage.setItem("freeadsconfidential",  JSON.stringify(this.confidential));
-		}
-
+		this.confidential  = {"name": name, "pass": pass};
 	}
 }
