@@ -15,8 +15,8 @@ class UserCreationController extends Controller
 
 	public function createNewUser(Request $request){
 		$request->validate([
-			'name' => 'required',
-			'pass' => 'required'
+			'name' => 'required|max:30',
+			'pass' => 'required|confirmed|min:5'
 		]);
                   		
 

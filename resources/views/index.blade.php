@@ -11,7 +11,8 @@
 	<!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
 
-        <!-- Styles -->
+	<!-- Styles -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <style>
             html, body {
                 background-color: #fff;
@@ -66,7 +67,7 @@
         </style>
     </head>
     <body>
-	<div class="flex-center position-ref full-height"></div>
+	<div id="index"></div>
 	<script src="/js/app.js"></script>
     </body>
 </html>

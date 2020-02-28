@@ -15,5 +15,5 @@ require('./bootstrap');
 require('./components/components');
 require('./components/api');
 require('./components/index');
-require('./components/messy-api-tests')
+//require('./components/messy-api-tests')
 

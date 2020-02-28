@@ -30,7 +30,7 @@ class ConfidentialInfoController extends Controller
 		$name = auth()->user()->name;
 		$request->validate([
 			'image'=>'required|image|dimensions:min_width=300,max_width=300,min_height=100,max_height=100',
-			'url'=>'required|url'
+			'url'=>'required|url|not_regex:/http:\/\/.*/i'
 		]);
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
 		$this->addUserJSON($name, $fname, $request->input('url'));
@@ -40,9 +40,11 @@ class ConfidentialInfoController extends Controller
 
 	public function removeInfo(Request $request){
 		$name = auth()->user()->name;
-		$this->removeAdSQL($name, $request->input('uri'), $request->input('url'));
-		$this->removeUserJSON($name, $request->input('uri'), $request->input('url'));
-		PageGenerationController::RemoveAdImage($request->input('uri'));
+		$uri = str_replace("storage/image", "public/image", $request->input('uri'));
+		$url = $request->input('url');
+		$this->removeAdSQL($name, $uri, $url);
+		$this->removeUserJSON($name, $uri , $url);
+		PageGenerationController::RemoveAdImage($uri);
 		return ['log'=>'Ad Removed'];
 	}
 	

@@ -1,11 +1,23 @@
-import react from 'react';
+import React from 'react';
+import {render} from '@testing-library/react';
+import Adapter from 'enzyme-adapter-react-16';
+import { shallow, configure, mount } from 'enzyme';
 
+configure({adapter: new Adapter()});
 import { APICalls } from '../../../resources/js/components/api';
 import { DataStore } from '../../../resources/js/components/api';
 
+import { MasterPage } from '../../../resources/js/components/components';
+
 describe("Main Page Design", function(){
-	test("Home/login page layout", function(){});
-	test("user page layout", function(){});
+	test("Home/login page layout", function(){
+		const page = mount(<MasterPage />);
+		expect(page).toMatchSnapshot()
+	});
+	test("user page layout", function(){
+		
+	});
+
 });
 
 describe("Button press form expansions", function(){
