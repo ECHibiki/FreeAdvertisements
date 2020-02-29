@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 
 var host_addr = "http://localhost:8000";
 var host_name = "localhost";
-var error_404 = {"message":"404", "error":{"server":"Server 404"}}
+var error_404 = {"message":"404", "error":{"server":"Server 404"}, "code":"404"}
 
 export class APICalls{
 	static hashPass(name, pass){
@@ -73,6 +73,7 @@ export class APICalls{
 					console.log(err);
 					return error_404;
 				}
+				err.response.data['code'] = err.response.status;
 				return err.response.data;
 			});
 

@@ -29,28 +29,44 @@ export class MasterPage extends Component{
 	render(){
 		console.log(this.state.auth);
 		if(this.state.auth == undefined){
-			return(<div id="master-waiting"><TopHeader />
-			  <div id="lower-master-waiting">
-				<PatreonBanner />
+			return(<div id="master-waiting">
+				<div id="upper-master-login">
+				<TopHeader />
+				<SampleBanner />
+				</div>
+				<div id="lower-master-waiting">
 				<hr/>
-				<img src="/Spinner-1s-200px.gif" />
+				<img src="/09b24e31234507.564a1d23c07b4.gif" style={{opacity:0.7}}/>
 			  </div>
 			</div>);
 		}
 		else if(!this.state.auth){
-			return(<div id="master-login"><TopHeader />
-				  <div id="lower-master-login">
-					<PatreonBanner />
-					<LoginContainer swapPage={this.swapPage}/>
+			return(<div id="master-login">
+				<div id="upper-master-login">
+				  <TopHeader />
+				  <SampleBanner />
+				</div>
+				<hr/>
+				  <div id="mid-master-login">
+				    <LoginContainer swapPage={this.swapPage}/>
+				   </div>
+				  <hr/>
+				   <div id="lower-master-login">
 					<HelperText />
-				  </div>
+				   </div>
 				</div>);
 		}
 		else{
-			return(<div id="master-user"><TopHeader />
-				<div id="lower-master-user"><PatreonBanner />
-				<UserContainer />
-				<HelperText />
+			return(<div id="master-user">
+				<div id="upper-master-user">
+				<TopHeader />
+				<SampleBanner />
+				</div>
+				<div id="mid-master-user">
+				  <UserContainer />
+				</div>
+				<div id="lower-master-user">
+				  <HelperText />
 				</div>
 				</div>);
 		}
@@ -59,7 +75,7 @@ export class MasterPage extends Component{
 export class LoginContainer extends Component{
 	constructor(props){
 		super(props);
-		this.state = {si_display:"none", si_height:"0em", c_display:"none", c_height:"0em"};
+		this.state = {si_visibility:"unset", si_height:"0em", si_opacity:"0", c_visibility:"unset", c_height:"0em", c_opacity:"0"};
 
 		this.SignInOnClick = this.SignInOnClick.bind(this);
 		this.CreateOnClick = this.CreateOnClick.bind(this);
@@ -67,30 +83,32 @@ export class LoginContainer extends Component{
 	}
 
 	SignInOnClick(){
-		if(this.state.si_display=="none"){
-			this.setState({si_display:"unset", si_height:"15em"});
+		if(this.state.si_visibility=="unset"){
+			this.setState({si_visibility:"initial", si_height:"17em", si_opacity:"1"});
 		}
 		else{
-			this.setState({si_display:"none", si_height:"0em"});
+			this.setState({si_visibility:"unset", si_height:"0em", si_opacity:"0"});
 		}
 	}
 
 	CreateOnClick(){
-		if(this.state.c_display=="none"){
-			this.setState({c_display:"unset", c_height:"15em"});
+		if(this.state.c_visibility=="unset"){
+			this.setState({c_visibility:"initial", c_height:"22.5em", c_opacity:"1"});
 		}
 		else{
-			this.setState({c_display:"none", c_height:"0em"});
+			this.setState({c_visibility:"unset", c_height:"0em", c_opacity:"0"});
 		}
 	}
 
 	render(){
 		    return (<div id="login-container">
-				<h2>Authentication</h2>
+			    <h2>Authentication</h2>
+			    <div id="si-button-container">
 				<SignInButton onClickCallBack={this.SignInOnClick}/>
-				<SignInForm  swapPage={this.props.swapPage} display={this.state.si_display} height={this.state.si_height} />
+				<SignInForm  swapPage={this.props.swapPage} opacity={this.state.si_opacity} visibility={this.state.si_visibility} height={this.state.si_height} />
 				<CreateButton onClickCallBack={this.CreateOnClick}/>
-				<CreationForm swapPage={this.props.swapPage}  display={this.state.c_display} height={this.state.c_height} />
+				<CreationForm swapPage={this.props.swapPage} opacity={this.state.c_opacity} visibility={this.state.c_visibility} height={this.state.c_height} />
+			    </div>
 			</div>)
 	}
 }
@@ -98,7 +116,7 @@ export class UserContainer extends Component{
 	constructor(props){
 		super(props);
 		this.AdCreateOnClick = this.AdCreateOnClick.bind(this);
-		this.state = {AdCDisplay:"none", AdCHeight:"0em", AdArray:[]};
+		this.state = {AdCVisibility:"unset", AdCHeight:"0em", AdCOpacity:"0", AdArray:[]};
 		this.UpdateDetails = this.UpdateDetails.bind(this);
 	}
 
@@ -107,10 +125,10 @@ export class UserContainer extends Component{
 	}
 
 	AdCreateOnClick(){
-		if(this.state.AdCDisplay == "none")
-			this.setState({AdCDisplay:"unset", AdCHeight:"10em"});
+		if(this.state.AdCVisibility == "unset")
+			this.setState({AdCVisibility:"initial", AdCHeight:"16.4em", AdCOpacity:"1"});
 		else
-			this.setState({AdCDisplay:"none", AdCHeight:"0em"});
+			this.setState({AdCVisibility:"unset", AdCHeight:"0em", AdCOpacity:"0"});
 	}
 
 	async UpdateDetails(){
@@ -142,8 +160,10 @@ export class UserContainer extends Component{
 		console.log(this.state.AdArray);
 		return (<div id="user-container">
 				<h2>Your Banners</h2>
-				<AdCreateButton onClickCallBack={this.AdCreateOnClick}/>
-				<AdCreationForm display={this.state.AdCDisplay} height={this.state.AdCHeight} UpdateDetails={this.UpdateDetails}/>
+				<div id="ad-button-container">
+				  <AdCreateButton onClickCallBack={this.AdCreateOnClick}/>
+				  <AdCreationForm visibility={this.state.AdCVisibility} opacity={this.state.AdCOpacity} height={this.state.AdCHeight} UpdateDetails={this.UpdateDetails}/>
+				</div>
 				<AdDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.UpdateDetails}/>
 			</div>)
 	}
@@ -153,10 +173,12 @@ export class UserContainer extends Component{
 export class HelperText extends Component{
 	render(){
 		return (<div id="helper">
+		<PatreonBanner />
 		<h2>How To Use</h2>
-		<SampleBanner />
-		<p>To embed on a website use <span className="code">{'<iframe src="/banner" scrolling="no" width="300" height="100"></iframe>'}</span>. 
-			Uploaded images must be 300x100 and safe for work</p>
+		<p>To embed on a website use <span className="code">{
+			'<iframe id="kissu-banner" src="https://banners.kissu.moe/banner" scrolling="no" width="700" height="70" style="margin:auto;display:block;max-width:100%;border:none"></iframe>'
+		}</span>. 
+			Uploaded images must be 700x70 and safe for work</p>
 		</div>)
 	};
 }
@@ -183,7 +205,7 @@ export class CreateButton extends Component{
 }
 export class AdCreateButton extends Component{
 	render(){
-		return (<div id="create-ad-start"><button onClick={this.props.onClickCallBack} type="button" className="btn btn-outline-primary" >New Banner</button></div>);
+		return (<div id="create-ad-start"><button onClick={this.props.onClickCallBack} type="button" className="btn btn-primary" >New Banner</button></div>);
 	}
 
 }
@@ -195,7 +217,7 @@ export class PatreonBanner extends Component{
 }
 export class SampleBanner extends Component{
 	render(){
-		return (<div id="sample-banner"><iframe src="/banner" scrolling="no" width="300" height="100"></iframe></div>);
+		return (<div id="sample-banner"><iframe src="/banner" scrolling="no" width="700" height="70" className="iframe-banner"></iframe></div>);
 	}
 }
 export class SignInForm extends Component{
@@ -203,9 +225,7 @@ export class SignInForm extends Component{
 		super(props);
 	}
 	render(){
-		return(<div style={{display: this.props.display, height: this.props.height}} id="sign-form">
-			<form>
-			
+		return(<div style={{visibility: this.props.visibility, opacity: this.props.opacity, height: this.props.height}} id="sign-form">
 				<div className="form-group">
 					<label htmlFor="name-si">UserName</label>
 					<input className="form-control" id="name-si" placeholder="insert username" required/>
@@ -215,7 +235,7 @@ export class SignInForm extends Component{
 					<input type="password" className="form-control" id="pass-si" placeholder="" required/>
 				</div>
 				<SignInAPIButton swapPage={this.props.swapPage}  />
-			</form></div>);
+			</div>);
 	}
 }
 export class CreationForm extends Component{
@@ -223,8 +243,7 @@ export class CreationForm extends Component{
 		super(props);
 	}
 	render(){
-		return(<div style={{display: this.props.display, height: this.props.height}} id="create-form">
-			<form>
+		return(<div style={{visibility: this.props.visibility, opacity:this.props.opacity, height: this.props.height}} id="create-form">
 				<div className="form-group">
 					<label htmlFor="name-c">UserName</label>
 					<input className="form-control" id="name-c" placeholder="insert username" required/>
@@ -239,7 +258,7 @@ export class CreationForm extends Component{
 				</div>
 
 				<CreateAPIButton swapPage={this.props.swapPage}  />
-			</form></div>);
+			</div>);
 	}
 
 }
@@ -248,20 +267,19 @@ export class AdCreationForm extends Component{
 		super(props);
 	}
 	render(){
-		return(<div style={{display: this.props.display, height: this.props.height}} id="ad-create-form">
-			<form>
+		return(<div style={{visibility: this.props.visibility, height: this.props.height, opacity: this.props.opacity}} id="ad-create-form">
 				<div className="form-group">
 					<label htmlFor="image-ad-c">Image</label>
 					<input type="file" className="form-control-file" id="image-ad-c" accept="image/*" required/>
-					<small className="form-text text-muted">Must be 300x100 and SFW</small>
+					<small className="form-text text-muted">Must be 700x70 and SFW</small>
 				</div>
 				<div className="form-group">
 					<label htmlFor="ad-url-c">URL</label>
-					<input type="url" pattern="https://.*" className="formui-control" id="ad-url-c" placeholder="https://.*" required/>
+					<input type="url" pattern="/^https:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|]+$/i" className="form-control" id="ad-url-c" placeholder="Must be HTTPS URL" required/>
 				</div>
 
 				<AdCreateAPIButton UpdateDetails={this.props.UpdateDetails}/>
-			</form></div>);
+			</div>);
 	}
 
 }
@@ -317,12 +335,20 @@ export class SignInAPIButton extends Component{
 		}
 	}
 
+	setDisplay(r){
+		if(r == ""){
+			return {display:"none"}
+		}
+		else{
+			return {display:"block"}
+		}
+	}
 
 	render(){
-		return (<div id="sign-in-finish"><button type="button" className="btn btn-outline-secondary" onClick={this.SendUserSignIn}>Sign In</button>
-			<br/><p className="text-danger" id="c-error-field">{this.state.err_text}</p>
-			<p className="text-warning" id="c-war-field">{this.state.war_text}</p>
-			<p className="text-success" id="c-win-field">{this.state.suc_text}</p>
+		return (<div id="sign-in-finish"><button type="button" className="btn btn-secondary" onClick={this.SendUserSignIn}>Submit</button>
+			<p className="text-danger" id="si-error-field" style={this.setDisplay(this.state.err_text)}>{this.state.err_text}</p>
+			<p className="text-warning bg-dark" id="si-war-field" style={this.setDisplay(this.state.war_text)}><span className="bg-dark">{this.state.war_text}</span></p>
+			<p className="text-success" id="si-win-field" style={this.setDisplay(this.state.suc_text)}>{this.state.suc_text}</p>
 			</div>);
 	}
 
@@ -381,11 +407,21 @@ export class CreateAPIButton extends Component{
 		}
 	}
 
+	setDisplay(r){
+		if(r == ""){
+			return {display:"none"}
+		}
+		else{
+			return {display:"block"}
+		}
+	}
+
+
 	render(){
-		return (<div id="create-finish"><button type="button" className="btn btn-outline-secondary" onClick={this.SendUserCreate}>Create</button>
-			<br/><p className="text-danger" id="c-error-field">{this.state.err_text}</p>
-			<p className="text-warning" id="c-war-field">{this.state.war_text}</p>
-			<p className="text-success" id="c-win-field">{this.state.suc_text}</p>
+		return (<div id="create-finish"><button type="button" className="btn btn-secondary" onClick={this.SendUserCreate}>Create</button>
+			<p className="text-danger" id="c-error-field" style={this.setDisplay(this.state.err_text)}>{this.state.err_text}</p>
+			<p className="text-warning bg-dark" id="c-war-field" style={this.setDisplay(this.state.war_text)}><span className="bg-dark">{this.state.war_text}</span></p>
+			<p className="text-success" id="c-win-field" style={this.setDisplay(this.state.suc_text)}>{this.state.suc_text}</p>
 			</div>);
 	}
 
@@ -414,6 +450,10 @@ export class AdCreateAPIButton extends Component{
 				var key_ind = 0;
 				this.setState({err_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ), war_text: "", suc_text:""});
 			}
+			else if(nb_response['code'] == "413"){
+				this.setState({err_text:<span>Upload Failed. File too Large<br/></span>});
+
+			}
 			else{
 				this.setState({err_text:<span>Authorization Failed, Please Refresh<br/></span>});
 			}
@@ -428,10 +468,10 @@ export class AdCreateAPIButton extends Component{
 
 
 	render(){
-		return (<div id="ad-create-finish"><button type="button" className="btn btn-outline-danger" onClick={this.SendNewBanner}>Create</button>
-			<br/><p className="text-danger" id="c-error-field">{this.state.err_text}</p>
-			<p className="text-warning" id="c-war-field">{this.state.war_text}</p>
-			<p className="text-success" id="c-win-field">{this.state.suc_text}</p>
+		return (<div id="ad-create-finish"><button type="button" className="btn btn-secondary" onClick={this.SendNewBanner}>Create</button>
+			<p className="text-danger" id="cad-error-field">{this.state.err_text}</p>
+			<p className="text-warning bg-dark" id="cad-war-field"><span className="bg-dark">{this.state.war_text}</span></p>
+			<p className="text-success" id="cad-win-field">{this.state.suc_text}</p>
 			</div>);
 	}
 
@@ -493,9 +533,9 @@ export class AdRemovalAPIButton extends Component{
 
 	render(){
 		return (<div id="ad-remove"><button type="button" className="btn btn-danger btn-sm" onClick={this.RemoveAd}>Remove</button>
-			<br/><p className="text-danger" id="c-error-field">{this.state.err_text}</p>
-			<p className="text-warning" id="c-war-field">{this.state.war_text}</p>
-			<p className="text-success" id="c-win-field">{this.state.suc_text}</p>
+			<br/><p className="text-danger" id="cr-error-field">{this.state.err_text}</p>
+			<p className="text-warning bg-dark" id="cr-war-field"><span className="bg-dark">{this.state.war_text}</span></p>
+			<p className="text-success" id="cr-win-field">{this.state.suc_text}</p>
 			</div>);
 	}
 }
@@ -519,13 +559,13 @@ export class AdDetailsTable extends Component{
 
 	render(){
 		return (<div id="details-table" className="table table-striped table-responsive">
-			<table className="">
+			<table>
 				<caption>ありがとうございます!</caption>		
 				<thead className="thead-dark">
 					<tr>
-						<th>Remove</th>
-						<th>Image</th>
-						<th>URL</th>
+						<th className="ad-th-del">Remove</th>
+						<th className="ad-th-img">Image</th>
+						<th className="ad-th-url">URL</th>
 					</tr>
 				</thead>
 				<tbody className="">
@@ -542,9 +582,9 @@ export class AdDetailsEntry extends Component{
 	
 	render(){
 		return(<tr id={this.props.id} className="">
-				<td><AdRemovalButton updateDetailsCallback={this.props.updateDetailsCallback}  ad_src={this.props.ad_src} url={this.props.url}/></td>
-				<td><a href={this.props.ad_src}><img src={this.props.ad_src}/></a></td>
-				<td><a href={this.props.url}>{this.props.url}</a></td>
+				<td className="ad-td-del"><AdRemovalButton updateDetailsCallback={this.props.updateDetailsCallback}  ad_src={this.props.ad_src} url={this.props.url}/></td>
+				<td className="ad-td-img"><a href={this.props.ad_src} ><img src={this.props.ad_src}/></a></td>
+				<td className="ad-td-url"><a href={this.props.url}>{this.props.url}</a></td>
 			</tr>);
 	}
 }
