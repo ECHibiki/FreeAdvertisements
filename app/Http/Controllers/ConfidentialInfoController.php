@@ -29,8 +29,8 @@ class ConfidentialInfoController extends Controller
 	public function createInfo(Request $request){
 		$name = auth()->user()->name;
 		$request->validate([
-			'image'=>'required|image|dimensions:width=700,height=100',
-			'url'=>['required','url','regex:/^https:\/\/[A-Z0-9+&@#\/%?=~_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|]+$/i']
+			'image'=>'required|image|dimensions:width=500,height=90',
+			'url'=>['required','url','regex:/^http(|s):\/\/[A-Z0-9+&@#\/%?=~_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|]+$/i']
 		]);
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
 		$this->addUserJSON($name, $fname, $request->input('url'));
