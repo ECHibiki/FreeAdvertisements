@@ -1,4 +1,4 @@
-import { MasterPage } from './components';
+import { MasterPage } from './container-components';
 import ReactDOM from 'react-dom';
 import React from 'react';
 

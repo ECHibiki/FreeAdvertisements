@@ -12,8 +12,7 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-require('./components/components');
-require('./components/api');
+
 require('./components/index');
 //require('./components/messy-api-tests')
 

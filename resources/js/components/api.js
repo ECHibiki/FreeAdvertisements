@@ -2,8 +2,8 @@ import axios from 'axios';
 import { sha256 } from 'js-sha256'
 import Cookies from 'js-cookie';
 
-var host_addr = "http://localhost:8000";
-var host_name = "localhost";
+import {host_addr, host_name} from './settings';
+
 var error_404 = {"message":"404", "error":{"server":"Server 404"}, "code":"404"}
 
 export class APICalls{
