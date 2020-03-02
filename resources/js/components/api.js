@@ -27,11 +27,9 @@ export class APICalls{
 			}
 			})
 			.then(function(res){
-				console.log("pass");
 				return res.data;
 			})
 			.catch(function(err){
-				console.log("fail")
 				if(err.response == undefined){
 					console.log(err);
 					return error_404;
@@ -92,7 +90,6 @@ export class APICalls{
 			})
 			.catch(function(err){
 				if(err.response == undefined){
-					console.log(err);
 					return error_404;
 				}
 				return err.response.data;
@@ -107,7 +104,6 @@ export class APICalls{
 			}
 			})
 			.then(function(res){
-				console.log('set');
 				setterCallBack({[key]: res.data});
 			})
 			.catch(function(err){
@@ -155,7 +151,6 @@ export class DataStore{
 	}
 	static storeAuthToken(token){
 		this.token = token;
-		console.log(host_name)
 		if(this.token != undefined){
 			Cookies.set("freeadstoken", token, {expires: 1,  path: '/',//, domain: host_name, secure: true,
 				sameSite:'strict'})

@@ -4,9 +4,15 @@ import Popup from "reactjs-popup";
 
 import {dimensions_w, dimensions_h} from './settings'
 
+export class LoadingSpinner extends Component{
+	render(){
+		return(<img src="/static/spinner.gif" />)
+	}
+}
+
 export class PatreonBanner extends Component{
 	render(){
-		return (<div id="patreon"><a href="https://patreon.com/ECVerniy"><img src="https://abdullahsameer-8c5e.kxcdn.com/blog/wp-content/uploads/2018/11/support-my-work-on-patreon-banner-image-600px.png"/></a></div>);
+		return (<div id="patreon"><a href="https://patreon.com/ECVerniy"><img src="/static/Patreon_Navy.png" /></a></div>);
 	}
 
 }

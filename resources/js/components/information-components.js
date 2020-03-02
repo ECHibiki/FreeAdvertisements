@@ -29,13 +29,11 @@ export class AdDetailsTable extends Component{
 	
 	JSXRowData(adData){
 		var JSX_var = [];
-		console.log(adData)
 		for(var index in adData){
 			var entry = adData[index];
 			entry['uri'] = entry['uri'].replace('public/image/', 'storage/image/');
 			JSX_var.push(<AdDetailsEntry updateDetailsCallback={this.props.updateDetailsCallback} id={"banner-" + index} key={"banner-"+index} ad_src={entry['uri']} url={entry['url']}/>);
 		}
-		console.log(JSX_var);
 		return JSX_var;
 	}
 
@@ -84,7 +82,6 @@ export class AllDetailsTable extends Component{
 			JSX_var.push(<AllDetailsEntry updateDetailsCallback={this.props.updateDetailsCallback} 
 				id={"banner-" + index} key={"banner-"+index} name={entry['fk_name']} ad_src={entry['uri']} url={entry['url']}/>);
 		}
-		console.log(JSX_var);
 		return JSX_var;
 	}
 
