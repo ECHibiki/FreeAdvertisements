@@ -22,14 +22,14 @@ hr{
 }
 
 #master{
-	&-login, &-waiting, &-all {
+	&-login, &-waiting{
 		width:50vw;
 		@include master-body-standards();
 		@media (max-width:$mobile_px){
 			width:100vw;
 		}
 	}
-	&-user{
+	&-user, &-all {
 		width:70vw;
 		@include master-body-standards();
 		@media (max-width:$mobile_px){
@@ -147,10 +147,14 @@ hr{
 		padding-bottom:1vh;
 	}
 }
-#details-table{
+#details-table, #ad-details-table{
 	table{
 		margin: auto;
 		width: 65%;
+		@media (max-width:$mobile_px){
+        		width:90%;
+		}
+
 	}
 	th{
 		text-align:center !important;
@@ -164,13 +168,13 @@ hr{
 	       	margin:auto;
 		max-width:100%	
 	}
-
-
 }
 
 .iframe-banner{
 	display: block;
 	margin: auto;
+	max-width:100%;
+	border:none
 }
 
 .form-group{

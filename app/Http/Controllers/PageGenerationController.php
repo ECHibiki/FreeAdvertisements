@@ -39,7 +39,7 @@ class PageGenerationController extends Controller
 		return 	DB::table('ads')->inRandomOrder()->first();
 	}
 
-	public static function GetAllEntries(){
-		return DB::table('ads')->orderBy('created_at')->get();
-	}
+        public static function GetAllEntries(){
+                return DB::table('ads')->orderBy('created_at', 'desc')->get();
+        }
 }
