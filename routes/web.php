@@ -11,9 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
 
 Route::get('banner', 'PageGenerationController@GenerateAdPage');
+
+Route::get('/{path?}', function () {
+    return view('index');
+});
 
