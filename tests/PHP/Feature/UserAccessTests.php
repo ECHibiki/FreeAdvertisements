@@ -32,7 +32,7 @@ class UserAccessTests extends TestCase
   
     public function test_a_user_is_sucessfuly_created(){
 	Storage::fake('local');
-	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass']);
+	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass', 'pass_confirmation'=>'hashedtestpass']);
 	
 	$response
 		->assertStatus(200)
@@ -46,11 +46,30 @@ class UserAccessTests extends TestCase
 	$this->assertTrue(Storage::get('test.json') == "[]", "json malformated");
     }   
 
+    public function test_incorrect_confirm(){
+	Storage::fake('local');
+	$response = $this->json('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass', 'pass_confirmation'=>'hashessdtestpass']);
+	
+	$response
+		->assertStatus(422);
+	
+    }   
+
+    public function test_pass_too_small(){
+	Storage::fake('local');
+	$response = $this->json('POST', 'api/create', ['name'=>'test', 'pass'=>'h', 'pass_confirmation'=>'h']);
+	
+	$response
+		->assertStatus(422);
+	
+    }   
+
+
     public function test_a_duplicate_user_creation_fails(){
 	Storage::fake('local');
 	$this->test_a_user_is_sucessfuly_created();
 
-    	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass2']);
+    	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass2', 'pass_confirmation'=>'hashedtestpass2']);
 	$response
 		->assertStatus(401)
 		->assertJson([
@@ -83,7 +102,7 @@ class UserAccessTests extends TestCase
 	Storage::disk('local')->assertMissing("test.json");
     }
     public function test_name_field_does_not_exist_and_user_is_not_created(){  
-	    $response = $this->withHeaders([  'Accept' => 'application/json'])->json('POST', 'api/create', ['name'=>'', 'pass'=>'hashedtestpass']);
+	    $response = $this->withHeaders([  'Accept' => 'application/json'])->json('POST', 'api/create', ['name'=>'', 'pass'=>'hashedtestpass', 'pass_confirmation'=>'hashedtestpass']);
 	$response
 		->assertStatus(422)
 		->assertJson([
@@ -105,7 +124,7 @@ class UserAccessTests extends TestCase
 	//redundant but easy    
 	Storage::fake('local');
 
-	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass']);
+	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
         $response
 		->assertStatus(200)
@@ -122,7 +141,7 @@ class UserAccessTests extends TestCase
     public function test_a_bad_pass_for_existing_user_tries_to_log_in(){
 	    //redundant but easy     
 	Storage::fake('local');
-	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass']);
+	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass','pass_confirmation'=>'hashedtestpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hash']);
         $response
 		->assertStatus(401)

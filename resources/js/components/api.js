@@ -2,8 +2,10 @@ import axios from 'axios';
 import { sha256 } from 'js-sha256'
 import Cookies from 'js-cookie';
 
-var host_addr = "http://localhost:8000";
-var host_name = "localhost";
+import React from 'react';
+
+import {host_addr, host_name} from './settings';
+
 var error_404 = {"message":"404", "error":{"server":"Server 404"}, "code":"404"}
 
 export class APICalls{
@@ -25,11 +27,9 @@ export class APICalls{
 			}
 			})
 			.then(function(res){
-				console.log("pass");
 				return res.data;
 			})
 			.catch(function(err){
-				console.log("fail")
 				if(err.response == undefined){
 					console.log(err);
 					return error_404;
@@ -90,7 +90,6 @@ export class APICalls{
 			})
 			.catch(function(err){
 				if(err.response == undefined){
-					console.log(err);
 					return error_404;
 				}
 				return err.response.data;
@@ -98,6 +97,30 @@ export class APICalls{
 			});
 
 	}
+	static callRetrieveAllAds(setterCallBack, key){
+		axios.get(host_addr + '/api/all', {headers:
+			{
+				"accept":"application/json" 
+			}
+			})
+			.then(function(res){
+				setterCallBack({[key]: res.data});
+			})
+			.catch(function(err){
+				console.log(err);
+				if(err.response == undefined){
+					console.log('a')
+					setterCallBack({[key] : [{fk_name:'404', uri:'' , url:'server out of order'}]});
+					return;
+				}
+				else{
+					console.log('b');
+					setterCallBack({[key] : [{fk_name:err.response.status, uri:'', url:JSON.stringify(err.response.data)}]});
+				}
+			});
+
+	}
+
 	static callRemoveUserAds(uri, url){
 		var post_data = {"uri":uri, "url":url};
 		return axios.post(host_addr + '/api/removal', post_data, {headers:
@@ -128,7 +151,6 @@ export class DataStore{
 	}
 	static storeAuthToken(token){
 		this.token = token;
-		console.log(host_name)
 		if(this.token != undefined){
 			Cookies.set("freeadstoken", token, {expires: 1,  path: '/',//, domain: host_name, secure: true,
 				sameSite:'strict'})
