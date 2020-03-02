@@ -89,7 +89,7 @@ export class AllDetailsTable extends Component{
 	}
 
 	render(){
-		return (<div id="details-table" className="table table-striped table-responsive">
+		return (<div id="ad-details-table" className="table table-striped table-responsive">
 			<table>
 				<caption>ありがとうございます!</caption>		
 				<thead className="thead-dark">

@@ -3,6 +3,6 @@
     <head>
     </head>
     <body style="margin:0">
-<a href="{{ $url }}" target="_blank"><img src="{{ $uri }}" owner="{{ $name }}"/></a>
+<a href="{{ $url }}" target="_blank"><img style="max-width:100%" src="{{ $uri }}" owner="{{ $name }}"/></a>
     </body>
 </html>
