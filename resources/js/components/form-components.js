@@ -82,7 +82,7 @@ export class AdCreationForm extends Component{
 				</div>
 				<div className="form-group">
 					<label htmlFor="ad-url-c">URL</label>
-					<input type="url" pattern="/^https:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|]+$/i" className="form-control" id="ad-url-c" placeholder="Must be HTTPS URL" required/>
+					<input type="url" pattern="/^http(|s):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|]+$/i" className="form-control" id="ad-url-c" placeholder="http/https urls only" required/>
 				</div>
 
 				<AdCreateAPIButton UpdateDetails={this.props.UpdateDetails}/>
@@ -119,7 +119,6 @@ export class SignInAPIButton extends Component{
 		var pass = document.getElementById("pass-si").value;
 
 		var si_response = await APICalls.callSignIn(name, pass);
-		console.log(si_response);
 		if("message" in si_response){
 			if("errors" in si_response){
 				var reasons_arr = []
@@ -171,9 +170,7 @@ export class CreateAPIButton extends Component{
 		var name = document.getElementById("name-c").value;
 		var pass = document.getElementById("pass-c").value;
 		var pass_confirmation = document.getElementById("pass-c-conf").value;
-		console.log(name, pass, pass_confirmation);
 		var response = await APICalls.callCreate(name, pass, pass_confirmation);
-		console.log(response);
 		if("message" in response){
 			if("errors" in response){
 				var reasons_arr = []
@@ -190,7 +187,6 @@ export class CreateAPIButton extends Component{
 		else{
 			this.setState({suc_text:response['log'], war_text: "", err_text:""});
 			var si_response = await APICalls.callSignIn(name, pass);
-			console.log(si_response);
 			if("message" in si_response){
 				if("errors" in si_response){
 					var reasons_arr = []
@@ -241,13 +237,9 @@ export class AdCreateAPIButton extends Component{
 	}
 
 	async SendNewBanner(e){
-		console.log("--snb--");
 		var image = document.getElementById("image-ad-c").files[0];
 		var url = document.getElementById("ad-url-c").value;
-		console.log(image);
-		console.log(url);
 		var nb_response = await APICalls.callCreateNewAd(image, url);
-		console.log(nb_response);
 		if("message" in nb_response){
 			if("errors" in nb_response){
 				var reasons_arr = []
@@ -313,7 +305,6 @@ export class AdRemovalAPIButton extends Component{
 		const url= this.props.url;
 
 		var rem_response = await APICalls.callRemoveUserAds(uri,url);
-		console.log(rem_response);
 		if("message" in rem_response){
 			if("errors" in rem_response){
 				var reasons_arr = []
@@ -331,7 +322,6 @@ export class AdRemovalAPIButton extends Component{
 			this.setState({war_text:rem_response['warn']});
 		}
 		else{
-			console.log(this.props.updateDetailsCallback)
 			this.props.updateDetailsCallback();
 			this.props.onClickCallBack();
 

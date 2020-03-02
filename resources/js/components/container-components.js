@@ -3,7 +3,7 @@ import {DataStore, APICalls} from './api';
 import Popup from "reactjs-popup";
 import {HelperText, TopHeader, AdDetailsTable, AdDetailsEntry, AllDetailsTable} from "./information-components";
 import {SignInForm, SignInButton, CreationForm, CreateButton, AdCreationForm, AdCreateButton, AdRemovalButton, AdRemovalForm } from "./form-components"
-import {SampleBanner, PatreonBanner} from "./image-components";
+import {SampleBanner, PatreonBanner, LoadingSpinner} from "./image-components";
 
 import {
   BrowserRouter as Router,
@@ -49,8 +49,8 @@ export class MasterPage extends Component{
 				</div>
 				<div id="lower-master-waiting">
 				 <hr/>
-				 <img src="/09b24e31234507.564a1d23c07b4.gif" style={{opacity:0.7}}/>
-			        </div>
+				 <LoadingSpinner />
+				</div>
 			       </div>);
 		}
 		else if(!this.state.auth){
@@ -169,7 +169,6 @@ export class UserContainer extends Component{
 			this.setState({war_text:d_response['warn']});
 		}
 		else{
-			console.log(d_response['ads']);
 			this.setState({AdArray:d_response['ads']});	
 		}
 
@@ -191,7 +190,6 @@ export class UserContainer extends Component{
 
 
 export class AllPage extends Component{
-
 	render(){
 			return(<div id="master-all">
 				<div id="upper-master-all">
@@ -218,13 +216,10 @@ export class AllContainer extends Component{
 	}
 
 	componentDidMount(){
-		console.log('m');
 		APICalls.callRetrieveAllAds(this.setAllDetails, 'AdArray');
 	}
 
 	setAllDetails(state_obj){
-		console.log('gad');
-		console.log(state_obj);
 		this.setState(state_obj);
 	}
 
