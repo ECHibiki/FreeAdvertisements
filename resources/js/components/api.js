@@ -2,6 +2,8 @@ import axios from 'axios';
 import { sha256 } from 'js-sha256'
 import Cookies from 'js-cookie';
 
+import React from 'react';
+
 import {host_addr, host_name} from './settings';
 
 var error_404 = {"message":"404", "error":{"server":"Server 404"}, "code":"404"}
@@ -98,6 +100,31 @@ export class APICalls{
 			});
 
 	}
+	static callRetrieveAllAds(setterCallBack, key){
+		axios.get(host_addr + '/api/all', {headers:
+			{
+				"accept":"application/json" 
+			}
+			})
+			.then(function(res){
+				console.log('set');
+				setterCallBack({[key]: res.data});
+			})
+			.catch(function(err){
+				console.log(err);
+				if(err.response == undefined){
+					console.log('a')
+					setterCallBack({[key] : [{fk_name:'404', uri:'' , url:'server out of order'}]});
+					return;
+				}
+				else{
+					console.log('b');
+					setterCallBack({[key] : [{fk_name:err.response.status, uri:'', url:JSON.stringify(err.response.data)}]});
+				}
+			});
+
+	}
+
 	static callRemoveUserAds(uri, url){
 		var post_data = {"uri":uri, "url":url};
 		return axios.post(host_addr + '/api/removal', post_data, {headers:

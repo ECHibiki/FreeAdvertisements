@@ -22,6 +22,10 @@ class PageGenerationController extends Controller
 	public static function RemoveAdImage($uri){
 		$fname = Storage::delete("$uri");
 	}
+	public static function getAllInfo(){
+		return json_encode(PageGenerationController::GetAllEntries());
+	}
+
 	public function GenerateAdPage(){
 		$rand_ad = $this->GetRandomAdEntry();
 		if($rand_ad == null){
@@ -33,5 +37,9 @@ class PageGenerationController extends Controller
 
 	public static function GetRandomAdEntry(){
 		return 	DB::table('ads')->inRandomOrder()->first();
+	}
+
+	public static function GetAllEntries(){
+		return DB::table('ads')->orderBy('created_at')->get();
 	}
 }

@@ -32,11 +32,11 @@ class PageGenerationTests extends TestCase
 
 	Storage::fake('local');
 
-	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass']);
+	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 	$token = $response->getOriginalContent()['access_token'];
         Storage::fake('public/image');
-        $img = UploadedFile::fake()->image('ad.jpg',300,100);
+        $img = UploadedFile::fake()->image('ad.jpg',500,90);
 
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);	
 	$response->assertStatus(200)->assertJson(['log'=>'Ad Created']);
@@ -47,11 +47,11 @@ class PageGenerationTests extends TestCase
     }          
     public function test_ad_page_generation(){
 	Storage::fake('local');
-	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass']);
+	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 	$token = $response->getOriginalContent()['access_token'];
         Storage::fake('image');
-        $img = UploadedFile::fake()->image('ad.jpg',300,100);
+        $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
 	$fname = $response->json()['fname'];	
 	$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
@@ -64,11 +64,11 @@ class PageGenerationTests extends TestCase
     }
     public function test_user_data_retrieval(){
 	Storage::fake('local');
-	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass']);
+	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 	$token = $response->getOriginalContent()['access_token'];
         Storage::fake('public/image');
-        $img = UploadedFile::fake()->image('ad.jpg',300,100);
+        $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
 	$fname = $response->json()['fname'];	
 	$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
@@ -88,11 +88,11 @@ class PageGenerationTests extends TestCase
 
     public function test_user_ad_removal(){
 	Storage::fake('local');
-	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass']);
+	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 	$token = $response->getOriginalContent()['access_token'];
         Storage::fake('public/image');
-        $img = UploadedFile::fake()->image('ad.jpg',300,100);
+        $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
 	$fname = $response->json()['fname'];	
 	$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");

@@ -1,22 +1,34 @@
 import React, { Component } from 'react';
 import {DataStore, APICalls} from './api';
 import Popup from "reactjs-popup";
-import {HelperText, TopHeader, AdDetailsTable, AdDetailsEntry} from "./information-components";
+import {HelperText, TopHeader, AdDetailsTable, AdDetailsEntry, AllDetailsTable} from "./information-components";
 import {SignInForm, SignInButton, CreationForm, CreateButton, AdCreationForm, AdCreateButton, AdRemovalButton, AdRemovalForm } from "./form-components"
 import {SampleBanner, PatreonBanner} from "./image-components";
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+  useParams
+} from "react-router-dom";
+
+
 
 export class MasterPage extends Component{
 	constructor(props){
 		super(props);
 		this.state = {auth: undefined};
 		this.swapPage = this.swapPage.bind(this);
+	}
+
+	componentDidMount(){
 		this.checkLoggedIn();
 	}
 
 	async checkLoggedIn(){
-		console.log(DataStore.getAuthToken());
 		var instant_login = await APICalls.callRetrieveUserAds();
-		console.log(instant_login);
 		if("message" in instant_login){
 			this.setState({auth: false});
 		}
@@ -24,24 +36,22 @@ export class MasterPage extends Component{
 			this.setState({auth: true});
 		}
 	}
-
-	swapPage(ruin){
+	swapPage(){
 		this.setState({auth: !this.state.auth});
 	}
 
 	render(){
-		console.log(this.state.auth);
 		if(this.state.auth == undefined){
 			return(<div id="master-waiting">
 				<div id="upper-master-login">
-				<TopHeader />
-				<SampleBanner />
+				 <TopHeader />
+				 <SampleBanner />
 				</div>
 				<div id="lower-master-waiting">
-				<hr/>
-				<img src="/09b24e31234507.564a1d23c07b4.gif" style={{opacity:0.7}}/>
-			  </div>
-			</div>);
+				 <hr/>
+				 <img src="/09b24e31234507.564a1d23c07b4.gif" style={{opacity:0.7}}/>
+			        </div>
+			       </div>);
 		}
 		else if(!this.state.auth){
 			return(<div id="master-login">
@@ -107,13 +117,17 @@ export class LoginContainer extends Component{
 
 	render(){
 		    return (<div id="login-container">
+			    <div className="mid-header-container">
 			    <h2>Authentication</h2>
+			    </div>
 			    <div id="si-button-container">
-				<SignInButton onClickCallBack={this.SignInOnClick}/>
+			    <SignInButton onClickCallBack={this.SignInOnClick}/>
 				<SignInForm  swapPage={this.props.swapPage} opacity={this.state.si_opacity} visibility={this.state.si_visibility} height={this.state.si_height} />
 				<CreateButton onClickCallBack={this.CreateOnClick}/>
 				<CreationForm swapPage={this.props.swapPage} opacity={this.state.c_opacity} visibility={this.state.c_visibility} height={this.state.c_height} />
 			    </div>
+			    <span className="all-span"><Link to="/all">View All</Link></span>
+
 			</div>)
 	}
 }
@@ -162,7 +176,6 @@ export class UserContainer extends Component{
 	}
 
 	render(){
-		console.log(this.state.AdArray);
 		return (<div id="user-container">
 				<h2>Your Banners</h2>
 				<div id="ad-button-container">
@@ -170,8 +183,56 @@ export class UserContainer extends Component{
 				  <AdCreationForm visibility={this.state.AdCVisibility} opacity={this.state.AdCOpacity} height={this.state.AdCHeight} UpdateDetails={this.UpdateDetails}/>
 				</div>
 				<AdDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.UpdateDetails}/>
+				<span className="all-span"><Link to="/all">View All</Link></span>
 			</div>)
 	}
 
 }
 
+
+export class AllPage extends Component{
+
+	render(){
+			return(<div id="master-all">
+				<div id="upper-master-all">
+				  <TopHeader />
+				  <SampleBanner />
+				</div>
+				<hr/>
+				  <div id="mid-master-all">
+				    <AllContainer />
+				   </div>
+				  <hr/>
+				   <div id="lower-master-all">
+					<PatreonBanner />
+					<HelperText />
+				   </div>
+				</div>);
+	}
+}
+export class AllContainer extends Component{
+	constructor(props){
+		super(props);
+		this.state = {AdArray:[]}
+		this.setAllDetails = this.setAllDetails.bind(this);
+	}
+
+	componentDidMount(){
+		console.log('m');
+		APICalls.callRetrieveAllAds(this.setAllDetails, 'AdArray');
+	}
+
+	setAllDetails(state_obj){
+		console.log('gad');
+		console.log(state_obj);
+		this.setState(state_obj);
+	}
+
+	render(){
+			return (<div id="all-container">
+				<h2>All Banners</h2>
+				  <AllDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.setAllDetails}/>
+				<span className="all-span"><Link to="/">Back</Link></span>
+			</div>);
+	}
+}

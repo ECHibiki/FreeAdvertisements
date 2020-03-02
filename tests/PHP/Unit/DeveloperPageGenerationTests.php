@@ -35,12 +35,11 @@ class DeveloperPageGenerationTests extends TestCase
 
    public function test_upload_image_to_mock_storage(){
         Storage::fake('image');
-        $img = UploadedFile::fake()->image('ad.jpg',300,11);
+        $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	$fname = \app\Http\Controllers\PageGenerationController::StoreAdImage($img);
 	Storage::assertExists($fname);
 	return $fname;
    }
-
    public function test_remove_image_from_storage(){
 	   $fname = $this->test_upload_image_to_mock_storage();
 	   Storage::assertExists($fname);
@@ -55,8 +54,9 @@ class DeveloperPageGenerationTests extends TestCase
    public function test_add_sample_json_data(){
 	//redundant but easy    
 	Storage::fake('local');
-	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass']);
+	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
+
 	$token = $response->getOriginalContent()['access_token'];
  	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token])->get('api/details');
 
