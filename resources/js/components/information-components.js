@@ -82,6 +82,8 @@ export class AllDetailsTable extends Component{
 			JSX_var.push(<AllDetailsEntry updateDetailsCallback={this.props.updateDetailsCallback} 
 				id={"banner-" + index} key={"banner-"+index} name={entry['fk_name']} ad_src={entry['uri']} url={entry['url']}/>);
 		}
+		// reverse ASC selector because DESC is messy
+		JSX_var.reverse();
 		return JSX_var;
 	}
 

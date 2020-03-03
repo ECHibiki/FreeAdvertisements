@@ -40,6 +40,6 @@ class PageGenerationController extends Controller
 	}
 
         public static function GetAllEntries(){
-                return DB::table('ads')->orderBy('created_at', 'desc')->get();
+                return DB::table('ads')->orderBy('created_at', 'ASC')->get();
         }
 }
