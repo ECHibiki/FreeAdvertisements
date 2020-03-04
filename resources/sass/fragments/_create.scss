@@ -1,4 +1,4 @@
-$mobile_px: 886px;
+$mobile_px: 1300px;
 
 @mixin master-body-standards {
 		height:100%;
@@ -185,9 +185,13 @@ hr{
 }
 
 .code{
-	font-family: monospace;
-	font-size: 0.9em;
-	margin-left:2em;
+	font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace;
+	margin: auto;
+	resize: none;
+	width: 85%;
+	background-color:#dbd7d7;
+	color: gray;
+	display: block;
 }
 
 .popup-content{
@@ -202,4 +206,8 @@ hr{
 	a {
 		color: #608cbb;
 	}
+}
+
+.ad-td-name{
+	word-break:break-word;
 }

@@ -40,6 +40,13 @@ $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
 );
+/*
+|----- Cors Headers ----
+|
+*/
+
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET');
 
 /*
 |--------------------------------------------------------------------------
