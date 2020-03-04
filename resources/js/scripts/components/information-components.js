@@ -1,19 +1,33 @@
 import React, { Component } from 'react';
-import {DataStore, APICalls} from './api';
+import {DataStore, APICalls} from '../network/api';
 import Popup from "reactjs-popup";
-import { AdRemovalButton } from './form-components'
+import { AdRemovalButton } from './form-components';
+import {SampleBanner} from './image-components';
 
-import {dimensions_w, dimensions_h} from './settings'
+import {dimensions_w, dimensions_h} from '../settings'
 
 export class HelperText extends Component{
+
+
 	render(){
-		return (<div id="helper">
-		<h2>How To Use</h2>
-		<p>To embed on a website use <span className="code">{
-			'<iframe id="kissu-banner" src="https://banners.kissu.moe/banner" scrolling="no" width="'}{dimensions_w}{'" height="'}{dimensions_h}{'" style="margin:auto;display:block;max-width:100%;border:none"></iframe>'
-		}</span>. 
-			Uploaded images must be {dimensions_w}x{dimensions_h} and safe for work</p>
-		</div>)
+		
+		// Trust in React to parse safely
+		var code_string_iframe = '<iframe id="kissu-banner" src="/banner" scrolling="no" width="' + dimensions_w + '" height="' + dimensions_h + '" style="margin:auto;display:block;max-width:100%;border:none"></iframe>';
+		var code_string_ajax = 	'<head><script>var fetch = new XMLHttpRequest();fetch.open("GET", "api/banner");fetch.addEventListener("load", function(){window.banner_fa = document.createElement("IMG");});fetch.send();</script></head>';
+
+
+		return (
+			<div id="helper">
+				<h2>How To Use</h2>
+				<p>
+					To easily embed on a website use:<br/>
+					<blockquote className="code">{code_string_iframe}.</blockquote>
+					A more sophisticated method is to preload the banner and then place into a container:<br/>
+					<blockquote className="code">{code_string_ajax}.</blockquote>
+					Uploaded images must be {dimensions_w}x{dimensions_h} and safe for work
+
+				</p>
+			</div>)
 	};
 }
 export class TopHeader extends Component{

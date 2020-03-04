@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 
 import React from 'react';
 
-import {host_addr, host_name} from './settings';
+import {host_addr, host_name} from '../settings';
 
 var error_404 = {"message":"404", "error":{"server":"Server 404"}, "code":"404"}
 

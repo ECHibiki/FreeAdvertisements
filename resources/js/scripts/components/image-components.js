@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import {DataStore, APICalls} from './api';
+import {DataStore, APICalls} from '../network/api';
 import Popup from "reactjs-popup";
 
-import {dimensions_w, dimensions_h} from './settings'
+import {dimensions_w, dimensions_h} from '../settings'
 
 export class LoadingSpinner extends Component{
 	render(){
@@ -21,3 +21,4 @@ export class SampleBanner extends Component{
 		return (<div id="sample-banner"><iframe src="/banner" scrolling="no" width={dimensions_w} height={dimensions_h} className="iframe-banner"></iframe></div>);
 	}
 }
+

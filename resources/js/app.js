@@ -13,6 +13,6 @@ require('./bootstrap');
  */
 
 
-require('./components/index');
+require('./scripts/index');
 //require('./components/messy-api-tests')
 
