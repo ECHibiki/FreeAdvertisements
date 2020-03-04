@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 	Route::post("login", "UserSignInController@loginUser");
 
 	Route::get("all", "PageGenerationController@getAllInfo");
+	Route::get("banner", "PageGenerationController@GenerateAdJSON");
 
 	Route::get("details", "ConfidentialInfoController@accessInfo");
 	Route::post("details", "ConfidentialInfoController@createInfo");

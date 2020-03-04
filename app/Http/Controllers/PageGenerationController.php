@@ -34,6 +34,15 @@ class PageGenerationController extends Controller
 		else
 			return view('banner', ['url'=>$rand_ad->url, 'uri'=>str_replace('public','storage',$rand_ad->uri), 'name'=>$rand_ad->fk_name]);
 	}
+	public function GenerateAdJSON(){
+		$rand_ad = $this->GetRandomAdEntry();
+		if($rand_ad == null){
+			return "asdf no ads";
+		}
+		else
+			return json_encode([['url'=>$rand_ad->url, 'uri'=>str_replace('public','storage',$rand_ad->uri), 'name'=>$rand_ad->fk_name]]);
+
+	}
 
 	public static function GetRandomAdEntry(){
 		return 	DB::table('ads')->inRandomOrder()->first();

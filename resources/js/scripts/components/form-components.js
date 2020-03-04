@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import {DataStore, APICalls} from './api';
+import {DataStore, APICalls} from '../network/api';
 import Popup from "reactjs-popup";
 
-import {dimensions_w, dimensions_h} from './settings'
+import {dimensions_w, dimensions_h} from '../settings'
 
 export class SignInButton extends Component{
 	constructor(props){

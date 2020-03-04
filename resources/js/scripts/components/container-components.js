@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {DataStore, APICalls} from './api';
+import {DataStore, APICalls} from '../network/api';
 import Popup from "reactjs-popup";
 import {HelperText, TopHeader, AdDetailsTable, AdDetailsEntry, AllDetailsTable} from "./information-components";
 import {SignInForm, SignInButton, CreationForm, CreateButton, AdCreationForm, AdCreateButton, AdRemovalButton, AdRemovalForm } from "./form-components"
