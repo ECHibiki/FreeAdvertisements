@@ -37,11 +37,20 @@ hr{
 		}
 
 	}
+
+	&-mod{
+		width:90vw;
+		@include master-body-standards();
+		@media (max-width:$mobile_px){
+			width:100vw;
+		}
+
+	}
 	
 }
 
 #upper-master{
-	&-login, &-waiting, &-user, &-all{
+	&-login, &-waiting, &-user, &-all, &-mod{
 		max-height: 33%;
 		background-color:white;
 		#top-head{
@@ -63,7 +72,8 @@ hr{
 }
 
 #lower-master{
-	&-login, &-waiting, &-user, &-all{
+	&-login, &-waiting, &-user, &-all, &-mod{
+		clear: both;
 		#patreon{
 			height:16vh;
 		}
@@ -78,23 +88,24 @@ hr{
 }
 
 #mid-master, #lower-master{
-	&-login, &-waiting, &-user{
+	&-login, &-waiting, &-user, &-mod{
 		min-height:33%;
 	}	
 }
 
-#login-container, #user-container, #ad-create-container,#all-container{
+#login-container, #user-container, #ad-create-container,#all-container, #mod-container{
 	h2{
 		font-size:4vh;
 		padding-left:1vw;
 	}
 
-	#si-button-container, #ad-button-container, #all-container{
+	#si-button-container, #ad-button-container, #all-container, #mod-container{
 		background-color:#e1e1e1;
 		width: 50%;
 		margin: auto;
 		display: block;
 		padding:2vh;
+		border: 0.01px solid #c6c6c6;
 		button{
 			margin: auto;
 			display: block;
@@ -127,11 +138,15 @@ hr{
 	padding: 0.5vh 1vw;
 	overflow: hidden;
 	transition:height 0.5s, opacity 0.5s;
+	border: #bbb 0.01px dashed;
 }
 #ad-create-form{
 	padding: 0.5vh 1vw;
 	width: 70%;
 	margin: auto;
+	margin-top: 0.25em;
+	margin-bottom: 0.1em;
+
 }
 #sample-banner{
 	padding-bottom:1em;
@@ -147,14 +162,13 @@ hr{
 		padding-bottom:1vh;
 	}
 }
-#details-table, #ad-details-table{
+#details-table, #ad-details-table, #mod-details-table{
 	table{
 		margin: auto;
 		width: 65%;
 		@media (max-width:$mobile_px){
         		width:90%;
 		}
-
 	}
 	th{
 		text-align:center !important;
@@ -169,6 +183,15 @@ hr{
 		max-width:100%	
 	}
 }
+
+
+	
+#mod-details-table{
+    table{
+    	width:90%;
+    }
+}
+
 
 .iframe-banner{
 	display: block;
@@ -185,13 +208,15 @@ hr{
 }
 
 .code{
-	font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace;
+	font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace;	
+	font-size: 0.9em;
 	margin: auto;
-	resize: none;
-	width: 85%;
-	background-color:#dbd7d7;
-	color: gray;
 	display: block;
+	resize: none;
+	width: 83%;
+	background-color: #dfdddd;
+	color: #a4a4a4;
+	border: 0px solid #c4c4c4;
 }
 
 .popup-content{
@@ -199,7 +224,7 @@ hr{
 	font-size: 1.1em;
 }
 
-.all-span{
+.all-link, .mod-link{
 	float: right;
 	font-size: 1.5em;
 	padding-right: 0.5em;

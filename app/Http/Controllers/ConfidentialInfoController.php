@@ -14,14 +14,15 @@ class ConfidentialInfoController extends Controller
 {
 
 	public function __construct(){
-		$this->middleware(['auth:api'])->except('index');
+		$this->middleware(['auth:api']);
 	}
 
 	public function accessInfo(Request $request){
 		$name = auth()->user()->name;
 		$ad_arr = $this->getUserJson($name);
 		return [
-		 	'name'=>$name,
+			'name'=>$name,
+			'mod'=> auth()->payload()->get("is_mod"),
 			'ads'=> $ad_arr
 		];
 	}
@@ -41,7 +42,10 @@ class ConfidentialInfoController extends Controller
 	public function removeInfo(Request $request){
 		$name = auth()->user()->name;
 		$uri = str_replace("storage/image", "public/image", $request->input('uri'));
-		$url = $request->input('url');
+		$url = $request->input('url');	
+		if(!PageGenerationController::affirmImageIsOwned($name, $uri)){
+			return ['warn'=>'This banner isn\'t owned'];
+		}
 		$this->removeAdSQL($name, $uri, $url);
 		$this->removeUserJSON($name, $uri , $url);
 		PageGenerationController::RemoveAdImage($uri);

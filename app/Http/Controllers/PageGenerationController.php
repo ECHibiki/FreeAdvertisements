@@ -45,10 +45,14 @@ class PageGenerationController extends Controller
 	}
 
 	public static function GetRandomAdEntry(){
-		return 	DB::table('ads')->inRandomOrder()->first();
+		return 	DB::table('ads')->leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')->where('bans.hardban','!=','0')->inRandomOrder()->first();
 	}
 
         public static function GetAllEntries(){
                 return DB::table('ads')->orderBy('created_at', 'ASC')->get();
-        }
+	}
+
+	public static function affirmImageIsOwned($name, $uri){
+		return DB::table('ads')->where('fk_name','=', $name)->where('uri','=', $uri)->count() > 0;
+	}
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {DataStore, APICalls} from '../network/api';
 import Popup from "reactjs-popup";
-import {HelperText, TopHeader, AdDetailsTable, AdDetailsEntry, AllDetailsTable} from "./information-components";
+import {HelperText, TopHeader, AdDetailsTable, AllDetailsTable, ModDetailsTable} from "./information-components";
 import {SignInForm, SignInButton, CreationForm, CreateButton, AdCreationForm, AdCreateButton, AdRemovalButton, AdRemovalForm } from "./form-components"
 import {SampleBanner, PatreonBanner, LoadingSpinner} from "./image-components";
 
@@ -77,7 +77,7 @@ export class MasterPage extends Component{
 				<SampleBanner />
 				</div>
 				<div id="mid-master-user">
-				  <UserContainer />
+				  <UserContainer/>
 				</div>
 				<div id="lower-master-user">
 				  <PatreonBanner />
@@ -135,7 +135,7 @@ export class UserContainer extends Component{
 	constructor(props){
 		super(props);
 		this.AdCreateOnClick = this.AdCreateOnClick.bind(this);
-		this.state = {AdCVisibility:"unset", AdCHeight:"0em", AdCOpacity:"0", AdArray:[]};
+		this.state = {AdCVisibility:"unset", AdCHeight:"0em", AdCOpacity:"0", AdArray:[], mod:false};
 		this.UpdateDetails = this.UpdateDetails.bind(this);
 	}
 
@@ -169,12 +169,15 @@ export class UserContainer extends Component{
 			this.setState({war_text:d_response['warn']});
 		}
 		else{
-			this.setState({AdArray:d_response['ads']});	
+			this.setState({AdArray:d_response['ads'], mod:d_response['mod']});	
 		}
 
 	}
 
 	render(){
+		if(this.state.mod){
+			var mod_button = (<div className="mod-link"><Link to="/mod">Mod Mode</Link></div>);
+		}
 		return (<div id="user-container">
 				<h2>Your Banners</h2>
 				<div id="ad-button-container">
@@ -182,7 +185,8 @@ export class UserContainer extends Component{
 				  <AdCreationForm visibility={this.state.AdCVisibility} opacity={this.state.AdCOpacity} height={this.state.AdCHeight} UpdateDetails={this.UpdateDetails}/>
 				</div>
 				<AdDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.UpdateDetails}/>
-				<span className="all-span"><Link to="/all">View All</Link></span>
+				{mod_button}
+				<div className="all-link"><Link to="/all">View All</Link></div>
 			</div>)
 	}
 
@@ -227,7 +231,56 @@ export class AllContainer extends Component{
 			return (<div id="all-container">
 				<h2>All Banners</h2>
 				  <AllDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.setAllDetails}/>
-				<span className="all-span"><Link to="/">Back</Link></span>
+				<span className="all-link"><Link to="/">Back</Link></span>
 			</div>);
+	}
+}
+
+
+export class ModPage extends Component{
+	render(){
+			return(<div id="master-mod">
+				<div id="upper-master-mod">
+				  <TopHeader />
+				  <SampleBanner />
+				</div>
+				<hr/>
+				  <div id="mid-master-mod">
+				    <ModContainer />
+				   </div>
+				  <hr/>
+				   <div id="lower-master-mod">
+					<PatreonBanner />
+					<HelperText />
+				   </div>
+				</div>);
+	}
+}
+export class ModContainer extends Component{
+	constructor(props){
+		super(props);
+		this.state = {AdArray:[]}
+		this.setAllDetails = this.setAllDetails.bind(this);
+		this.UpdateDetails = this.UpdateDetails.bind(this);
+
+	}
+
+	componentDidMount(){
+		APICalls.callRetrieveModAds(this.setAllDetails, 'AdArray');
+	}
+	// set warnings from afar
+	setAllDetails(state_obj){
+		this.setState(state_obj);
+	}
+	async UpdateDetails(){
+		APICalls.callRetrieveModAds(this.setAllDetails, 'AdArray');	
+	}
+
+	render(){	
+		return (<div id="mod-container">
+			<h2>All Banners</h2>
+			  <ModDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.UpdateDetails}/>
+			<span className="mod-link"><Link to="/">Back</Link></span>
+		</div>);
 	}
 }

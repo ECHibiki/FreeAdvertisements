@@ -109,12 +109,32 @@ export class APICalls{
 			.catch(function(err){
 				console.log(err);
 				if(err.response == undefined){
-					console.log('a')
 					setterCallBack({[key] : [{fk_name:'404', uri:'' , url:'server out of order'}]});
 					return;
 				}
 				else{
-					console.log('b');
+					setterCallBack({[key] : [{fk_name:err.response.status, uri:'', url:JSON.stringify(err.response.data)}]});
+				}
+			});
+
+	}
+	static callRetrieveModAds(setterCallBack, key){
+		axios.get(host_addr + '/api/mod/all', {headers:
+			{
+				"accept":"application/json", 
+				"authorization": "bearer " + DataStore.getAuthToken()
+			}
+			})
+			.then(function(res){
+				setterCallBack({[key]: res.data});
+			})
+			.catch(function(err){
+				console.log(err);
+				if(err.response == undefined){
+					setterCallBack({[key] : [{fk_name:'404', uri:'' , url:'server out of order'}]});
+					return;
+				}
+				else{
 					setterCallBack({[key] : [{fk_name:err.response.status, uri:'', url:JSON.stringify(err.response.data)}]});
 				}
 			});
@@ -140,6 +160,65 @@ export class APICalls{
 				return err.response.data;
 			});
 	}	
+	static callModRemoveIndividualAds(name, uri, url){
+		var post_data = {"name": name, "uri":uri, "url":url};
+		return axios.post(host_addr + '/api/mod/individual', post_data, {headers:
+			{
+				"accept":"application/json", 
+				"authorization": "bearer " + DataStore.getAuthToken()
+			}
+			})
+			.then(function(res){
+				return res.data;
+			})
+			.catch(function(err){
+				if(err.response == undefined){
+					console.log(err);
+					return error_404;
+				}
+				return err.response.data;
+			});
+	}	
+	static callModRemoveAllUserAds(name){
+		var post_data = {"name": name};
+		return axios.post(host_addr + '/api/mod/purge', post_data, {headers:
+			{
+				"accept":"application/json", 
+				"authorization": "bearer " + DataStore.getAuthToken()
+			}
+			})
+			.then(function(res){
+				return res.data;
+			})
+			.catch(function(err){
+				if(err.response == undefined){
+					console.log(err);
+					return error_404;
+				}
+				return err.response.data;
+			});
+	}
+
+	static callModBanUser(name,hard){
+		var post_data = {"target": name,"hard": hard};
+		return axios.post(host_addr + '/api/mod/ban', post_data, {headers:
+			{
+				"accept":"application/json", 
+				"authorization": "bearer " + DataStore.getAuthToken()
+			}
+			})
+			.then(function(res){
+				return res.data;
+			})
+			.catch(function(err){
+				if(err.response == undefined){
+					console.log(err);
+					return error_404;
+				}
+				return err.response.data;
+			});
+	}	
+
 }
 
 export class DataStore{

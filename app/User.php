@@ -39,7 +39,18 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+	    return 
+	    [
+		    'is_mod'=> $this->isMod()
+	    ];
+    }
+
+    public function isMod(){
+    	return Mods::where('fk_name','=', $this->name)->count() > 0;
+    }
+
+    public function isBanned(){
+    
     }
 
 }
