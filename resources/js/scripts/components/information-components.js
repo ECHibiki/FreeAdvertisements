@@ -152,7 +152,6 @@ export class AllDetailsTable extends Component{
 				id={"banner-" + index} key={"banner-"+index} name={entry['fk_name']} ad_src={entry['uri']} url={entry['url']}/>);
 		}
 		// reverse ASC selector because DESC is messy
-		JSX_var.reverse();
 		return JSX_var;
 	}
 

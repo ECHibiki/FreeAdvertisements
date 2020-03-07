@@ -19,7 +19,7 @@ class ConfidentialInfoController extends Controller
 
 	public function accessInfo(Request $request){
 		$name = auth()->user()->name;
-		$ad_arr = $this->getUserJson($name);
+		$ad_arr = array_reverse($this->getUserJson($name));
 		return [
 			'name'=>$name,
 			'mod'=> auth()->payload()->get("is_mod"),

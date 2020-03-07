@@ -23,7 +23,9 @@ class PageGenerationController extends Controller
 		$fname = Storage::delete("$uri");
 	}
 	public static function getAllInfo(){
-		return json_encode(PageGenerationController::GetAllEntries());
+		$data = (array)PageGenerationController::GetAllEntries();
+		$data = array_reverse(array_pop($data));
+		return json_encode($data);
 	}
 
 	public function GenerateAdPage(){
@@ -44,8 +46,10 @@ class PageGenerationController extends Controller
 
 	}
 
+	// banned users will not show up in rotation
 	public static function GetRandomAdEntry(){
-		return 	DB::table('ads')->leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')->where('bans.hardban','!=','0')->inRandomOrder()->first();
+		return  DB::table('ads')->
+                        leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')->whereNull('bans.hardban')->select("ads.fk_name", "uri", "url")->inRandomOrder()->first();
 	}
 
         public static function GetAllEntries(){

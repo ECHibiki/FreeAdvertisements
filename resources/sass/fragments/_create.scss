@@ -1,4 +1,5 @@
 $mobile_px: 1300px;
+$mobile_width: 95vw;
 
 @mixin master-body-standards {
 		height:100%;
@@ -19,6 +20,7 @@ html, body{
 }
 hr{
 	clear:both;
+	margin-bottom: 0.5em;
 }
 
 #master{
@@ -26,14 +28,14 @@ hr{
 		width:50vw;
 		@include master-body-standards();
 		@media (max-width:$mobile_px){
-			width:100vw;
+			width:$mobile_width;
 		}
 	}
 	&-user, &-all {
 		width:70vw;
 		@include master-body-standards();
 		@media (max-width:$mobile_px){
-			width:100vw;
+			width:$mobile_width;
 		}
 
 	}
@@ -42,7 +44,7 @@ hr{
 		width:90vw;
 		@include master-body-standards();
 		@media (max-width:$mobile_px){
-			width:100vw;
+			width:$mobile_width;
 		}
 
 	}
@@ -95,6 +97,7 @@ hr{
 
 #login-container, #user-container, #ad-create-container,#all-container, #mod-container{
 	h2{
+		display: inline;
 		font-size:4vh;
 		padding-left:1vw;
 	}
@@ -105,7 +108,7 @@ hr{
 		margin: auto;
 		display: block;
 		padding:2vh;
-		border: 0.01px solid #c6c6c6;
+		border: 0.1px solid #c6c6c6;
 		button{
 			margin: auto;
 			display: block;
@@ -121,6 +124,7 @@ hr{
 	#ad-button-container{
 		width:65%;
 		padding:0;
+		margin-top: 2rem;
 	}
 
 }
@@ -138,7 +142,7 @@ hr{
 	padding: 0.5vh 1vw;
 	overflow: hidden;
 	transition:height 0.5s, opacity 0.5s;
-	border: #bbb 0.01px dashed;
+	border: #bbb 0.1px dashed;
 }
 #ad-create-form{
 	padding: 0.5vh 1vw;
@@ -164,8 +168,9 @@ hr{
 }
 #details-table, #ad-details-table, #mod-details-table{
 	table{
-		margin: auto;
+		margin: 2rem auto;
 		width: 65%;
+
 		@media (max-width:$mobile_px){
         		width:90%;
 		}
@@ -178,12 +183,18 @@ hr{
 	}
 
 	.ad-td-img img{
-		display:block;
+	 	display:block;
 	       	margin:auto;
 		max-width:100%	
 	}
 }
 
+
+#details-table {
+	table{
+	  margin: auto;
+	}
+}
 
 	
 #mod-details-table{
@@ -235,4 +246,10 @@ hr{
 
 .ad-td-url{
 	word-break:break-word;
+}
+.ad-td-name{
+	@media (max-width:$mobile_px){
+		word-break:break-word;
+	}
+
 }

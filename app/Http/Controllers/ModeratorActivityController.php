@@ -17,7 +17,9 @@ class ModeratorActivityController extends Controller
 	}
 
 	public function getAllInfo(){
-		return json_encode(ModeratorActivityController::GetAllEntries());
+		$data = (array)ModeratorActivityController::GetAllEntries();
+		$data = array_reverse(array_pop($data));
+		return json_encode($data);
 	}
 
 	public function banUser(Request $request){

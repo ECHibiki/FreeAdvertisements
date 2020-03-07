@@ -76,6 +76,7 @@ export class MasterPage extends Component{
 				<TopHeader />
 				<SampleBanner />
 				</div>
+				<hr/>
 				<div id="mid-master-user">
 				  <UserContainer/>
 				</div>
@@ -119,6 +120,7 @@ export class LoginContainer extends Component{
 		    return (<div id="login-container">
 			    <div className="mid-header-container">
 			    <h2>Authentication</h2>
+			     <span className="all-link"><Link to="/all">View All</Link></span>
 			    </div>
 			    <div id="si-button-container">
 			    <SignInButton onClickCallBack={this.SignInOnClick}/>
@@ -126,8 +128,6 @@ export class LoginContainer extends Component{
 				<CreateButton onClickCallBack={this.CreateOnClick}/>
 				<CreationForm swapPage={this.props.swapPage} opacity={this.state.c_opacity} visibility={this.state.c_visibility} height={this.state.c_height} />
 			    </div>
-			    <span className="all-span"><Link to="/all">View All</Link></span>
-
 			</div>)
 	}
 }
@@ -176,17 +176,18 @@ export class UserContainer extends Component{
 
 	render(){
 		if(this.state.mod){
-			var mod_button = (<div className="mod-link"><Link to="/mod">Mod Mode</Link></div>);
+			var mod_button = (<span className="mod-link"><Link to="/mod">Mod Mode</Link></span>);
 		}
 		return (<div id="user-container">
-				<h2>Your Banners</h2>
+				<h2>Your Banners</h2>				
+				{mod_button}
+				<span className="all-link"><Link to="/all">View All</Link></span>
+
 				<div id="ad-button-container">
 				  <AdCreateButton onClickCallBack={this.AdCreateOnClick}/>
 				  <AdCreationForm visibility={this.state.AdCVisibility} opacity={this.state.AdCOpacity} height={this.state.AdCHeight} UpdateDetails={this.UpdateDetails}/>
 				</div>
 				<AdDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.UpdateDetails}/>
-				{mod_button}
-				<div className="all-link"><Link to="/all">View All</Link></div>
 			</div>)
 	}
 
@@ -230,9 +231,9 @@ export class AllContainer extends Component{
 	render(){
 			return (<div id="all-container">
 				<h2>All Banners</h2>
-				  <AllDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.setAllDetails}/>
 				<span className="all-link"><Link to="/">Back</Link></span>
-			</div>);
+				  <AllDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.setAllDetails}/>
+							</div>);
 	}
 }
 
@@ -279,8 +280,8 @@ export class ModContainer extends Component{
 	render(){	
 		return (<div id="mod-container">
 			<h2>All Banners</h2>
-			  <ModDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.UpdateDetails}/>
 			<span className="mod-link"><Link to="/">Back</Link></span>
+			  <ModDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.UpdateDetails}/>
 		</div>);
 	}
 }
