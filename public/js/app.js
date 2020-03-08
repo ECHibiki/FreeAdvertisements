@@ -58014,7 +58014,7 @@ function (_Component7) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
         id: "mod-container"
-      }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("h2", null, "All Banners"), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
+      }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("h2", null, "Mod Mode"), react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
         className: "mod-link"
       }, react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_7__["Link"], {
         to: "/"

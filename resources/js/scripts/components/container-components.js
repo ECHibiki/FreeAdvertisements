@@ -279,7 +279,7 @@ export class ModContainer extends Component{
 
 	render(){	
 		return (<div id="mod-container">
-			<h2>All Banners</h2>
+			<h2>Mod Mode</h2>
 			<span className="mod-link"><Link to="/">Back</Link></span>
 			  <ModDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.UpdateDetails}/>
 		</div>);
