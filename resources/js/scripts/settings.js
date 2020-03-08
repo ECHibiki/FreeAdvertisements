@@ -1,5 +1,5 @@
-export var dimensions_w = "500";
-export var dimensions_h = "90";
+export var dimensions_w =  process.env.MIX_IMAGE_DIMENSIONS_W;
+export var dimensions_h =  process.env.MIX_IMAGE_DIMENSIONS_H;
 
-export var host_addr = "http://localhost:8000";
-export var host_name = "localhost";
+export var host_addr = process.env.MIX_APP_URL;//"http://localhost:8000";
+export var host_name = process.env.MIX_APP_HOSTNAME;
