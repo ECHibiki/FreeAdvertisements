@@ -16,6 +16,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserSignInController extends Controller
 {
+
 	public function username()
 	{
     		return 'name';

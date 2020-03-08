@@ -29,7 +29,7 @@ export class MasterPage extends Component{
 
 	async checkLoggedIn(){
 		var instant_login = await APICalls.callRetrieveUserAds();
-		if("message" in instant_login){
+		if(!("name" in instant_login)){
 			this.setState({auth: false});
 		}
 		else{

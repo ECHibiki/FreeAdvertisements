@@ -19,6 +19,6 @@ If you want to host your own version you must:
 
 ### Considerations
 
-<a href="https://www.patreon.com/ECHibiki"><img src="https://i2.wp.com/arledgecomics.com/wp-content/uploads/2017/03/support-my-work-on-patreon-banner-image-600px.png?resize=600%2C208&ssl=1" />
+<a href="https://www.patreon.com/ECHibiki"><img src="https://banners.kissu.moe" />
 </a>
 

@@ -50,7 +50,8 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function isBanned(){
-    
+    	return Bans::where('fk_name','=', $this->name)->where('hardban','=', '1')->count() > 0;
+
     }
 
 }

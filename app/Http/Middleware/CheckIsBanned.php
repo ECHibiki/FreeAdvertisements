@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use App\User;
 use JWTAuth;
-class CheckIsMod
+class CheckIsBanned
 {
     /**
      * Handle an incoming request.
@@ -16,8 +16,9 @@ class CheckIsMod
      */
     public function handle($request, Closure $next)
     {
-	    if(!User::query()->where("name", "=", auth()->user()->name)->first()->isMod()){
-		    return response(json_encode(['warn'=>'You are not a moderator']), 401);
+	    if(User::query()->where("name", "=", auth()->user()->name)->first()->isBanned()){
+		    auth()->invalidate();
+		    return response(json_encode(['warn'=>'You are banned']),401);
 	    }
 	    return $next($request);
     }
