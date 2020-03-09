@@ -76,6 +76,7 @@ class UserSignInController extends Controller
 		$token = auth()->attempt(["name"=>$name, "password"=>$pass]);
 		return $token;
 	}
+	
 	public function checkIfBanned($name){
 		return Bans::query()
 			->where("hardban", "=", "1")

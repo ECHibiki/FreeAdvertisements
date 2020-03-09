@@ -4,8 +4,8 @@ namespace Tests\Unit;
 
 
 
-require "app/Http/Controllers/ConfidentialInfoController.php";
-//require "app/Http/Controllers/UserCreationController.php";
+use App\Http\Controllers\ConfidentialInfoController;
+
 
 
 
@@ -16,10 +16,14 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
+use App\Bans;
+
 class DeveloperPageGenerationTests extends TestCase
 {
 
 	use RefreshDatabase;
+
+//routes
 
    public function test_data_addition_route(){
 	   $response = $this->withHeaders(['Accept' => 'application/json'])->post("api/details", []);
@@ -31,6 +35,10 @@ class DeveloperPageGenerationTests extends TestCase
 	   $response->assertStatus(401);
    }
 
+     public function test_user_all_route(){
+	   $response = $this->withHeaders(['Accept' => 'application/json'])->get("api/all", []);
+	   $response->assertStatus(200);
+   }
 //image
 
    public function test_upload_image_to_mock_storage(){
@@ -40,17 +48,32 @@ class DeveloperPageGenerationTests extends TestCase
 	Storage::assertExists($fname);
 	return $fname;
    }
+   public function test_upload_image_to_mock_storage_fails(){
+	$this->expectException(\ArgumentCountError::class);
+        Storage::fake('image');
+	$fname = \app\Http\Controllers\PageGenerationController::StoreAdImage();
+	Storage::assertExists($fname);
+	return $fname;
+   }
+
    public function test_remove_image_from_storage(){
 	   $fname = $this->test_upload_image_to_mock_storage();
 	   Storage::assertExists($fname);
 
 	   \app\Http\Controllers\PageGenerationController::RemoveAdImage($fname);
 	   Storage::assertMissing($fname);
-
    }
 
+      public function test_remove_missing_image_from_storage(){
+	   $fname = $this->test_upload_image_to_mock_storage();
+	   Storage::assertExists($fname);
+
+	   \app\Http\Controllers\PageGenerationController::RemoveAdImage($fname . "z");
+	   Storage::assertExists($fname);
+   }
+
+
    //json
-   
    public function test_add_sample_json_data(){
 	//redundant but easy    
 	Storage::fake('local');
@@ -68,8 +91,8 @@ class DeveloperPageGenerationTests extends TestCase
 	\app\Http\Controllers\ConfidentialInfoController::addUserJSON("hardtest", $fname, "https://test.com");
 	$this->assertEquals([['uri'=>$fname, 'url'=>'https://test.com']], json_decode(Storage::disk('local')->get("hardtest.json"), true));
 	return $fname;
+   }
 
-    }
 
    public function test_get_user_json_data(){
       $fname = $this->test_add_sample_json_data();
@@ -102,6 +125,31 @@ class DeveloperPageGenerationTests extends TestCase
 	    $this->assertDatabaseMissing("ads", ['fk_name'=>'test', 'uri'=>'abc/123', 'url'=>'http://test.com']);
     }
 
+    public function test_all_page_get_info(){
+	    \App\Http\Controllers\UserCreationController::addNewUserToDB("test", "hashedpass");
+	    \App\Http\Controllers\ConfidentialInfoController::addAdSQL("test", "a", "a");
+	    \App\Http\Controllers\UserCreationController::addNewUserToDB("test2", "hashedpass");
+	    \App\Http\Controllers\ConfidentialInfoController::addAdSQL("test2", "b", "b");
+	    \App\Http\Controllers\UserCreationController::addNewUserToDB("test3", "hashedpass");
+	    \App\Http\Controllers\ConfidentialInfoController::addAdSQL("test3", "c", "c");
+	    $res = \App\Http\Controllers\PageGenerationController::getLimitedEntries();
+	    $this->assertEquals(json_decode('[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test2","uri":"b","url":"b"},{"fk_name":"test3","uri":"c","url":"c"}]', true)[2]['fk_name'],json_decode($res, true)[2]['fk_name']);
+    }
+
+        public function test_all_page_get_info_under_effects_of_ban(){
+	    \App\Http\Controllers\UserCreationController::addNewUserToDB("test", "hashedpass");
+	    \App\Http\Controllers\ConfidentialInfoController::addAdSQL("test", "a", "a");
+	    \App\Http\Controllers\UserCreationController::addNewUserToDB("test2", "hashedpass");
+	    \App\Http\Controllers\ConfidentialInfoController::addAdSQL("test2", "b", "b");
+	    $b = new Bans(['fk_name'=>'test2']);
+	    $b->save();
+	    \App\Http\Controllers\UserCreationController::addNewUserToDB("test3", "hashedpass");
+	    \App\Http\Controllers\ConfidentialInfoController::addAdSQL("test3", "c", "c");
+	    $res = \App\Http\Controllers\PageGenerationController::getLimitedEntries();
+	    $this->assertEquals(json_decode('[{"fk_name":"test","uri":"b","url":"b"},{"fk_name":"test3","uri":"c","url":"c"}]', true)[1]['fk_name'], json_decode($res, true)[1]['fk_name']);
+	}
+
+
     
     public function test_random_sql_entry(){
 	    \App\Http\Controllers\UserCreationController::addNewUserToDB("test", "hashedpass");
@@ -113,8 +161,10 @@ class DeveloperPageGenerationTests extends TestCase
 		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->uri == "a" ? $a++ : $b++;
 	}	
 	    echo "$a $b";
-	$this->assertEquals($a / $b > 0.8, $a / $b < 1.2);
+	$this->assertEquals($a / $b > 0.75, $a / $b < 1.25);
     }
+
+
 
 // ad page
     

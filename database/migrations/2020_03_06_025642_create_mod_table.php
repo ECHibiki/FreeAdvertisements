@@ -14,8 +14,8 @@ class CreateModTable extends Migration
     public function up()
     {
 	Schema::create('mods', function (Blueprint $table) {
-		$table->bigIncrements('id');
-            $table->string('fk_name');
+	    $table->bigIncrements('id');
+            $table->string('fk_name')->unique();
 	    $table->timestamps();
 
 	    $table->foreign('fk_name')->references('name')->on('users')->onDelete('cascade');

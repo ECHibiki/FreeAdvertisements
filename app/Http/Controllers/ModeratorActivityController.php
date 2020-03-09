@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use DB;
 use App\Bans;
 use App\Ads;
+use App\Mods;
 use App\Http\Controllers\ConfidentialInfoController;
 use App\Http\Controllers\PageGenerationController;
 use Storage;
@@ -16,7 +17,7 @@ class ModeratorActivityController extends Controller
 		$this->middleware(['mod:api']);
 	}
 
-	public function getAllInfo(){
+	public static function getAllInfo(){
 		$data = (array)ModeratorActivityController::GetAllEntries();
 		$data = array_reverse(array_pop($data));
 		return json_encode($data);
@@ -56,7 +57,9 @@ class ModeratorActivityController extends Controller
 		]);
 		$name = $request->input("name");
 		$uri = str_replace("storage/image/", "public/image/", $request->input("uri"));
-		$this->removeIndividualBanner($name, $uri, $request->input("url"));
+		ModeratorActivityController::removeIndividualBannerFromJSON($name, $uri, $request->input("url"));
+		ModeratorActivityController::removeIndividualBannerFromImages($uri);
+		ModeratorActivityController::removeIndividualBannerFromDB($uri);
 		return response(json_encode(["log"=>"$name's image was pruned"]), 200);
  
 
@@ -67,18 +70,13 @@ class ModeratorActivityController extends Controller
 	}
 
 	public function createNewBan($target, $hard){
-		if($ban = Bans::query()->where('fk_name', '=', $target)->first() ){}
+		if(ModeratorActivityController::GetBanInfo($target)){}
 		else{
 			$ban = new Bans();
 		}
 		$ban->fk_name = $target;
 		$ban->hardban = $hard;
 		$ban->save();
-	}
-
-	public function removeIndividualBanner($name, $uri, $url){
-		Ads::where('uri', '=', $uri)->delete();
-		ConfidentialInfoController::removeUserJSON($name,$uri,$url);
 	}
 
 	public function removeAllBanners($target){
@@ -91,7 +89,26 @@ class ModeratorActivityController extends Controller
 
 	}
 
+	public static function removeIndividualBannerFromJSON($name, $uri, $url){
+		ConfidentialInfoController::removeUserJSON($name,$uri,$url);
+	}
 
+	public static function removeIndividualBannerFromDB($uri){
+		Ads::where('uri', '=', $uri)->delete();
+	}
+
+	public static function removeIndividualBannerFromImages($uri){
+		Storage::delete($uri);
+	}
+
+	public static function GetBanInfo($name){
+		return Bans::query()->where('fk_name', '=', $name)->first();
+	}
+
+	public static function createMod($name){
+		$mod = new Mods(['fk_name'=>$name]);
+		$mod->save();
+	}
 
 	public function truncateUserJSON($target){
 		Storage::disk('local')->put("$target.json","[]");

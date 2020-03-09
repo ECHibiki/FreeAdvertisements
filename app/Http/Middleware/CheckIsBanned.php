@@ -18,7 +18,7 @@ class CheckIsBanned
     {
 	    if(User::query()->where("name", "=", auth()->user()->name)->first()->isBanned()){
 		    auth()->invalidate();
-		    return response(json_encode(['warn'=>'You are banned']),401);
+		    return response(json_encode(['warn'=>'You\'ve been banned...']),401);
 	    }
 	    return $next($request);
     }

@@ -20,25 +20,29 @@ class UserCreationController extends Controller
 		]);
                   		
 
-		$code = UserCreationController::addNewUserToDB($request->input('name'), $request->input('pass'));
-		if($code == 1){
-			PageGenerationController::CreateUserFile($request->input('name'));
+		$response_msg = UserCreationController::addNewUserToDB($request->input('name'), $request->input('pass'));
+		if($response_msg === 1){
+			if($err = PageGenerationController::CreateUserFile($request->input('name')))
+				return $err;
 			return response(json_encode(["log"=>"Successfully Created"]), 200)->header('Content-Type', 'text/plain');
 		}
 		else{
-			return response(json_encode(["warn"=>"Username Already Exists"]), 401)->header('Content-Type', 'text/plain');
+			return $response_msg;
 		}
 	
 	}
 	
 	public static function addNewUserToDB(string $name, string $hashedpass){
+		if(preg_match('/(\\.|\\/|;)/', $name)){
+			return response(json_encode(["warn"=>"Name has invalid characters"]), 422)->header('Content-Type', 'text/plain');
+		}
 		if(!User::where('name', $name)->exists()){
 			$user = new User (['name' => $name, 'pass' => bcrypt($hashedpass)]);
 			$user->save();
 			return 1;
 		}
 		else
-			return 0;
+			return response(json_encode(["warn"=>"Username Already Exists"]), 401)->header('Content-Type', 'text/plain');
 
 	}
 }

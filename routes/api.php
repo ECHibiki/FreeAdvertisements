@@ -16,12 +16,11 @@ use Illuminate\Http\Request;
 
 	// standard api routes
 	Route::post("create", "UserCreationController@createNewUser");
-
-	Route::post("login", "UserSignInController@loginUser");
-
-	Route::get("all", "PageGenerationController@getAllInfo");
+	Route::get("all", "PageGenerationController@getLimitedInfo");
 	Route::get("banner", "PageGenerationController@GenerateAdJSON");
 
+	// credential level
+	Route::post("login", "UserSignInController@loginUser");
 	Route::get("details", "ConfidentialInfoController@accessInfo");
 	Route::post("details", "ConfidentialInfoController@createInfo");
 	Route::post("removal", "ConfidentialInfoController@removeInfo");

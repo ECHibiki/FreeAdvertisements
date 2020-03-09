@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class PageGenerationController extends Controller
 {
+
 	public static function CreateUserFile(string $name){
+		if(preg_match('/(\\.|\\/|;)/', $name))
+			return response(json_encode(["warn"=>"Name has invalid characters"]), 422)->header('Content-Type', 'text/plain');
 		Storage::disk('local')->put("$name.json", '[]');
 	}
 
@@ -19,11 +22,9 @@ class PageGenerationController extends Controller
 		$fname = Storage::putFile('public/image', $img);
 		return $fname;
 	}
-	public static function RemoveAdImage($uri){
-		$fname = Storage::delete("$uri");
-	}
-	public static function getAllInfo(){
-		$data = (array)PageGenerationController::GetAllEntries();
+
+	public static function getLimitedInfo(){
+		$data = (array)PageGenerationController::GetLimitedEntries();
 		$data = array_reverse(array_pop($data));
 		return json_encode($data);
 	}
@@ -52,11 +53,8 @@ class PageGenerationController extends Controller
                         leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')->whereNull('bans.hardban')->select("ads.fk_name", "uri", "url")->inRandomOrder()->first();
 	}
 
-        public static function GetAllEntries(){
-                return DB::table('ads')->orderBy('created_at', 'ASC')->get();
-	}
-
-	public static function affirmImageIsOwned($name, $uri){
-		return DB::table('ads')->where('fk_name','=', $name)->where('uri','=', $uri)->count() > 0;
+        public static function GetLimitedEntries(){
+                return DB::table('ads')->
+                        leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')->whereNull('bans.hardban')->select("ads.fk_name", "uri", "url")->get();
 	}
 }
