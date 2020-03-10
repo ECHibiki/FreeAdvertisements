@@ -122,48 +122,48 @@ var_dump($res->getContent());
     	// test the action route of banning user
 	public function test_banning_action(){
 		    	//redundant but easy    
-	Storage::fake('local');
+		Storage::fake('local');
 
-	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
-	\App\Http\Controllers\ModeratorActivityController::createMod("hardtest");
-	$this->assertDatabaseHas('mods', ['fk_name'=>'hardtest']);
+		$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
+		\App\Http\Controllers\ModeratorActivityController::createMod("hardtest");
+		$this->assertDatabaseHas('mods', ['fk_name'=>'hardtest']);
 
 
-	$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
+		$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
 
-        $response
-		->assertStatus(200)
-		->assertJson(['access_token'=>true]);
-	$token = $response->getOriginalContent()['access_token'];
-	$this->assertFalse($token == '' || is_null($token));
+		$response
+			->assertStatus(200)
+			->assertJson(['access_token'=>true]);
+		$token = $response->getOriginalContent()['access_token'];
+		$this->assertFalse($token == '' || is_null($token));
 
-	    \App\Http\Controllers\UserCreationController::addNewUserToDB("test", "hashedpass");
-	    \App\Http\Controllers\ConfidentialInfoController::addAdSQL("test", "a", "a");
+		    \App\Http\Controllers\UserCreationController::addNewUserToDB("test", "hashedpass");
+		    \App\Http\Controllers\ConfidentialInfoController::addAdSQL("test", "a", "a");
 
-	    $res = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token])->json('post','api/mod/ban', ['target'=>'test', 'hard'=>1]); 
-		$in = \App\Http\Controllers\ModeratorActivityController::GetBanInfo("test");
-		$this->assertEquals($in->hardban, 1);
+		    $res = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token])->json('post','api/mod/ban', ['target'=>'test', 'hard'=>1]); 
+			$in = \App\Http\Controllers\ModeratorActivityController::GetBanInfo("test");
+			$this->assertEquals($in->hardban, 1);
 
-	}
-	// test route of purge
-	public function test_individual_remove_action(){
-				    	//redundant but easy    
+		}
+		// test route of purge
+	   public function test_individual_remove_action(){
+						//redundant but easy    
 		Storage::fake('local');
 
 		$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 		$response->assertStatus(200);
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 		$response->assertStatus(200);
-	$token = $response->getOriginalContent()['access_token'];
-        $img = UploadedFile::fake()->image('ad.jpg',500,90);
-	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
-	$fname = $response->json()['fname'];	
+		$token = $response->getOriginalContent()['access_token'];
+		$img = UploadedFile::fake()->image('ad.jpg',500,90);
+		$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
+		$fname = $response->json()['fname'];	
 
-	$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
+		$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
 
 
-	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
-	$response->assertStatus(200);
+		$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
+		$response->assertStatus(200);
 
 		\App\Http\Controllers\ModeratorActivityController::createMod("hardtest");
 		$this->assertDatabaseHas('mods', ['fk_name'=>'hardtest']);
@@ -190,7 +190,7 @@ var_dump($res->getContent());
 	}
     
 	// test route of prune
-		public function test_purge_remove_action(){
+	public function test_purge_remove_action(){
 				    	//redundant but easy    
 		Storage::fake('local');
 
@@ -239,4 +239,12 @@ var_dump($res->getContent());
 
 	}
 
+
+	// email method succeeds when called with api key
+	
+	// not having an email doesn't cause error
+	
+	// a softban removes from users who are not abusers in rotation
+	
+	// a softban removes from /all/ except for users who are abusers
 }

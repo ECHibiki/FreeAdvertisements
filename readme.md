@@ -16,6 +16,14 @@ If you want to host your own version you must:
 5) ```php artisan key:generate```, ```php artisan link:storage```, ```php artisan migrate```
 6) ```php artisan serve```
 
+#Requirements
+
+FA runs on the simplest of systems. You just need: 
+- PHP >= 7.2.5
+- MySQL 
+- php-mysql
+- NPM
+
 ### Considerations
 
 <a href="https://www.patreon.com/ECHibiki"><img src="https://banners.kissu.moe" />

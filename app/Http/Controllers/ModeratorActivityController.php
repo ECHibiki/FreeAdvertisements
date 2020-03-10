@@ -73,7 +73,7 @@ class ModeratorActivityController extends Controller
 	}
 
 	public function createNewBan($target, $hard){
-		if(ModeratorActivityController::GetBanInfo($target)){}
+		if($ban = ModeratorActivityController::GetBanInfo($target)){}
 		else{
 			$ban = new Bans();
 		}
