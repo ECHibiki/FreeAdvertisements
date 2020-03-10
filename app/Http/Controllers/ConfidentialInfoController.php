@@ -22,6 +22,7 @@ class ConfidentialInfoController extends Controller
 		$name = auth()->user()->name;
 		$ad_arr = array_reverse($this->getUserJson($name));
 		return [
+			'name'=>"$name",
 			'mod'=> auth()->payload()->get("is_mod"),
 			'ads'=> $ad_arr
 		];
@@ -41,20 +42,23 @@ class ConfidentialInfoController extends Controller
 	public function removeInfo(Request $request){
 		$uri = str_replace("storage/image", "public/image", $request->input('uri'));
 		$url = $request->input('url');	
-		$this->removeAdSQL($uri, $url);
-		$this->removeUserJSON($uri , $url);
 		// slightly dangerous
-		$err = ConfidentialInfoController::RemoveAdImage($uri);
-		if($err)
-			return $err;
-		return response(['log'=>'Ad Removed'], 200);
+		if(!ConfidentialInfoController::affirmImageIsOwned($uri)){
+			return response(['warn'=>'This banner isn\'t owned'], 401);
+		}
+		else{
+			ConfidentialInfoController::RemoveAdImage($uri);
+			$this->removeAdSQL($uri, $url);
+			$this->removeUserJSON($uri , $url);
+			return response(['log'=>'Ad Removed'], 200);
+		}
 	}
 
 	public static function addUserJSON(string $uri, string $url){
 		$name = auth()->user()->name;
 		$combined = json_decode(Storage::disk('local')->get("$name.json"), true);
 		$combined[] = ['uri'=>$uri, 'url'=>$url];
-		Storage::disk('local')->put("$name.json", json_encode($combined));
+			Storage::disk('local')->put("$name.json", json_encode($combined));
 	}
 
 	public static function removeUserJSON(string $uri, string $url){
@@ -90,9 +94,6 @@ class ConfidentialInfoController extends Controller
 
 	// verify if owned
 	public static function RemoveAdImage($uri){
-		if(!ConfidentialInfoController::affirmImageIsOwned($uri)){
-			return response(['warn'=>'This banner isn\'t owned'], 401);
-		}
 		$fname = Storage::delete("$uri");
 	}
 	public static function affirmImageIsOwned($uri){

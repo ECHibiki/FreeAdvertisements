@@ -44,7 +44,12 @@ class ModeratorActivityController extends Controller
 			"name"=>"required|string"
 		]);
 		$target = $request->input("name");
-		$this->removeAllBanners($target);
+
+		//images must be first
+		ModeratorActivityController::removeAllUserImages($target);
+		ModeratorActivityController::removeUserFromDatabase($target);
+		ModeratorActivityController::truncateUserJSON($target);
+
 		return response(json_encode(["log"=>"user $target was purged"]), 200);
 
 	}
@@ -57,12 +62,10 @@ class ModeratorActivityController extends Controller
 		]);
 		$name = $request->input("name");
 		$uri = str_replace("storage/image/", "public/image/", $request->input("uri"));
-		ModeratorActivityController::removeIndividualBannerFromJSON($name, $uri, $request->input("url"));
 		ModeratorActivityController::removeIndividualBannerFromImages($uri);
+		ModeratorActivityController::removeIndividualBannerFromJSON($name, $uri, $request->input("url"));
 		ModeratorActivityController::removeIndividualBannerFromDB($uri);
 		return response(json_encode(["log"=>"$name's image was pruned"]), 200);
- 
-
 	}
 
 	public static function GetAllEntries(){
@@ -78,19 +81,8 @@ class ModeratorActivityController extends Controller
 		$ban->hardban = $hard;
 		$ban->save();
 	}
-
-	public function removeAllBanners($target){
-		Ads::where('fk_name', '=', $target)->delete();
-		$all = ConfidentialInfoController::getUserJson($target);
-		foreach ($all as $ad){
-			PageGenerationController::RemoveAdImage($ad['uri']);
-		}
-		$this->truncateUserJSON($target);
-
-	}
-
 	public static function removeIndividualBannerFromJSON($name, $uri, $url){
-		ConfidentialInfoController::removeUserJSON($name,$uri,$url);
+		ModeratorActivityController::removeUserJSON($name,$uri,$url);
 	}
 
 	public static function removeIndividualBannerFromDB($uri){
@@ -110,7 +102,36 @@ class ModeratorActivityController extends Controller
 		$mod->save();
 	}
 
-	public function truncateUserJSON($target){
+	public static function removeUserFromDatabase($name){
+		Ads::where('fk_name','=', '$name')->delete();
+	}
+
+	public static function truncateUserJSON($target){
 		Storage::disk('local')->put("$target.json","[]");
+	}
+
+	public static function removeAllUserImages($target){
+		$ads = json_decode(ModeratorActivityController::getSelectJSON($target), true);
+		foreach($ads as $ad){
+			Storage::delete($ad['uri']);
+		}
+	}
+
+	public static function getSelectJSON($name){
+		return Storage::disk('local')->get("$name.json");
+	}
+
+	public static function removeUserJSON(string $name, string $uri, string $url){
+		$combined = json_decode(Storage::disk('local')->get("$name.json"), true);
+		$reduced = [];
+		foreach($combined as $entry){
+			if($entry['uri'] == $uri && $entry['url'] == $url){
+				continue;
+			}
+			else{
+				$reduced[] = $entry;
+			}
+		}
+		Storage::disk('local')->put("$name.json", json_encode($reduced));
 	}
 }
