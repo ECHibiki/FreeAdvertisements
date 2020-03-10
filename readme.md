@@ -26,6 +26,7 @@ FA runs on the simplest of systems. You just need:
 
 ### Considerations
 
-<a href="https://www.patreon.com/ECHibiki"><img src="https://banners.kissu.moe" />
+<a href="https://www.patreon.com/ECHibiki">
+	Send me a 5'er
 </a>
 
