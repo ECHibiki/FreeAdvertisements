@@ -51,6 +51,8 @@ class DeveloperModTests extends TestCase
 	// test get all entries
 	//
 	public function test_get_complete_list_as_mod(){
+				$_SERVER['HTTP_X_REAL_IP'] = 1;
+
          $response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
          $response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
          Storage::fake('public/image');
@@ -83,6 +85,8 @@ class DeveloperModTests extends TestCase
 
 	// test db ad removal from mod
 	public function test_db_removal_on_individual(){
+				$_SERVER['HTTP_X_REAL_IP'] = 1;
+
 			Storage::fake('local');
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
@@ -102,6 +106,8 @@ class DeveloperModTests extends TestCase
 	//
 	// test json ad removal from mod
 	public function test_json_removal_on_individual(){
+				$_SERVER['HTTP_X_REAL_IP'] = 1;
+
 			Storage::fake('local');
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
@@ -124,7 +130,9 @@ class DeveloperModTests extends TestCase
 	}
 
 	// test file removal
-     public function test_image_removal_on_individual(){
+	public function test_image_removal_on_individual(){
+				$_SERVER['HTTP_X_REAL_IP'] = 1;
+
 			Storage::fake('local');
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
@@ -148,6 +156,8 @@ class DeveloperModTests extends TestCase
 
 	// test complete db removal from mod
 	public function test_complete_db_removal_from_mod(){
+				$_SERVER['HTTP_X_REAL_IP'] = 1;
+
      		$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);		
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 		$token = $response->getOriginalContent()['access_token'];
@@ -169,6 +179,8 @@ class DeveloperModTests extends TestCase
      	}
 	// test complete json removal from mod
 	public function test_complete_json_removal(){
+				$_SERVER['HTTP_X_REAL_IP'] = 1;
+
 	     	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);	
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 		$token = $response->getOriginalContent()['access_token'];
@@ -189,6 +201,7 @@ class DeveloperModTests extends TestCase
 
 	// test images removed
 	public function test_complete_image_removal(){
+		$_SERVER['HTTP_X_REAL_IP'] = 1;
 	     	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);	
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 		$token = $response->getOriginalContent()['access_token'];
@@ -207,51 +220,6 @@ class DeveloperModTests extends TestCase
 		Storage::fake('public/image')->assertMissing($fname1);
 	}
 
-	//test email view exists
-	public function test_email_view_propper(){
-		$this->assertEquals("<h2>New Banner :: {{ \$time }}</h2>
-<p style=\"color:green\">Name:  {{ \$name }}</p><br/>
-<p style=\"color:cyan\">URL: {{\$url}}</p>
-@if (\$err}
-<hr/>
-<p>Previous Send Errors: <pre>{{ \$err }}</pre>
-@endif\n", (new \App\Mail\BannerNotification(["name"=>"testname", "time"=>date('yMd-h:m:s',time()), "url"=>"http://sdf.com", 'err'=>'']))->render());
-	}
-
-	//test sending email
-	public function test_sending_email(){
-		Mail::fake();
-		$re = \App\Http\Controllers\MailSendController::sendMail(["name"=>"testname", "time"=>date('yMd-h:m:s',time()), "url"=>"http://sdf.com"], 
-			['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
-		$this->assertEquals($re, true);
-		Mail::assertSent(BannerNotification::class);
-	}
-
-	public function test_setting_cooldown(){
-		Storage::fake('local');
-		\App\Http\Controllers\MailSendController::updateCooldown();
-		Storage::disk('local')->assertExists('mail/mail.json');
-		$file = Storage::disk('local')->get('mail/mail.json');
-		sleep(1);
-		\App\Http\Controllers\MailSendController::updateCooldown();
-		$this->assertNotEquals($file, Storage::disk('local')->get('mail.json'));
-	}
-
-	public function test_getting_cooldown(){
-		Storage::fake('local');
-		$cd = \App\Http\Controllers\MailSendController::getCooldown();
-		$this->assertEquals($cd, 0);
-	}
-
-	// not having an email doesn't cause error 
-	public function test_email_does_not_error_when_no_emails_listed(){
-		Mail::fake();
-		$re = \App\Http\Controllers\MailSendController::sendMail(["name"=>"testname", "time"=>date('yMd-h:m:s',time()), "url"=>"http://sdf.com"], 
-			['primary_email'=>null, 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
-		$this->assertEquals($re, false);
-		Mail::assertNothingSent();
-	}	
 	
-
 
 }

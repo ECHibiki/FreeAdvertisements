@@ -34,12 +34,11 @@ class MailSendController extends Controller
 		$errors = '';
 	    if(isset($emails['primary_email'])){
 		    $msg = Mail::to(str_replace("\n", "", $emails['primary_email']));
-		    echo "|P: " .str_replace("\n", "", $emails['primary_email']);
-	    	if(isset($emails['secondary_emails'])){
+		   if(isset($emails['secondary_emails'])){
 			$bcc = explode(',', $emails['secondary_emails']);
 			foreach($bcc as $mail){
 				$mail = str_replace("\n", "", $mail);
-				echo "|M: " . $mail;
+
 				if(preg_match('/[^@]+@[^@\.]+\.[^@]+/', $mail)){
 					$msg->bcc($mail);	
 				}
@@ -49,7 +48,7 @@ class MailSendController extends Controller
 				}
 			}
 		}
-		    echo "|err: " . $errors;
+
 		$msg->send(new BannerNotification(['name'=>$data['name'], 'time'=>$data['time'], 'url'=>$data['url'], 'err'=>$errors]));
 		return true;
 	    }

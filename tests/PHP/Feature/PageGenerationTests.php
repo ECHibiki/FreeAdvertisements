@@ -184,19 +184,22 @@ class PageGenerationTests extends TestCase
 	}
 
     public function test_banned_user_does_not_show(){
+$_SERVER["HTTP_X_REAL_IP"] = 1;
          $response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
          $response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
-	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://a.com"]);
+	 $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://a.com"]);
+	 $ban = new Bans(['fk_name'=>'test']);
+	 $ban->save();
 
+
+$_SERVER["HTTP_X_REAL_IP"] = 2;
          $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
          $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
-	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://b.com"]);
-	 $ban = new Bans(['fk_name'=>'test2']);
-	 $ban->save();
+	 $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://b.com"]);
 
 	    $a = 0;
 	    $b = 0;	    
@@ -204,7 +207,7 @@ class PageGenerationTests extends TestCase
 		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://a.com" ? $a++ : $b++;
 	}	
 	    echo "$a $b";
-	$this->assertEquals($b, 0);
+	$this->assertEquals($a, 0);
     }
 
      public function test_banned_users_see_there_own(){
@@ -265,7 +268,7 @@ class PageGenerationTests extends TestCase
       public function test_all_page_get_info_under_effects_of_ban_for_normal_user(){
 	//redundant but easy    
 	Storage::fake('local');
-
+$_SERVER["HTTP_X_REAL_IP"] = 1;
          $response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
          $response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
          Storage::fake('public/image');
@@ -273,7 +276,7 @@ class PageGenerationTests extends TestCase
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
 	    $b = new Bans(['fk_name'=>'test']);
 	    $b->save();
-
+$_SERVER["HTTP_X_REAL_IP"] = 2;
          $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
          $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
          Storage::fake('public/image');
@@ -281,7 +284,7 @@ class PageGenerationTests extends TestCase
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
 	    $b = new Bans(['fk_name'=>'test2']);
 	    $b->save();
-
+$_SERVER["HTTP_X_REAL_IP"] = 3;
          $response = $this->call('POST', 'api/create', ['name'=>'test3', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
          $response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
          Storage::fake('public/image');
@@ -289,7 +292,7 @@ class PageGenerationTests extends TestCase
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
 	    $b = new Bans(['fk_name'=>'test3']);
 	    $b->save();
-
+$_SERVER["HTTP_X_REAL_IP"] = 4;
 	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
         $response
@@ -308,6 +311,7 @@ class PageGenerationTests extends TestCase
 	//redundant but easy    
 	Storage::fake('local');
 
+$_SERVER["HTTP_X_REAL_IP"] = 1;
          $response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
          $response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
          Storage::fake('public/image');
@@ -315,7 +319,7 @@ class PageGenerationTests extends TestCase
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
 	    $b = new Bans(['fk_name'=>'test']);
 	    $b->save();
-
+$_SERVER["HTTP_X_REAL_IP"] = 2;
          $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
          $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
          Storage::fake('public/image');
@@ -323,27 +327,21 @@ class PageGenerationTests extends TestCase
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
 	    $b = new Bans(['fk_name'=>'test2']);
 	    $b->save();
-
+$_SERVER["HTTP_X_REAL_IP"] = 3;
          $response = $this->call('POST', 'api/create', ['name'=>'test3', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
-         $response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
+	 $response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
+	 $token =  $response->getOriginalContent()['access_token'];
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
 	    $b = new Bans(['fk_name'=>'test3']);
 	    $b->save();
 
-	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
-	$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
-        $response
-		->assertStatus(200)
-		->assertJson(['access_token'=>true]);
-	$token = $response->getOriginalContent()['access_token'];
-	$this->assertFalse($token == '' || is_null($token));
 
-
-	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all'); 
+	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all', [], ['freeadstoken'=>$token]); 
+var_dump($res->getContent());
 	    $this->assertEquals(json_decode('[{"fk_name":"test3","uri":"c","url":"c","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test2","uri":"b","url":"b","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test","uri":"a","url":"a","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"}]', true)[2]['fk_name'], 
-		    json_decode($res, true)[2]['fk_name']);
+		    json_decode($res->getContent(), true)[2]['fk_name']);
 
 	}
 
