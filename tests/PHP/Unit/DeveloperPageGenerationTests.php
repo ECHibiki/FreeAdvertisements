@@ -35,7 +35,8 @@ class DeveloperPageGenerationTests extends TestCase
 	   $response->assertStatus(401);
    }
 
-     public function test_user_all_route(){
+   public function test_user_all_route(){
+	   $_SERVER["HTTP_X_REAL_IP"] = "1";
 	   $response = $this->withHeaders(['Accept' => 'application/json'])->get("api/all", []);
 	   $response->assertStatus(200);
    }
@@ -136,6 +137,8 @@ class DeveloperPageGenerationTests extends TestCase
     }
 
     public function test_all_page_get_info(){
+$_SERVER["HTTP_X_REAL_IP"] = "2";
+
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 	$token = $response->getOriginalContent()['access_token'];
@@ -184,18 +187,28 @@ class DeveloperPageGenerationTests extends TestCase
 	    $this->assertEquals([], json_decode($res, true));
      }
 
-      public function test_all_page_get_info_shows_for_all_banned(){
+    public function test_all_page_get_info_shows_for_all_banned(){
+	    $_SERVER["HTTP_X_REAL_IP"] = "1";
+
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
-	$token = $response->getOriginalContent()['access_token'];
+	$token = $t1 = $response->getOriginalContent()['access_token'];
 
         $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
 	$fname1 = $response->json()['fname'];	
 
+	$response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+	$token = $response->getOriginalContent()['access_token'];
+
 	$img2 = UploadedFile::fake()->image('ad1.jpg',500,90);
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img2, 'url'=>"https://test.com"]);
-	$fname2 = $response->json()['fname'];	
+	$fname2 = $response->json()['fname'];
+
+	$response = $this->call('POST', 'api/create', ['name'=>'test3', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
+	$token = $response->getOriginalContent()['access_token'];
 
 	$img3 = UploadedFile::fake()->image('ad2.jpg',500,90);
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img2, 'url'=>"https://test.com"]);
@@ -207,8 +220,9 @@ class DeveloperPageGenerationTests extends TestCase
 	$b->save();
 	$b = new Bans(['fk_name'=>'test3']);
 	$b->save();
-
-	    $res = \App\Http\Controllers\PageGenerationController::getLimitedEntries();
+	
+	$_COOKIE['freeadstoken'] = $t1;
+	$res = \App\Http\Controllers\PageGenerationController::getLimitedEntries('test');
 	    $this->assertEquals(json_decode('[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test2","uri":"b","url":"b"},{"fk_name":"test3","uri":"c","url":"c"}]', true)[2]['fk_name'],json_decode($res, true)[2]['fk_name']);
      }
 
@@ -239,12 +253,38 @@ class DeveloperPageGenerationTests extends TestCase
     }
 
     public function test_IP_associated_with_image_sql(){
+	$_SERVER["HTTP_X_REAL_IP"] = "1";
+	
+	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
+	$token = $response->getOriginalContent()['access_token'];
+        $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://a.com"]);
+	$fname1 = $response->json()['fname'];	
+	$this->assertDatabaseHas('ads', ['ip'=>$_SERVER["HTTP_X_REAL_IP"]]);
     }
 
 // ad page
     
     public function test_distributed_ad_page_reachable(){
+	    $_SERVER["HTTP_X_REAL_IP"] = "1";
 	    $re = $this->call('GET', 'banner');
+var_dump($re->getContent());
 	    $re->assertStatus(200);
     }
+
+    public function test_if_in_ban_list(){
+    	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
+	$token = $t1 = $response->getOriginalContent()['access_token'];
+
+        $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
+	$fname1 = $response->json()['fname'];	
+	$b = new Bans(['fk_name'=>'test']);
+	$b->save();
+	
+	$this->assertTrue(\App\Http\Controllers\PageGenerationController::checkBanned('test'));
+    }
+
 }

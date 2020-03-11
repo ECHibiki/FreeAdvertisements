@@ -256,7 +256,6 @@ class ModTests extends TestCase
 		$token = $response->getOriginalContent()['access_token'];
         	$img = UploadedFile::fake()->image('ad.jpg',500,90);
 		$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
-var_dump($response->getContent());
 		$response->assertStatus(200);
 
 

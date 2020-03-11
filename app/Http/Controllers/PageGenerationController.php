@@ -23,7 +23,7 @@ class PageGenerationController extends Controller
 		return $fname;
 	}
 
-	public static function getLimitedInfo(){
+	public static function getLimitedInfo(){	
 		$data = (array)PageGenerationController::GetLimitedEntries();
 		$data = array_reverse(array_pop($data));
 		return json_encode($data);
@@ -49,12 +49,43 @@ class PageGenerationController extends Controller
 
 	// banned users will not show up in rotation
 	public static function GetRandomAdEntry(){
-		return  DB::table('ads')->
-                        leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')->whereNull('bans.hardban')->select("ads.fk_name", "uri", "url")->inRandomOrder()->first();
+		try{
+                        $name = auth()->setToken($request->cookie('freeadstoken'))->user()->name;
+                }
+                catch(\Exception $e){
+                        $name = null;           
+		}
+                return DB::table('ads')->
+			leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')
+			->when(!PageGenerationController::checkBanned($name), function($q){
+				return $q->whereNull('bans.hardban')
+					->where('ip','=', $_SERVER["HTTP_X_REAL_IP"]);	
+			})		
+			->select("ads.fk_name", "uri", "url")
+			->get();
+	
+		}
+
+	public static function GetLimitedEntries($name = null){
+		try{
+			if(!$name)
+                        	$name = auth()->setToken($request->cookie('freeadstoken'))->user()->name;
+                }
+                catch(\Exception $e){
+                        $name = null;           
+		}
+                return DB::table('ads')->
+			leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')
+			->when(!PageGenerationController::checkBanned($name), function($q){
+				return $q->whereNull('bans.hardban')
+					->where('ip','=', $_SERVER["HTTP_X_REAL_IP"]);	
+			})		
+			->select("ads.fk_name", "uri", "url")
+			->get();
 	}
 
-        public static function GetLimitedEntries(){
-                return DB::table('ads')->
-                        leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')->whereNull('bans.hardban')->select("ads.fk_name", "uri", "url")->get();
+	public static function checkBanned($name){
+		return  DB::table('bans')->where('fk_name', '=', $name)->count() > 0;
+
 	}
 }
