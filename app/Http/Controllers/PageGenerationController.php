@@ -57,7 +57,7 @@ class PageGenerationController extends Controller
                 return DB::table('ads')
 			->leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')
 			->whereNull('bans.hardban')
-			->orWhere('ip','=', $_SERVER["HTTP_X_REAL_IP"])	
+			->orWhere('ip','=', PageGenerationController::getBestIPSource())	
 			->select("ads.fk_name", "uri", "url")
 			->orderBy('ads.created_at', 'ASC')->inRandomOrder()->first();
 	
@@ -75,7 +75,7 @@ class PageGenerationController extends Controller
 			->leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')
 			->when($name == "" || !PageGenerationController::checkBanned($name),function($q){
 				return $q->whereNull('bans.hardban')
-					->orWhere('ip','=', $_SERVER["HTTP_X_REAL_IP"]);
+					->orWhere('ip','=', PageGenerationController::getBestIPSource());
 			})
 			->select("ads.fk_name", "uri", "url")
 			->orderBy('ads.created_at', 'ASC')->get();
@@ -84,4 +84,9 @@ class PageGenerationController extends Controller
 	public static function checkBanned($name){
 		return  DB::table('bans')->where('fk_name', '=', $name)->count() > 0;
 	}
+
+	public static function getBestIPSource(){
+		return isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER['HTTP_X_REAL_IP'] : \Request::ip(); 
+	}
+
 }

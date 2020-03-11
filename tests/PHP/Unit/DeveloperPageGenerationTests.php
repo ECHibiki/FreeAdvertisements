@@ -286,5 +286,14 @@ $_SERVER["HTTP_X_REAL_IP"] = "2";
 	
 	$this->assertTrue(\app\Http\Controllers\PageGenerationController::checkBanned('test'));
     }
+	
+    public function test_IP_does_not_fail_on_no_HTTP_X_REAL_pagegen(){
+	unset($_SERVER['HTTP_X_REAL_IP']);
+    	$this->assertTrue(\app\Http\Controllers\PageGenerationController::getBestIPSource() == "127.0.0.1");
+    }
+    public function test_IP_does_not_fail_on_no_HTTP_X_REAL_confidential(){
+	unset($_SERVER['HTTP_X_REAL_IP']);
+    	$this->assertTrue(\app\Http\Controllers\ConfidentialInfoController::getBestIPSource() == "127.0.0.1");
+    }
 
 }

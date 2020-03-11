@@ -39,7 +39,7 @@ class ConfidentialInfoController extends Controller
 		$this->addUserJSON($fname, $request->input('url'));
 		$this->addAdSQL($fname, $request->input('url'));
 		$t = MailSendController::getCooldown();
-		echo "te $t";
+
 		if($t < time()){
 			MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:m:s',time()), "url"=> $request->input('url')],
 				['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
@@ -92,7 +92,7 @@ class ConfidentialInfoController extends Controller
 
 	public static function addAdSQL(string $uri, string $url){
 		$name = auth()->user()->name;
-		$ad = new Ads(['fk_name'=>$name, 'uri'=>$uri, 'url'=>$url, 'ip'=>$_SERVER["HTTP_X_REAL_IP"]]);
+		$ad = new Ads(['fk_name'=>$name, 'uri'=>$uri, 'url'=>$url, 'ip'=>ConfidentialInfoController::getBestIPSource()]);
 		$ad->save();
 	}
 	
@@ -108,6 +108,10 @@ class ConfidentialInfoController extends Controller
 	public static function affirmImageIsOwned($uri){
 		$name = auth()->user()->name;
 		return DB::table('ads')->where('fk_name','=', $name)->where('uri','=', $uri)->count() > 0;
+	}
+
+	public static function getBestIPSource(){
+		return isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER['HTTP_X_REAL_IP'] : \Request::ip(); 
 	}
 
 
