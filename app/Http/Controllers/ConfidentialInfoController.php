@@ -10,6 +10,8 @@ use Illuminate\Http\UploadedFile;
 use App\Ads;
 use JWTAuth;
 use App\Http\Controllers\PageGenerationController;
+use App\Http\Controllers\MailSendController;
+
 class ConfidentialInfoController extends Controller
 {
 
@@ -36,6 +38,13 @@ class ConfidentialInfoController extends Controller
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
 		$this->addUserJSON($fname, $request->input('url'));
 		$this->addAdSQL($fname, $request->input('url'));
+		$t = MailSendController::getCooldown();
+		echo "te $t";
+		if($t < time()){
+			MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:m:s',time()), "url"=> $request->input('url')],
+				['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
+			MailSendController::updateCooldown();	
+		}
 		return ['log'=>'Ad Created', 'fname'=>$fname];
 	}
 
@@ -83,7 +92,7 @@ class ConfidentialInfoController extends Controller
 
 	public static function addAdSQL(string $uri, string $url){
 		$name = auth()->user()->name;
-		$ad = new Ads(['fk_name'=>$name, 'uri'=>$uri, 'url'=>$url]);
+		$ad = new Ads(['fk_name'=>$name, 'uri'=>$uri, 'url'=>$url, 'ip'=>$_SERVER["HTTP_X_REAL_IP"]]);
 		$ad->save();
 	}
 	

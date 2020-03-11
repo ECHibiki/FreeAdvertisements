@@ -59,7 +59,6 @@ class PageGenerationTests extends TestCase
 
 
 	$response = $this->call("GET", 'banner');
-	var_dump($response->content());
 	$response->assertViewHasAll(['name'=>'test', 'uri'=>str_replace('public','storage',$fname), 'url'=>'https://test.com']);
 
     }
@@ -208,6 +207,33 @@ class PageGenerationTests extends TestCase
 	$this->assertEquals($b, 0);
     }
 
+     public function test_banned_users_see_there_own(){
+         $response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://a.com"]);
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://b.com"]);
+
+	 $ban = new Bans(['fk_name'=>'test']);
+	 $ban->save();
+	 $ban = new Bans(['fk_name'=>'test2']);
+	 $ban->save();
+
+	    $a = 1;
+	    $b = 1;	    
+	for($i = 0 ; $i < 500 ; $i++){
+		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://a.com" ? $a++ : $b++;
+	}	
+	    echo "$a $b";
+	$this->assertTrue($b / $a >= 0.75 || $a / $b >= 0.75);
+    }
+
 	public function test_all_page_get_info(){
 	//redundant but easy    
 	Storage::fake('local');
@@ -236,7 +262,7 @@ class PageGenerationTests extends TestCase
 		    json_decode($res, true)[2]['fk_name']);
     }
 
-        public function test_all_page_get_info_under_effects_of_ban(){
+      public function test_all_page_get_info_under_effects_of_ban_for_normal_user(){
 	//redundant but easy    
 	Storage::fake('local');
 
@@ -274,8 +300,136 @@ class PageGenerationTests extends TestCase
 
 
 	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all'); 
-var_dump($res->getContent());
 	    $this->assertEquals(json_decode($res->getContent(), true), []);
+
+	}
+
+     public function test_all_page_get_info_under_effects_of_ban_for_banned_user(){
+	//redundant but easy    
+	Storage::fake('local');
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	    $b = new Bans(['fk_name'=>'test']);
+	    $b->save();
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	    $b = new Bans(['fk_name'=>'test2']);
+	    $b->save();
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test3', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	    $b = new Bans(['fk_name'=>'test3']);
+	    $b->save();
+
+	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
+        $response
+		->assertStatus(200)
+		->assertJson(['access_token'=>true]);
+	$token = $response->getOriginalContent()['access_token'];
+	$this->assertFalse($token == '' || is_null($token));
+
+
+	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all'); 
+	    $this->assertEquals(json_decode('[{"fk_name":"test3","uri":"c","url":"c","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test2","uri":"b","url":"b","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test","uri":"a","url":"a","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"}]', true)[2]['fk_name'], 
+		    json_decode($res, true)[2]['fk_name']);
+
+	}
+
+     public function test_all_page_get_info_under_effects_of_ban_for_unbanned_users_with_same_ip(){
+	//redundant but easy    
+	Storage::fake('local');
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	    $b = new Bans(['fk_name'=>'test']);
+	    $b->save();
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	    $b = new Bans(['fk_name'=>'test2']);
+	    $b->save();
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test3', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	    $b = new Bans(['fk_name'=>'test3']);
+	    $b->save();
+
+	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
+        $response
+		->assertStatus(200)
+		->assertJson(['access_token'=>true]);
+	$token = $response->getOriginalContent()['access_token'];
+	$this->assertFalse($token == '' || is_null($token));
+
+
+	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all'); 
+	    $this->assertEquals(json_decode('[{"fk_name":"test3","uri":"c","url":"c","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test2","uri":"b","url":"b","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test","uri":"a","url":"a","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"}]', true)[2]['fk_name'], 
+		    json_decode($res, true)[2]['fk_name']);
+
+     }
+
+         public function test_all_page_get_info_under_effects_of_ban_for_unbanned_users_with_same_ip_range(){
+	//redundant but easy    
+	Storage::fake('local');
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	    $b = new Bans(['fk_name'=>'test']);
+	    $b->save();
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	    $b = new Bans(['fk_name'=>'test2']);
+	    $b->save();
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test3', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	    $b = new Bans(['fk_name'=>'test3']);
+	    $b->save();
+
+	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
+        $response
+		->assertStatus(200)
+		->assertJson(['access_token'=>true]);
+	$token = $response->getOriginalContent()['access_token'];
+	$this->assertFalse($token == '' || is_null($token));
+
+
+	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all'); 
+	    $this->assertEquals(json_decode('[{"fk_name":"test3","uri":"c","url":"c","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test2","uri":"b","url":"b","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test","uri":"a","url":"a","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"}]', true)[2]['fk_name'], 
+		    json_decode($res, true)[2]['fk_name']);
 
 	}
 
