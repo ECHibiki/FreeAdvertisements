@@ -1,6 +1,6 @@
 # FreeAdvertising
 Done initially with Test Driven Development on both React-Router and Laravel PHP with SASS, this is a simple webapplication for hosting an user submitted banner/advertisement platform with no direct monetization.<br/>
-Uses Nginx, MySQL, Larvel and React ~and Docker(laradock)~. Docker is a consideration. <br/>Testing done with PHPUnit, Jest+Enzyme. 
+Uses Nginx, MySQL, Larvel and React. Docker and Jest+Enzyme are considerations. <br/>Testing done with PHPUnit. 
 <br/>
 
 ## About
