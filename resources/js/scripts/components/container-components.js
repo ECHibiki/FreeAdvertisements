@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {DataStore, APICalls} from '../network/api';
 import Popup from "reactjs-popup";
-import {HelperText, TopHeader, AdDetailsTable, AllDetailsTable, ModDetailsTable} from "./information-components";
+import {HelperText, TopHeader, AdDetailsTable, AllDetailsTable, ModDetailsTable, DonatorBox} from "./information-components";
 import {SignInForm, SignInButton, CreationForm, CreateButton, AdCreationForm, AdCreateButton, AdRemovalButton, AdRemovalForm } from "./form-components"
 import {SampleBanner, PatreonBanner, LoadingSpinner} from "./image-components";
 
@@ -66,6 +66,7 @@ export class MasterPage extends Component{
 				  <hr/>
 				   <div id="lower-master-login">
 					<PatreonBanner />
+					<DonatorBox />
 					<HelperText />
 				   </div>
 				</div>);
@@ -82,6 +83,7 @@ export class MasterPage extends Component{
 				</div>
 				<div id="lower-master-user">
 				  <PatreonBanner />
+			  	  <DonatorBox />
 				  <HelperText />
 				</div>
 				</div>);
@@ -208,6 +210,7 @@ export class AllPage extends Component{
 				  <hr/>
 				   <div id="lower-master-all">
 					<PatreonBanner />
+				        <DonatorBox />
 					<HelperText />
 				   </div>
 				</div>);
@@ -252,6 +255,7 @@ export class ModPage extends Component{
 				  <hr/>
 				   <div id="lower-master-mod">
 					<PatreonBanner />
+				        <DonatorBox />
 					<HelperText />
 				   </div>
 				</div>);
@@ -281,7 +285,7 @@ export class ModContainer extends Component{
 		return (<div id="mod-container">
 			<h2>Mod Mode</h2>
 			<span className="mod-link"><Link to="/">Back</Link></span>
-			  <ModDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.UpdateDetails}/>
-		</div>);
+			   <ModDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.UpdateDetails}/>
+			</div>);
 	}
 }

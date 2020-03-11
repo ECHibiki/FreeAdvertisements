@@ -186,3 +186,9 @@ export class AllDetailsEntry extends Component{
 			</tr>);
 	}
 }
+export class DonatorBox extends Component{
+	render(){
+		var html = {__html: process.env.MIX_EXTRA_INFO}
+		return(<div id="donation" dangerouslySetInnerHTML={html}></div>);
+	}
+}

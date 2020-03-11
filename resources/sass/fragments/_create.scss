@@ -203,6 +203,9 @@ hr{
     }
 }
 
+#donation{
+	padding: 2em;
+}
 
 .iframe-banner{
 	display: block;
@@ -251,5 +254,5 @@ hr{
 	@media (max-width:$mobile_px){
 		word-break:break-word;
 	}
-
 }
+
