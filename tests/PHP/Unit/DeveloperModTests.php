@@ -64,12 +64,13 @@ class DeveloperModTests extends TestCase
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://b.com"]);
-	 $ban = new Bans(['fk_name'=>'test2']);
+	 $ban = new Bans(['fk_name'=>'test2', 'hardban'=>0]);
 	 $ban->save();
 
 	    $res = \App\Http\Controllers\ModeratorActivityController::GetAllEntries();
-		
-	    $this->assertEquals(json_decode('[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test2","uri":"b","url":"b"}]', true)[0]['fk_name'],json_decode($res, true)[0]['fk_name']);
+	 $this->assertEquals(json_decode('[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test2","uri":"b","url":"b", "hardban":0}]', true)[0]['fk_name'],json_decode($res, true)[0]['fk_name']);
+	 $this->assertEquals(json_decode('[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test2","uri":"b","url":"b", "hardban":0}]', true)[1]['hardban'],json_decode($res, true)[1]['hardban']);
+
 	}
 	//
 	// test and make new check if already banned

@@ -83,7 +83,7 @@ class ModTests extends TestCase
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
-	    $b = new Bans(['fk_name'=>'test']);
+	    $b = new Bans(['fk_name'=>'test','hardban'=>1]);
 	    $b->save();
 
          $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
@@ -92,7 +92,7 @@ class ModTests extends TestCase
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
-	    $b = new Bans(['fk_name'=>'test2']);
+	    $b = new Bans(['fk_name'=>'test2','hardban'=>1]);
 	    $b->save();
 
          $response = $this->call('POST', 'api/create', ['name'=>'test3', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
@@ -101,7 +101,7 @@ class ModTests extends TestCase
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
-	    $b = new Bans(['fk_name'=>'test3']);
+	    $b = new Bans(['fk_name'=>'test3', 'hardban'=>0]);
 	    $b->save();
 
 	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
@@ -117,9 +117,14 @@ class ModTests extends TestCase
 	$token = $response->getOriginalContent()['access_token'];
 	$this->assertFalse($token == '' || is_null($token));
 
+	$expected_json = '[{"fk_name":"test3","uri":"c","url":"c","hardban":0},{"fk_name":"test2","uri":"b","url":"b","hardban":1},{"fk_name":"test","uri":"a","url":"a","hardban":1}]';
 
 	    $res = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token])->json('get','api/mod/all'); 
-	    $this->assertEquals(json_decode('[{"fk_name":"test3","uri":"c","url":"c","updated_at":"2020-03-09 00:08:27","created_at":"2020-03-09 00:08:27"},{"fk_name":"test2","uri":"b","url":"b","updated_at":"2020-03-09 00:08:27","created_at":"2020-03-09 00:08:27"},{"fk_name":"test","uri":"a","url":"a","updated_at":"2020-03-09 00:08:27","created_at":"2020-03-09 00:08:27"}]', true)[0]['fk_name'], json_decode($res->getContent(), true)[0]['fk_name']);
+	$this->assertEquals(json_decode($expected_json, true)[0]['fk_name'], json_decode($res->getContent(), true)[0]['fk_name']);
+	$this->assertEquals(json_decode($expected_json, true)[2]['fk_name'], json_decode($res->getContent(), true)[2]['fk_name']);
+
+	$this->assertEquals(json_decode($expected_json, true)[0]['hardban'], json_decode($res->getContent(), true)[0]['hardban']);
+        $this->assertEquals(json_decode($expected_json, true)[2]['hardban'], json_decode($res->getContent(), true)[2]['hardban']);
 	}
 
     	// test the action route of banning user

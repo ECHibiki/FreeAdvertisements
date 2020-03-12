@@ -93,7 +93,7 @@ export class ModDetailsTable extends Component{
 		for(var index in adData){
 			var entry = adData[index];
 			entry['uri'] = entry['uri'].replace('public/image/', 'storage/image/');
-			JSX_var.push(<ModDetailsEntry updateDetailsCallback={this.props.updateDetailsCallback} id={"banner-" + index} key={"banner-"+index} ad_src={entry['uri']} url={entry['url']} name={entry['fk_name']}/>);
+			JSX_var.push(<ModDetailsEntry updateDetailsCallback={this.props.updateDetailsCallback} id={"banner-" + index} key={"banner-"+index} ad_src={entry['uri']} url={entry['url']} name={entry['fk_name']} ban={entry['hardban']}/>);
 		}
 		return JSX_var;
 	}
@@ -109,6 +109,7 @@ export class ModDetailsTable extends Component{
 						<th className="ad-th-name">Name</th>
 						<th className="ad-th-img">Image</th>
 						<th className="ad-th-url">URL</th>
+						<th className="ad-th-ban">Ban State</th>
 					</tr>
 				</thead>
 				<tbody className="">
@@ -127,6 +128,13 @@ export class ModDetailsEntry extends Component{
 	}
 	
 	render(){
+		var ban_str = "-";;
+		if(this.props.ban == 1){
+			var ban_str =  "Hardban";
+		}
+		else if(this.props.ban == 0){
+			var ban_str = "Softban";
+		}
 		return(<tr id={this.props.id} className="">
 				<td className="ad-td-ban"><ModRemovalButton updateDetailsCallback={this.props.updateDetailsCallback} ad_src={this.props.ad_src} url={this.props.url} name={this.props.name}/></td>
 				<td className="ad-td-del"><ModBanButton updateDetailsCallback={this.props.updateDetailsCallback} ad_src={this.props.ad_src} url={this.props.url} name={this.props.name}/></td>
@@ -134,6 +142,7 @@ export class ModDetailsEntry extends Component{
 				<td className="ad-td-name">{this.props.name}</td>
 				<td className="ad-td-img"><a href={this.props.ad_src} ><img src={this.props.ad_src}/></a></td>
 				<td className="ad-td-url"><a href={this.props.url}>{this.props.url}</a></td>
+				<td className="ad-td-ban">{ban_str}</td>
 			</tr>);
 	}
 }
