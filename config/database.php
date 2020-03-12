@@ -61,7 +61,7 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
-            
+        ],
             'testing' => [
               'driver' => 'mysql',
               'host' => env('DB_TEST_HOST', 'localhost'),
@@ -73,8 +73,6 @@ return [
               'prefix' => '',
               'strict' => false,
             ],
-        ],
-
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
