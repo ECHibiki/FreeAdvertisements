@@ -1,4 +1,4 @@
-import { MasterPage, AllPage } from './components/container-components';
+import { MasterPage, AllPage, ModPage } from './components/container-components';
 import ReactDOM from 'react-dom';
 import React from 'react';
 
@@ -16,6 +16,7 @@ if(document.getElementById("index")){
 		<Router>
 		 <Switch>
 		  <Route path="/all" component={AllPage} />
+		  <Route path="/mod" component={ModPage} />
 		  <Route path="/" component={MasterPage} />
 		 </Switch>
 		</Router>,

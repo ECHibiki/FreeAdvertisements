@@ -1,0 +1,19 @@
+language: php
+php:
+ - 7.2
+ - 7.3
+ - 7.4
+services:
+ - mysql
+ 
+before_script:  
+ - cp .env.travis .env
+ - sudo mysql -e 'create database testing;'
+ - composer install --no-interaction 
+ - php artisan key:generate
+ - php artisan jwt:secret
+ - php artisan storage:link
+ - php artisan migrate
+ 
+script:  
+ - vendor/bin/phpunit           

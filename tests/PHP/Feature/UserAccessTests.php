@@ -33,7 +33,6 @@ class UserAccessTests extends TestCase
     public function test_a_user_is_sucessfuly_created(){
 	Storage::fake('local');
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hashedtestpass', 'pass_confirmation'=>'hashedtestpass']);
-	
 	$response
 		->assertStatus(200)
 		->assertJson([

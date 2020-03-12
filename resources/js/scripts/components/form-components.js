@@ -24,7 +24,6 @@ export class AdCreateButton extends Component{
 	render(){
 		return (<div id="create-ad-start"><button onClick={this.props.onClickCallBack} type="button" className="btn btn-primary" >New Banner</button></div>);
 	}
-
 }
 
 export class SignInForm extends Component{
@@ -72,20 +71,38 @@ export class CreationForm extends Component{
 export class AdCreationForm extends Component{
 	constructor(props){
 		super(props);
+		this.state = {file_input: "", url_input: ""}
+
+		this.unsetFormFields = this.unsetFormFields.bind(this);
+		this.handleFileChange = this.handleFileChange.bind(this);
+		this.handleURLChange = this.handleURLChange.bind(this);
+
 	}
+
+	unsetFormFields(){
+		this.setState({file_input:"", url_input: ""});
+	}
+
+	handleFileChange(e){
+		this.setState({file_input:e.target.value});
+	}
+	handleURLChange(e){
+		this.setState({url_input:e.target.value});
+	}
+
 	render(){
 		return(<div style={{visibility: this.props.visibility, height: this.props.height, opacity: this.props.opacity}} id="ad-create-form">
 				<div className="form-group">
 					<label htmlFor="image-ad-c">Image</label>
-					<input type="file" className="form-control-file" id="image-ad-c" accept="image/*" required/>
-					<small className="form-text text-muted">Must be { dimensions_w }x{ dimensions_h } and SFW</small>
+					<input onChange={this.handleFileChange} value={this.state.file_input}  type="file" className="form-control-file" id="image-ad-c" accept="image/*" />
+					<small  className="form-text text-muted">Must be { dimensions_w }x{ dimensions_h } and SFW</small>
 				</div>
 				<div className="form-group">
 					<label htmlFor="ad-url-c">URL</label>
-					<input type="url" pattern="/^http(|s):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|]+$/i" className="form-control" id="ad-url-c" placeholder="http/https urls only" required/>
+					<input onChange={this.handleURLChange} value={this.state.url_input} type="url" pattern="/^http(|s):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|]+$/i" className="form-control" id="ad-url-c" placeholder="http/https urls only" />
 				</div>
 
-				<AdCreateAPIButton UpdateDetails={this.props.UpdateDetails}/>
+				<AdCreateAPIButton UnsetFormFields={this.unsetFormFields} UpdateDetails={this.props.UpdateDetails}/>
 			</div>);
 	}
 
@@ -110,8 +127,7 @@ export class SignInAPIButton extends Component{
 	constructor(props){
 		super(props);
 		this.SendUserSignIn = this.SendUserSignIn.bind(this);
-		this.state = {err_text:"", war_text:"", suc_tex:""};
-
+		this.state = {info_text:"", info_class:""};
 	}
 
 	async SendUserSignIn(e){
@@ -126,35 +142,31 @@ export class SignInAPIButton extends Component{
 					reasons_arr.push(si_response['errors'][reason]);
 				}
 				var key_ind = 0;
-				this.setState({err_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ), war_text: "", suc_text:""});
+				this.setState({
+					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
+					info_class:"text-danger" 
+				});
 			}
 			else{
-				this.setState({err_text:<span>Authorization Failed, Please Refresh<br/></span>});
+				this.setState({
+					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_class:"text-danger" 
+				});
 			}
 		}
 		else if("warn" in si_response){
-			this.setState({war_text:si_response['warn']});
+			this.setState({info_text:si_response['warn'], info_class:"text-warning bg-dark"});
 		}
 		else{
+			this.setState({info_text:si_response['log'], info_class:"text-success"});
 			DataStore.storeAuthToken(si_response['access_token']);
 			this.props.swapPage();
 		}
 	}
 
-	setDisplay(r){
-		if(r == ""){
-			return {display:"none"}
-		}
-		else{
-			return {display:"block"}
-		}
-	}
-
 	render(){
 		return (<div id="sign-in-finish"><button type="button" className="btn btn-secondary" onClick={this.SendUserSignIn}>Submit</button>
-			<p className="text-danger" id="si-error-field" style={this.setDisplay(this.state.err_text)}>{this.state.err_text}</p>
-			<p className="text-warning bg-dark" id="si-war-field" style={this.setDisplay(this.state.war_text)}><span className="bg-dark">{this.state.war_text}</span></p>
-			<p className="text-success" id="si-win-field" style={this.setDisplay(this.state.suc_text)}>{this.state.suc_text}</p>
+			<p className={this.state.info_class}  id="si-info-field" >{this.state.info_text}</p>
 			</div>);
 	}
 
@@ -163,7 +175,7 @@ export class CreateAPIButton extends Component{
 	constructor(props){
 		super(props);
 		this.SendUserCreate = this.SendUserCreate.bind(this);
-		this.state = {err_text:"", war_text:"", suc_tex:""};
+		this.state = {info_text:"", info_class:""};
 	}
 
 	async SendUserCreate(e){
@@ -178,53 +190,57 @@ export class CreateAPIButton extends Component{
 					reasons_arr.push(response['errors'][reason]);
 				}
 				var key_ind = 0;
-				this.setState({err_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ), war_text: "", suc_text:""});
+				this.setState({
+					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
+					info_class:"text-danger" 
+				});
+			}
+			else{
+				this.setState({
+					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_class:"text-danger" 
+				});
 			}
 		}
 		else if("warn" in response){
-			this.setState({war_text:response['warn'], suc_text: "", err_text:""});
+			this.setState({info_text:response['warn'], info_class:"text-warning bg-dark"});
 		}
 		else{
-			this.setState({suc_text:response['log'], war_text: "", err_text:""});
-			var si_response = await APICalls.callSignIn(name, pass);
-			if("message" in si_response){
-				if("errors" in si_response){
+			this.setState({info_text:response['log'], info_class:"text-success"});
+			var response = await APICalls.callSignIn(name, pass);
+			if("message" in response){
+				if("errors" in response){
 					var reasons_arr = []
-					for(var reason in si_response['errors']){
-						reasons_arr.push(si_response['errors'][reason]);
+					for(var reason in response['errors']){
+						reasons_arr.push(response['errors'][reason]);
 					}
 					var key_ind = 0;
-					this.setState({err_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ), war_text: "", suc_text:""});
+					this.setState({
+						info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
+						info_class:"text-danger" 
+					});
 				}
 				else{
-					this.setState({err_text:<span>Authorization Failed, Please Refresh<br/></span>});
+					this.setState({
+						info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+						info_class:"text-danger" 
+					});
 				}
 			}
-			else if("warn" in si_response){
-				this.setState({war_text:si_response['warn']});
+			else if("warn" in response){
+				this.setState({info_text:response['warn'], info_class:"text-warning bg-dark"});
 			}
 			else{
-				DataStore.storeAuthToken(si_response['access_token']);
+				this.setState({info_text:response['log'], info_class:"text-success"});
+				DataStore.storeAuthToken(response['access_token']);
 				this.props.swapPage();
 			}
 		}
 	}
 
-	setDisplay(r){
-		if(r == ""){
-			return {display:"none"}
-		}
-		else{
-			return {display:"block"}
-		}
-	}
-
-
 	render(){
 		return (<div id="create-finish"><button type="button" className="btn btn-secondary" onClick={this.SendUserCreate}>Create</button>
-			<p className="text-danger" id="c-error-field" style={this.setDisplay(this.state.err_text)}>{this.state.err_text}</p>
-			<p className="text-warning bg-dark" id="c-war-field" style={this.setDisplay(this.state.war_text)}><span className="bg-dark">{this.state.war_text}</span></p>
-			<p className="text-success" id="c-win-field" style={this.setDisplay(this.state.suc_text)}>{this.state.suc_text}</p>
+			<p className={this.state.info_class}  id="c-info-field" >{this.state.info_text}</p>
 			</div>);
 	}
 
@@ -233,44 +249,46 @@ export class AdCreateAPIButton extends Component{
 	constructor(props){
 		super(props);
 		this.SendNewBanner = this.SendNewBanner.bind(this);
-		this.state = {err_text:"", war_text:"", suc_tex:""};
+		this.state = {info_text:"", info_class:""};
 	}
 
 	async SendNewBanner(e){
 		var image = document.getElementById("image-ad-c").files[0];
 		var url = document.getElementById("ad-url-c").value;
-		var nb_response = await APICalls.callCreateNewAd(image, url);
-		if("message" in nb_response){
-			if("errors" in nb_response){
+		var response = await APICalls.callCreateNewAd(image, url);
+		if("message" in response){
+			if("errors" in response){
 				var reasons_arr = []
-				for(var reason in nb_response['errors']){
-					reasons_arr.push(nb_response['errors'][reason]);
+				for(var reason in response['errors']){
+					reasons_arr.push(response['errors'][reason]);
 				}
 				var key_ind = 0;
-				this.setState({err_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ), war_text: "", suc_text:""});
-			}
-			else if(nb_response['code'] == "413"){
-				this.setState({err_text:<span>Upload Failed. File too Large<br/></span>});
-
+				this.setState({
+					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
+					info_class:"text-danger" 
+				});
 			}
 			else{
-				this.setState({err_text:<span>Authorization Failed, Please Refresh<br/></span>});
+				this.setState({
+					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_class:"text-danger" 
+				});
 			}
 		}
-		else if("warn" in nb_response){
-			this.setState({war_text:nb_response['warn']});
+		else if("warn" in response){
+			this.setState({info_text:response['warn'], info_class:"text-warning bg-dark"});
 		}
 		else{
+			this.setState({info_text:response['log'], info_class:"text-success"});
 			this.props.UpdateDetails();
+			this.props.UnsetFormFields();
 		}
 	}
 
 
 	render(){
 		return (<div id="ad-create-finish"><button type="button" className="btn btn-secondary" onClick={this.SendNewBanner}>Create</button>
-			<p className="text-danger" id="cad-error-field">{this.state.err_text}</p>
-			<p className="text-warning bg-dark" id="cad-war-field"><span className="bg-dark">{this.state.war_text}</span></p>
-			<p className="text-success" id="cad-win-field">{this.state.suc_text}</p>
+			<p className={this.state.info_class}  id="cad-info-field" >{this.state.info_text}</p>
 			</div>);
 	}
 
@@ -292,10 +310,48 @@ export class AdRemovalButton extends Component{
 			</Popup></div>);
 	}
 }
+export class ModRemovalButton extends Component{
+	constructor(props){
+		super(props);
+	}
+
+	render(){
+		return (<div id="ad-remove">
+			<Popup trigger={<button type="button" className="btn btn-danger btn-sm">Remove</button>}>
+			{close => (
+				<div>
+				<p className="text-danger">Delete all by name or delete individual?</p>
+				<ModIndividualRemovalAPIButton updateDetailsCallback={this.props.updateDetailsCallback}  onClickCallBack={close} ad_src={this.props.ad_src} url={this.props.url} name={this.props.name}/>&nbsp;
+				<ModCompleteRemovalAPIButton updateDetailsCallback={this.props.updateDetailsCallback}  onClickCallBack={close} ad_src={this.props.ad_src} url={this.props.url} name={this.props.name}/>
+
+				</div>
+			)}
+			</Popup></div>);
+	}
+}
+export class ModBanButton extends Component{
+	constructor(props){
+		super(props);
+	}
+
+	render(){
+		return (<div id="ad-remove">
+			<Popup trigger={<button type="button" className="btn btn-info btn-sm">Ban</button>}>
+			{close => (
+				<div>
+				<p className="text-info">Shadow realm this user or hard ban user?</p>
+				<ModSoftBanAPIButton updateDetailsCallback={this.props.updateDetailsCallback}  onClickCallBack={close} ad_src={this.props.ad_src} url={this.props.url} name={this.props.name}/>
+				<ModHardBanAPIButton updateDetailsCallback={this.props.updateDetailsCallback}  onClickCallBack={close} ad_src={this.props.ad_src} url={this.props.url} name={this.props.name}/>
+				</div>
+			)}
+			</Popup></div>);
+	}
+}
+
 export class AdRemovalAPIButton extends Component{
 	constructor(props){
 		super(props);
-		this.state = {err_text:"", war_text:"", suc_tex:""};
+		this.state = {info_text:"", info_class:""};
 
 		this.RemoveAd = this.RemoveAd.bind(this);
 	}
@@ -304,24 +360,79 @@ export class AdRemovalAPIButton extends Component{
 		const uri=this.props.ad_src;
 		const url= this.props.url;
 
-		var rem_response = await APICalls.callRemoveUserAds(uri,url);
-		if("message" in rem_response){
-			if("errors" in rem_response){
+		var response = await APICalls.callRemoveUserAds(uri,url);
+		if("message" in response){
+			if("errors" in response){
 				var reasons_arr = []
-				for(var reason in rem_response['errors']){
-					reasons_arr.push(rem_response['errors'][reason]);
+				for(var reason in response['errors']){
+					reasons_arr.push(response['errors'][reason]);
 				}
 				var key_ind = 0;
-				this.setState({err_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ), war_text: "", suc_text:""});
+				this.setState({
+					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
+					info_class:"text-danger" 
+				});
 			}
 			else{
-				this.setState({err_text:<span>Authorization Failed, Please Refresh<br/></span>});
+				this.setState({
+					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_class:"text-danger" 
+				});
 			}
 		}
-		else if("warn" in rem_response){
-			this.setState({war_text:rem_response['warn']});
+		else if("warn" in response){
+			this.setState({info_text:response['warn'], info_class:"text-warning bg-dark"});
 		}
 		else{
+			this.setState({info_text:response['log'], info_class:"text-success"});
+			this.props.updateDetailsCallback();
+			this.props.onClickCallBack();
+		}
+	}
+
+	render(){
+		return (<div id="ad-remove"><button type="button" className="btn btn-danger btn-sm" onClick={this.RemoveAd}>Remove</button>
+			<p className={this.state.info_class}  id="cr-info-field" >{this.state.info_text}</p>
+			</div>);
+	}
+}
+export class ModIndividualRemovalAPIButton extends Component{
+	constructor(props){
+		super(props);
+		this.state = {info_text:"", info_class:""};
+
+		this.RemoveAd = this.RemoveAd.bind(this);
+	}
+
+	async RemoveAd(){
+		const uri=this.props.ad_src;
+		const url= this.props.url;
+		const name = this.props.name;
+		var response = await APICalls.callModRemoveIndividualAds(name,uri,url);
+		if("message" in response){
+			if("errors" in response){
+				var reasons_arr = []
+				for(var reason in response['errors']){
+					reasons_arr.push(response['errors'][reason]);
+				}
+				var key_ind = 0;
+				this.setState({
+					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
+					info_class:"text-danger" 
+				});
+			}
+			else{
+				this.setState({
+					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_class:"text-danger" 
+				});
+			}
+		}
+		else if("warn" in response){
+			this.setState({info_text:response['warn'], info_class:"text-warning bg-dark"});
+		}
+		else{
+			this.setState({info_text:response['log'], info_class:"text-success"});			
 			this.props.updateDetailsCallback();
 			this.props.onClickCallBack();
 
@@ -329,10 +440,149 @@ export class AdRemovalAPIButton extends Component{
 	}
 
 	render(){
-		return (<div id="ad-remove"><button type="button" className="btn btn-danger btn-sm" onClick={this.RemoveAd}>Remove</button>
-			<br/><p className="text-danger" id="cr-error-field">{this.state.err_text}</p>
-			<p className="text-warning bg-dark" id="cr-war-field"><span className="bg-dark">{this.state.war_text}</span></p>
-			<p className="text-success" id="cr-win-field">{this.state.suc_text}</p>
+		return (<div id="ad-remove-soft"><button type="button" className="btn btn-danger btn-sm" onClick={this.RemoveAd}>Remove Selected</button>
+			<p className={this.state.info_class}  id="mi-info-field" >{this.state.info_text}</p>
+			</div>);
+	}
+}
+export class ModCompleteRemovalAPIButton extends Component{
+	constructor(props){
+		super(props);
+		this.state = {info_text:"", info_class:""};
+
+		this.RemoveAd = this.RemoveAd.bind(this);
+	}
+
+	async RemoveAd(){
+		const name = this.props.name;
+
+		var response = await APICalls.callModRemoveAllUserAds(name);
+		if("message" in response){
+			if("errors" in response){
+				var reasons_arr = []
+				for(var reason in response['errors']){
+					reasons_arr.push(response['errors'][reason]);
+				}
+				var key_ind = 0;
+				this.setState({
+					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
+					info_class:"text-danger" 
+				});
+			}
+			else{
+				this.setState({
+					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_class:"text-danger" 
+				});
+			}
+		}
+		else if("warn" in response){
+			this.setState({info_text:response['warn'], info_class:"text-warning bg-dark"});
+		}
+		else{
+			this.setState({info_text:response['log'], info_class:"text-success"});			this.props.updateDetailsCallback();
+			this.props.onClickCallBack();
+
+		}
+	}
+
+	render(){
+		return (<div id="ad-remove-hard"><button type="button" className="btn btn-danger btn-sm" onClick={this.RemoveAd}>Remove All</button>
+			<p className={this.state.info_class}  id="mc-info-field" >{this.state.info_text}</p>
+			</div>);
+	}
+}
+export class ModSoftBanAPIButton extends Component{
+	constructor(props){
+		super(props);
+		this.state = {info_text:"", info_class:""};
+
+		this.SoftBan = this.SoftBan.bind(this);
+	}
+
+	async SoftBan(){
+		const name = this.props.name;
+		var response = await APICalls.callModBanUser(name, 0);
+		if("message" in response){
+			if("errors" in response){
+				var reasons_arr = []
+				for(var reason in response['errors']){
+					reasons_arr.push(response['errors'][reason]);
+				}
+				var key_ind = 0;
+				this.setState({
+					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
+					info_class:"text-danger" 
+				});
+			}
+			else{
+				this.setState({
+					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_class:"text-danger" 
+				});
+			}
+		}
+		else if("warn" in response){
+			this.setState({info_text:response['warn'], info_class:"text-warning bg-dark"});
+		}
+		else{
+			this.setState({info_text:response['log'], info_class:"text-success"});			this.props.updateDetailsCallback();
+			this.props.onClickCallBack();
+
+		}
+	}
+
+	render(){
+		return (<div id="ban-soft"><button type="button" className="btn btn-info btn-sm" onClick={this.SoftBan}>Soft Ban</button>
+			<p className={this.state.info_class}  id="sb-info-field" >{this.state.info_text}</p>
+			</div>);
+	}
+}
+export class ModHardBanAPIButton extends Component{
+	constructor(props){
+		super(props);
+		this.state = {info_text:"", info_class:""};
+
+		this.HardBan = this.HardBan.bind(this);
+	}
+
+	async HardBan(){
+		const name = this.props.name;
+
+		var response = await APICalls.callModBanUser(name, 1);
+		if("message" in response){
+			if("errors" in response){
+				var reasons_arr = []
+				for(var reason in response['errors']){
+					reasons_arr.push(response['errors'][reason]);
+				}
+				var key_ind = 0;
+				this.setState({
+					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
+					info_class:"text-danger" 
+				});
+			}
+			else{
+				this.setState({
+					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_class:"text-danger" 
+				});
+			}
+		}
+		else if("warn" in response){
+			this.setState({info_text:response['warn'], info_class:"text-warning bg-dark"});
+		}
+		else{
+			this.setState({info_text:response['log'], info_class:"text-success"});			
+			this.props.updateDetailsCallback();
+			this.props.onClickCallBack();
+
+		}
+	}
+
+	render(){
+		return (<div id="ban-hard"><button type="button" className="btn btn-info btn-sm" onClick={this.HardBan}>Hard Ban</button>
+			<p className={this.state.info_class}  id="hb-info-field" >{this.state.info_text}</p>
 			</div>);
 	}
 }
