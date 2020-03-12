@@ -7,9 +7,11 @@ services:
  - mysql
  
 before_script:  
+ - cp .env.travis .env
+ - sudo mysql -e 'create database testing;'
  - composer install --no-interaction 
  - php artisan key:generate
- - php artisan link:storage
+ - php artisan storage:link
  - php artisan migrate
  
 script:  
