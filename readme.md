@@ -13,7 +13,7 @@ If you want to host your own version you must:
 2) Create your .env file from .env.example. Currently this will require npm configuration and rebuilds.
 3) Adjust app/http/controllers/ConfidentialInfoController.php to have the image dimensions desired. In settings.js change where desired.
 4) Setup is typically concluded by ```composer install --no-scripts```. This requires an install of various laravel php dependencies <a href="https://laravel.com/docs/5.8/installation">https://laravel.com/docs/5.8/installation</a>. If it fails chances are you don't have enough memory. You should manually add them from a desktop computer/VM into the server in this case.
-5) ```php artisan key:generate```, ```php artisan link:storage```, ```php artisan migrate```
+5) ```php artisan key:generate```, ```php artisan storage:link```, ```php artisan migrate```
 6) ```php artisan serve```
 
 #Requirements
