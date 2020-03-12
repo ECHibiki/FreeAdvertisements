@@ -3,7 +3,7 @@ php:
  - 7.2
  - 7.3
  - 7.4
- services:
+services:
  - mysql
  
 before_script:  
