@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# install all dependencies and configure attributes
+
+composer install --no-interaction 
+php artisan key:generate
+php artisan jwt:secret
+php artisan storage:link
+php artisan migrate
