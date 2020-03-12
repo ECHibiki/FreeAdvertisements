@@ -7,8 +7,8 @@ php:
  - mysql
  
 before_script:  
-   - composer install --no-interaction 
-   - php artisan key:generate  
-   - php artisan migrate
- script:  
-  - vendor/bin/phpunit           
+ - composer install --no-interaction 
+ - php artisan key:generate  
+ - php artisan migrate
+script:  
+ - vendor/bin/phpunit           
