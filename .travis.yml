@@ -8,7 +8,9 @@ services:
  
 before_script:  
  - composer install --no-interaction 
- - php artisan key:generate  
+ - php artisan key:generate
+ - php artisan link:storage
  - php artisan migrate
+ 
 script:  
  - vendor/bin/phpunit           
