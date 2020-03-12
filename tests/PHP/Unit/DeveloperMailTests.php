@@ -32,7 +32,7 @@ class DeveloperMailTests extends TestCase
 	public function test_email_view_propper(){
 		$this->assertEquals('<h2>New Banner @ 20</h2>
 <p style="color:green">Name:  testname</p><br/>
-<p style="color:cyan">URL: http://sdf.com</p>
+<p style="color:blue">URL: http://sdf.com</p>
 ', (new \App\Mail\BannerNotification(["name"=>"testname", "time"=>date('y',time()), "url"=>"http://sdf.com", 'err'=>'']))->render());
 	}
 
