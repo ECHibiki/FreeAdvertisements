@@ -230,19 +230,18 @@ $_SERVER["HTTP_X_REAL_IP"] = "2";
 
     
     public function test_random_sql_entry(){
-	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
-	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
-	$token = $response->getOriginalContent()['access_token'];
-        $img = UploadedFile::fake()->image('ad.jpg',500,90);
-	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://a.com"]);
-	$fname1 = $response->json()['fname'];	
-
-	$response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
-	$response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
-	$token = $response->getOriginalContent()['access_token'];
-        $img = UploadedFile::fake()->image('ad2.jpg',500,90);
-	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://b.com"]);
-	$fname1 = $response->json()['fname'];	
+         Storage::fake('public/image');
+$_SERVER["HTTP_X_REAL_IP"] = 1;
+         $response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://a.com"]);
+	 
+$_SERVER["HTTP_X_REAL_IP"] = 2;
+         $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://b.com"]);
 
 	    $a = 1;
 	    $b = 1;	    
