@@ -42455,11 +42455,11 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "How To Use"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "To easily embed on a website use:", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         className: "code",
         value: code_string_iframe,
-        disabled: ""
+        readOnly: true
       }), "A more sophisticated method is to preload the banner and then place into a container:", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
         className: "code",
         value: code_string_ajax,
-        disabled: ""
+        readOnly: true
       }), "This is a slight bit faster than iframes and removes difficulties with resizing.", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "Uploaded images must be ", _settings__WEBPACK_IMPORTED_MODULE_5__["dimensions_w"], "x", _settings__WEBPACK_IMPORTED_MODULE_5__["dimensions_h"], " and safe for work"));
     }
   }]);
@@ -42852,7 +42852,7 @@ function (_Component10) {
         id: "footer"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "https://github.com/ECHibiki/Community-Banners"
-      }, "Community Banners - ", "1.3.0"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), " Verniy - MPL-2.0, 2020", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "Concerns should be sent to Verniy @ ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+      }, "Community Banners - ", "1.3.1"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), " Verniy - MPL-2.0, 2020", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), "Concerns should be sent to Verniy @ ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "https://kissu.moe/b/res/2275"
       }, "kissu.moe"));
     }
