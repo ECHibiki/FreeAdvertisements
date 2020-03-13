@@ -213,16 +213,74 @@ $_SERVER["HTTP_X_REAL_IP"] = 2;
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://b.com"]);
 
+         $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://c.com"]);
+
+
+	          $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://d.com"]);
+
+	          $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://e.com"]);
+
+	 // 1 / 4 
+
 	    $a = 0;
-	    $b = 0;	    
-	for($i = 0 ; $i < 100 ; $i++){
+	    $b = 1;	
+   		$itterations = 4000;
+	    $plus = 0.27;
+	    $minus = 0.22;
+	for($i = 0 ; $i < $itterations ; $i++){
 		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://a.com" ? $a++ : $b++;
 	}	
-	    echo "$a $b";
-	$this->assertEquals($a, 0);
+	    echo " $a $b " . $a/($b+$a) . " ";
+	    $this->assertEquals($a / ($b+$a), 0);
+
+	    $a = 1;
+	    $b = 1;	
+	    	for($i = 0 ; $i < $itterations ; $i++){
+		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://b.com" ? $a++ : $b++;
+	}	
+	    echo " $a $b " . $a/($b+$a);
+	    $this->assertEquals($a / ($b+$a) > $minus, $a / ($b+$a) < $plus);
+
+	    $a = 1;
+	    $b = 1;	
+	    	for($i = 0 ; $i < $itterations ; $i++){
+		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://c.com" ? $a++ : $b++;
+	}	
+	    echo " $a $b " . $a/($b+$a);
+	    $this->assertEquals($a / ($b+$a) > $minus, $a / ($b+$a) < $plus);
+
+	    $a = 1;
+	    $b = 1;	
+	    	for($i = 0 ; $i < $itterations ; $i++){
+		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://d.com" ? $a++ : $b++;
+	}	
+	    echo " $a $b " . $a/($b+$a);
+	    $this->assertEquals($a / ($b+$a) > $minus, $a / ($b+$a) < $plus);
+
+	    $a = 1;
+	    $b = 1;	
+
+	    	for($i = 0 ; $i < $itterations ; $i++){
+		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://e.com" ? $a++ : $b++;
+	}	
+	    echo " $a $b " . $a/($b+$a);
+	    $this->assertEquals($a / ($b+$a) > $minus, $a / ($b+$a) < $plus);
     }
 
-     public function test_banned_users_see_there_own(){
+    public function test_same_ip_banned_users_see_there_own(){
+	    $_SERVER['HTTP_X_REAL_IP'] = 1;
          $response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
          $response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
          Storage::fake('public/image');
@@ -235,18 +293,70 @@ $_SERVER["HTTP_X_REAL_IP"] = 2;
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://b.com"]);
 
+	          $response = $this->call('POST', 'api/create', ['name'=>'test3', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://c.com"]);
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test4', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test4', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://d.com"]);
+
+         $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+         $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+         Storage::fake('public/image');
+         $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://e.com"]);
+
+
 	 $ban = new Bans(['fk_name'=>'test']);
 	 $ban->save();
 	 $ban = new Bans(['fk_name'=>'test2']);
 	 $ban->save();
 
 	    $a = 1;
-	    $b = 1;	    
-	for($i = 0 ; $i < 500 ; $i++){
+	 $b = 1;	
+	 $itterations = 4000;
+	    $plus = 0.22;
+	    $minus = 0.18;
+	for($i = 0 ; $i < $itterations ; $i++){
 		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://a.com" ? $a++ : $b++;
 	}	
-	    echo "$a $b";
-	$this->assertTrue($b / $a >= 0.75 || $a / $b >= 0.75);
+	    echo "$a $b " . $a/($b+$a);
+	    $this->assertEquals($a / ($b+$a) > $minus, $a / ($b+$a) < $plus);
+	    $a = 1;
+	    $b = 1;	
+	    	for($i = 0 ; $i < $itterations ; $i++){
+		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://b.com" ? $a++ : $b++;
+	}	
+	    echo "$a $b " . $a/($b+$a);
+	    $this->assertEquals($a / ($b+$a) > $minus, $a / ($b+$a) < $plus);
+	    $a = 1;
+	    $b = 1;	
+	    	for($i = 0 ; $i < $itterations ; $i++){
+		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://c.com" ? $a++ : $b++;
+	}	
+	    echo "$a $b " . $a/($b+$a);
+	    $this->assertEquals($a / ($b+$a) > $minus, $a / ($b+$a) < $plus);
+	    $a = 1;
+	    $b = 1;	
+	    	for($i = 0 ; $i < $itterations ; $i++){
+		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://d.com" ? $a++ : $b++;
+	}	
+	    echo "$a $b " . $a/($b+$a);
+	    $this->assertEquals($a / ($b+$a) > $minus, $a / ($b+$a) < $plus);
+
+	    $a = 1;
+	    $b = 1;	
+	    	for($i = 0 ; $i < $itterations ; $i++){
+		\App\Http\Controllers\PageGenerationController::GetRandomAdEntry()->url == "https://e.com" ? $a++ : $b++;
+	}	
+	    echo "$a $b " . $a/($b+$a);
+	    $this->assertEquals($a / ($b+$a) > $minus, $a / ($b+$a) < $plus);
+
     }
 
 	public function test_all_page_get_info(){
