@@ -11,6 +11,7 @@
     </head>
     <body>
 	<div id="index"></div>
+	<div id='footer'></div>
 	<script src="/js/app.js"></script>
     </body>
 </html>
