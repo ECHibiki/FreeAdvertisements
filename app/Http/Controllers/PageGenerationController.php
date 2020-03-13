@@ -22,8 +22,13 @@ class PageGenerationController extends Controller
 		return $fname;
 	}
 
-	public static function getLimitedInfo(){
-		$data = (array)PageGenerationController::GetLimitedEntries();
+	public static function getLimitedInfo(Request $request){
+		$pool = false;
+		try{
+			$pool =$request->input('env');
+		}
+		catch(\Exception $e){}
+		$data = (array)PageGenerationController::GetLimitedEntries(null, $pool);
 		$data = array_reverse(array_pop($data));
 		return json_encode($data);
 	}
@@ -57,13 +62,14 @@ class PageGenerationController extends Controller
                 return DB::table('ads')
 			->leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')
 			->whereNull('bans.hardban')
-			->orWhere('ip','=', PageGenerationController::getBestIPSource())	
+			->orWhere('ip','=', PageGenerationController::getBestIPSource())
+			->orWhere('bans.fk_name','=',$name)	
 			->select("ads.fk_name", "uri", "url")
 			->orderBy('ads.created_at', 'ASC')->inRandomOrder()->first();
 	
 		}
 
-	public static function GetLimitedEntries($name = null){
+	public static function GetLimitedEntries($name = null, $env_skip = false){
 		try{
 			if(!$name)
                         	$name = auth()->setToken($_COOKIE['freeadstoken'])->user()->name;
@@ -73,9 +79,10 @@ class PageGenerationController extends Controller
 		}
 		return DB::table('ads')
 			->leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')
-			->when($name == "" || !PageGenerationController::checkBanned($name),function($q){
+			->when(!(env('ALLOW_BANNED_USER_POOL') || $env_skip)  || ($name == "" || !PageGenerationController::checkBanned($name)),function($q) use ($name){
 				return $q->whereNull('bans.hardban')
-					->orWhere('ip','=', PageGenerationController::getBestIPSource());
+					->orWhere('ip','=', PageGenerationController::getBestIPSource())
+					->orWhere('bans.fk_name','=',$name);
 			})
 			->select("ads.fk_name", "uri", "url")
 			->orderBy('ads.created_at', 'ASC')->get();

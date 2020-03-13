@@ -162,7 +162,9 @@ $_SERVER["HTTP_X_REAL_IP"] = "2";
 	    $this->assertEquals(json_decode('[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test2","uri":"b","url":"b"},{"fk_name":"test3","uri":"c","url":"c"}]', true)[2]['fk_name'],json_decode($res, true)[2]['fk_name']);
     }
 
-     public function test_all_page_get_info_under_effects_of_ban_(){
+    public function test_all_page_get_info_under_effects_of_ban_pooling_disabled(){
+	$_SERVER["HTTP_X_REAL_IP"] = "0";
+
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 	$token = $response->getOriginalContent()['access_token'];
@@ -171,22 +173,89 @@ $_SERVER["HTTP_X_REAL_IP"] = "2";
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
 	$fname1 = $response->json()['fname'];	
 
+	$b = new Bans(['fk_name'=>'test']);
+	$b->save();
+
+	$_SERVER["HTTP_X_REAL_IP"] = "1";
+
+	$response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+	$token = $response->getOriginalContent()['access_token'];
+
 	$img2 = UploadedFile::fake()->image('ad1.jpg',500,90);
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img2, 'url'=>"https://test.com"]);
 	$fname2 = $response->json()['fname'];	
+
+	$b = new Bans(['fk_name'=>'test2']);
+	$b->save();
+
+		$_SERVER["HTTP_X_REAL_IP"] = "2";
+	$response = $this->call('POST', 'api/create', ['name'=>'test3', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
+	$token = $response->getOriginalContent()['access_token'];
 
 	$img3 = UploadedFile::fake()->image('ad2.jpg',500,90);
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img2, 'url'=>"https://test.com"]);
 	$fname3 = $response->json()['fname'];	
 
+	$b = new Bans(['fk_name'=>'test3']);
+	$b->save();
+
+	
+	$_SERVER["HTTP_X_REAL_IP"] = "1";
+
+	$res = \App\Http\Controllers\PageGenerationController::getLimitedEntries('test2', false);
+	$test_json = '[{"fk_name":"test2","uri":"a","url":"a"}]';
+        $this->assertEquals(json_decode($test_json, true)[0]['fk_name'],json_decode($res, true)[0]['fk_name']);
+
+    }
+
+    public function test_all_page_get_info_IP_Connection_of_ban_pooling_disabled(){
+	$_SERVER["HTTP_X_REAL_IP"] = "0";
+
+	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
+	$token = $response->getOriginalContent()['access_token'];
+
+        $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
+	$fname1 = $response->json()['fname'];	
+
 	$b = new Bans(['fk_name'=>'test']);
 	$b->save();
 
-	    $res = \App\Http\Controllers\PageGenerationController::getLimitedEntries();
-	    $this->assertEquals(json_decode('[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test","uri":"b","url":"b"},{"fk_name":"test","uri":"c","url":"c"}]', true)[2]['fk_name'],json_decode($res, true)[2]['fk_name']);
+
+	$response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+	$token = $response->getOriginalContent()['access_token'];
+
+	$img2 = UploadedFile::fake()->image('ad1.jpg',500,90);
+	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img2, 'url'=>"https://test.com"]);
+	$fname2 = $response->json()['fname'];	
+
+		$_SERVER["HTTP_X_REAL_IP"] = "2";
+	$response = $this->call('POST', 'api/create', ['name'=>'test3', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+	$response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
+	$token = $response->getOriginalContent()['access_token'];
+
+	$img3 = UploadedFile::fake()->image('ad2.jpg',500,90);
+	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img2, 'url'=>"https://test.com"]);
+	$fname3 = $response->json()['fname'];	
+
+	$b = new Bans(['fk_name'=>'test3']);
+	$b->save();
+
+	$res = \App\Http\Controllers\PageGenerationController::getLimitedEntries('test', false);
+
+	$test_json = '[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test2","uri":"a","url":"a"}]';
+	$this->assertEquals(json_decode($test_json, true)[0]['fk_name'],json_decode($res, true)[0]['fk_name']);
+	$this->assertEquals(json_decode($test_json, true)[1]['fk_name'],json_decode($res, true)[1]['fk_name']);
+
+
      }
 
-    public function test_all_page_get_info_shows_for_all_banned_by_ip(){
+
+    public function test_all_page_get_info_under_effects_of_ban_pooling_enabled(){
 	    $_SERVER["HTTP_X_REAL_IP"] = "1";
 
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
@@ -223,8 +292,11 @@ $_SERVER["HTTP_X_REAL_IP"] = "2";
 	$b->save();
 	
 	$_COOKIE['freeadstoken'] = $t1;
-	$res = \App\Http\Controllers\PageGenerationController::getLimitedEntries('test');
-	    $this->assertEquals(json_decode('[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test2","uri":"b","url":"b"},{"fk_name":"test3","uri":"c","url":"c"}]', true)[2]['fk_name'],json_decode($res, true)[2]['fk_name']);
+	$res = \App\Http\Controllers\PageGenerationController::getLimitedEntries('test', true);
+	$test_json = '[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test2","uri":"b","url":"b"},{"fk_name":"test3","uri":"c","url":"c"}]';
+	$this->assertEquals(json_decode($test_json, true)[2]['fk_name'],json_decode($res, true)[2]['fk_name']);
+	$this->assertEquals(json_decode($test_json, true)[1]['fk_name'],json_decode($res, true)[1]['fk_name']);
+        $this->assertEquals(json_decode($test_json, true)[0]['fk_name'],json_decode($res, true)[0]['fk_name']);
      }
 
 

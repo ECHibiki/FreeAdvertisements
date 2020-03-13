@@ -269,12 +269,13 @@ $_SERVER["HTTP_X_REAL_IP"] = 2;
          $response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
-	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	 $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	
 
-	 $res = \App\Http\Controllers\PageGenerationController::getLimitedInfo();
-
+	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all', ['env'=>'true'], ['freeadstoken'=>$response->getOriginalContent()['access_token']]); 
+var_dump($res);
 	    $this->assertEquals(json_decode('[{"fk_name":"test3","uri":"c","url":"c","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test2","uri":"b","url":"b","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test","uri":"a","url":"a","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"}]', true)[2]['fk_name'], 
-		    json_decode($res, true)[2]['fk_name']);
+		    json_decode($res->getOriginalContent(), true)[2]['fk_name']);
     }
 
       public function test_all_page_get_info_under_effects_of_ban_for_normal_user(){
@@ -319,7 +320,7 @@ $_SERVER["HTTP_X_REAL_IP"] = 4;
 
 	}
 
-     public function test_all_page_get_info_under_effects_of_ban_for_banned_user(){
+     public function test_all_page_get_info_under_effects_of_ban_for_banned_user_pooling_enabled(){
 	//redundant but easy    
 	Storage::fake('local');
 
@@ -350,7 +351,7 @@ $_SERVER["HTTP_X_REAL_IP"] = 3;
 	    $b->save();
 
 
-	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all', [], ['freeadstoken'=>$token]); 
+	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all', ['env'=>'true'], ['freeadstoken'=>$token]); 
 var_dump($res->getContent());
 	    $this->assertEquals(json_decode('[{"fk_name":"test3","uri":"c","url":"c","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test2","uri":"b","url":"b","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test","uri":"a","url":"a","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"}]', true)[2]['fk_name'], 
 		    json_decode($res->getContent(), true)[2]['fk_name']);
