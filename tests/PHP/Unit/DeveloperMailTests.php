@@ -69,6 +69,4 @@ class DeveloperMailTests extends TestCase
 		$this->assertEquals($re, false);
 		Mail::assertNothingSent();
 	}	
-	
-
 }

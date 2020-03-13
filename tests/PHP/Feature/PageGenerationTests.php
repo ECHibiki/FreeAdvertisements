@@ -273,7 +273,7 @@ $_SERVER["HTTP_X_REAL_IP"] = 2;
 	
 
 	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all', ['env'=>'true'], ['freeadstoken'=>$response->getOriginalContent()['access_token']]); 
-var_dump($res);
+
 	    $this->assertEquals(json_decode('[{"fk_name":"test3","uri":"c","url":"c","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test2","uri":"b","url":"b","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test","uri":"a","url":"a","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"}]', true)[2]['fk_name'], 
 		    json_decode($res->getOriginalContent(), true)[2]['fk_name']);
     }
@@ -352,7 +352,7 @@ $_SERVER["HTTP_X_REAL_IP"] = 3;
 
 
 	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all', ['env'=>'true'], ['freeadstoken'=>$token]); 
-var_dump($res->getContent());
+
 	    $this->assertEquals(json_decode('[{"fk_name":"test3","uri":"c","url":"c","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test2","uri":"b","url":"b","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test","uri":"a","url":"a","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"}]', true)[2]['fk_name'], 
 		    json_decode($res->getContent(), true)[2]['fk_name']);
 
