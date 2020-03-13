@@ -388,6 +388,10 @@ var_dump($res->getContent());
 
      }
 
-
+    public function test_empty_banner_JSON_call_does_not_fail(){
+    	$res = $this->json('get', 'api/banner');
+	$res->assertStatus(200);
+	$this->assertEquals('[{"url":"","uri":"","name":"asdf no ads"}]', $res->getContent());
+    }
 
 }

@@ -39,7 +39,7 @@ class PageGenerationController extends Controller
 	public function GenerateAdJSON(){
 		$rand_ad = $this->GetRandomAdEntry();
 		if($rand_ad == null){
-			return "asdf no ads";
+			return json_encode([['url'=>'', 'uri'=>'', 'name'=>'asdf no ads']]);
 		}
 		else
 			return json_encode([['url'=>$rand_ad->url, 'uri'=>str_replace('public','storage',$rand_ad->uri), 'name'=>$rand_ad->fk_name]]);
