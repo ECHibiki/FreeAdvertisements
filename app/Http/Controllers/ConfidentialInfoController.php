@@ -41,7 +41,7 @@ class ConfidentialInfoController extends Controller
 		$t = MailSendController::getCooldown();
 
 		if($t < time()){
-			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:m:s',time()), "url"=> $request->input('url')],
+			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:i:s',time()), "url"=> $request->input('url')],
 				['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
 			MailSendController::updateCooldown();	
 			if(!$err){
