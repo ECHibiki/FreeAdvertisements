@@ -65,7 +65,7 @@ class PageGenerationController extends Controller
 			->orWhere('ip','=', PageGenerationController::getBestIPSource())
 			->orWhere('bans.fk_name','=',$name)	
 			->select("ads.fk_name", "uri", "url")
-			->orderBy('ads.created_at', 'ASC')->inRandomOrder()->first();
+			->inRandomOrder()->first();
 	
 		}
 
