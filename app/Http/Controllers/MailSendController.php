@@ -31,7 +31,8 @@ class MailSendController extends Controller
 
 
 	public static function sendMail($data, $emails){
-		$errors = '';
+	$bcc_errors = '';
+	 try{
 	    if(isset($emails['primary_email'])){
 		    $msg = Mail::to(str_replace("\n", "", $emails['primary_email']));
 		   if(isset($emails['secondary_emails'])){
@@ -49,9 +50,12 @@ class MailSendController extends Controller
 			}
 		}
 
-		$msg->send(new BannerNotification(['name'=>$data['name'], 'time'=>$data['time'], 'url'=>$data['url'], 'err'=>$errors]));
+		$msg->send(new BannerNotification(['name'=>$data['name'], 'time'=>$data['time'], 'url'=>$data['url'], 'err'=>$bcc_errors]));
 		return true;
 	    }
-	    return false;
+	}catch(\Exception $e){
+		return $e->getMessage();
+	}
+	return false;
    }		
 }

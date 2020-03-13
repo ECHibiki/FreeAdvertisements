@@ -39,13 +39,25 @@ class PageGenerationTests extends TestCase
         Storage::fake('public/image');
         $img = UploadedFile::fake()->image('ad.jpg',500,90);
 
-	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);	
+	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://www.test.com/?asd=123"]);	
 	$response->assertStatus(200)->assertJson(['log'=>'Ad Created']);
 
 	$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
-	$this->assertEquals('https://test.com', $info[0]['url']);
-	$this->assertDatabaseHas("ads", ['fk_name'=>'test', 'url'=>'https://test.com']);
-    }          
+	$this->assertEquals('https://www.test.com/?asd=123', $info[0]['url']);
+	$this->assertDatabaseHas("ads", ['fk_name'=>'test', 'url'=>'https://www.test.com/?asd=123']);
+	Storage::disk('local')->assertExists($info[0]['uri']);  
+
+
+	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com/"]);	
+	$response->assertStatus(200)->assertJson(['log'=>'Ad Created']);
+
+	$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
+	$this->assertEquals('https://test.com/', $info[1]['url']);
+	$this->assertDatabaseHas("ads", ['fk_name'=>'test', 'url'=>'https://test.com/']);
+	Storage::disk('local')->assertExists($info[1]['uri']);  
+
+    }      
+
     public function test_ad_page_generation(){
 	Storage::fake('local');
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
@@ -257,12 +269,13 @@ $_SERVER["HTTP_X_REAL_IP"] = 2;
          $response = $this->call('POST', 'api/login', ['name'=>'test3', 'pass'=>'hardpass']);
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
-	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	 $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
+	
 
-	 $res = \App\Http\Controllers\PageGenerationController::getLimitedInfo();
+	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all', ['env'=>'true'], ['freeadstoken'=>$response->getOriginalContent()['access_token']]); 
 
 	    $this->assertEquals(json_decode('[{"fk_name":"test3","uri":"c","url":"c","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test2","uri":"b","url":"b","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test","uri":"a","url":"a","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"}]', true)[2]['fk_name'], 
-		    json_decode($res, true)[2]['fk_name']);
+		    json_decode($res->getOriginalContent(), true)[2]['fk_name']);
     }
 
       public function test_all_page_get_info_under_effects_of_ban_for_normal_user(){
@@ -307,7 +320,7 @@ $_SERVER["HTTP_X_REAL_IP"] = 4;
 
 	}
 
-     public function test_all_page_get_info_under_effects_of_ban_for_banned_user(){
+     public function test_all_page_get_info_under_effects_of_ban_for_banned_user_pooling_enabled(){
 	//redundant but easy    
 	Storage::fake('local');
 
@@ -338,8 +351,8 @@ $_SERVER["HTTP_X_REAL_IP"] = 3;
 	    $b->save();
 
 
-	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all', [], ['freeadstoken'=>$token]); 
-var_dump($res->getContent());
+	    $res = $this->withHeaders(['Accept' => 'application/json'])->json('get','api/all', ['env'=>'true'], ['freeadstoken'=>$token]); 
+
 	    $this->assertEquals(json_decode('[{"fk_name":"test3","uri":"c","url":"c","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test2","uri":"b","url":"b","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"},{"fk_name":"test","uri":"a","url":"a","updated_at":"2020-03-08 20:10:36","created_at":"2020-03-08 20:10:36"}]', true)[2]['fk_name'], 
 		    json_decode($res->getContent(), true)[2]['fk_name']);
 
@@ -388,6 +401,10 @@ var_dump($res->getContent());
 
      }
 
-
+    public function test_empty_banner_JSON_call_does_not_fail(){
+    	$res = $this->json('get', 'api/banner');
+	$res->assertStatus(200);
+	$this->assertEquals('[{"url":"","uri":"","name":"asdf no ads"}]', $res->getContent());
+    }
 
 }

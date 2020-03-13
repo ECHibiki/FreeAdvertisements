@@ -16,9 +16,9 @@ export class HelperText extends Component{
 		var code_string_ajax = 	'<script>var fetch = new XMLHttpRequest();fetch.open("GET", "{{ config.banner_src }}api/banner");fetch.addEventListener("load", function(){var info = JSON.parse(this.responseText)[0];window.ban_url = document.createElement("A");window.ban_url.setAttribute("href", info["url"]);ban_url.setAttribute("style", "display:contents");var ban_img = document.createElement("IMG");ban_img.setAttribute("src", "{{ config.banner_src }}" + info["uri"]);ban_img.setAttribute("style", "margin:auto;display:block;max-width:100%;border:none;");	window.ban_url.appendChild(ban_img);if(document.getElementById("banner-container") != undefined);document.getElementById("banner-container").appendChild(window.ban_url);});fetch.send();</script>;'
 		+ '\n\n<body><div id="banner-container"></div></body>';
 		return (<div id="helper"><h2>How To Use</h2><p>To easily embed on a website use:<br/>			
-					<textarea className="code" value={code_string_iframe} disabled=''/>
+					<textarea className="code" value={code_string_iframe} readOnly/>
 					A more sophisticated method is to preload the banner and then place into a container:<br/>
-					<textarea className="code" value={code_string_ajax} disabled=''/>
+					<textarea className="code" value={code_string_ajax} readOnly/>
 					This is a slight bit faster than iframes and removes difficulties with resizing.
 					<br/>Uploaded images must be {dimensions_w}x{dimensions_h} and safe for work
 
@@ -199,5 +199,11 @@ export class DonatorBox extends Component{
 	render(){
 		var html = {__html: process.env.MIX_EXTRA_INFO}
 		return(<div id="donation" dangerouslySetInnerHTML={html}></div>);
+	}
+}
+
+export class FooterInfo extends Component{
+	render(){
+		return(<div id='footer'><a href="https://github.com/ECHibiki/Community-Banners">Community Banners - {process.env.MIX_VERSION_NO}</a><br/> Verniy - MPL-2.0, 2020<br/>Concerns should be sent to Verniy @ <a href="https://kissu.moe/b/res/2275">kissu.moe</a></div>);
 	}
 }

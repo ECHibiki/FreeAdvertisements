@@ -97,14 +97,14 @@ $_SERVER['HTTP_X_REAL_IP'] = 1;
 		Storage::fake('public/image');
 $_SERVER['HTTP_X_REAL_IP'] = 1;
 		$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
-		var_dump($response->getContent());
+
 		$response->assertStatus(200);
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 		$response->assertStatus(200);
 		$token = $response->getOriginalContent()['access_token'];
         	$img = UploadedFile::fake()->image('ad.jpg',500,90);
 		$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
-
+var_dump($response->json());
 		sleep(6);
 
 		$response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);

@@ -153,7 +153,7 @@ class ModTests extends TestCase
 			$this->assertEquals($in->hardban, 1);
 
 		}
-		// test route of purge
+		// test route of individual
 	   public function test_individual_remove_action(){
 						//redundant but easy    
 		Storage::fake('local');
@@ -197,7 +197,7 @@ class ModTests extends TestCase
 
 	}
     
-	// test route of prune
+	// test route of purge
 	public function test_purge_remove_action(){
 				    	//redundant but easy    
 		Storage::fake('local');
@@ -217,6 +217,16 @@ class ModTests extends TestCase
 	$fname2 = $response->json()['fname'];	
 	$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
 
+	// keep this around
+	$response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+	$response->assertStatus(200);
+	$response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
+	$response->assertStatus(200);
+	$token = $response->getOriginalContent()['access_token'];
+		
+        $img = UploadedFile::fake()->image('ad.jpg',500,90);
+	$this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
+	/**/
 
 	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);
 	$response->assertStatus(200);
@@ -230,9 +240,7 @@ class ModTests extends TestCase
 			->assertJson(['access_token'=>true]);
 		$token = $response->getOriginalContent()['access_token'];
 		$this->assertFalse($token == '' || is_null($token));
-
 		$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
-
 		$res = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token])->json('post','api/mod/purge', ['name'=>'test']); 
 
 		$res->assertStatus(200);
@@ -243,8 +251,8 @@ class ModTests extends TestCase
 		$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
 		$this->assertEquals($info, []);
 		$this->assertDatabaseMissing('ads',[['fk_name'=>'test', 'uri'=>$fname], ['fk_name'=>'test', 'uri'=>$fname2]]);
-
-
+		$this->assertDatabaseHas('ads',['fk_name'=>'test2']);
+	
 	}
 
 	

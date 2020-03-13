@@ -1,4 +1,5 @@
 import { MasterPage, AllPage, ModPage } from './components/container-components';
+import { FooterInfo } from './components/information-components';
 import ReactDOM from 'react-dom';
 import React from 'react';
 
@@ -21,5 +22,10 @@ if(document.getElementById("index")){
 		 </Switch>
 		</Router>,
 	document.getElementById("index"));
+}
+if(document.getElementById("footer")){
+	ReactDOM.render(
+		<FooterInfo />,
+	document.getElementById("footer"));
 }
 

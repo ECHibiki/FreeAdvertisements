@@ -103,7 +103,7 @@ class ModeratorActivityController extends Controller
 	}
 
 	public static function removeUserFromDatabase($name){
-		Ads::where('fk_name','=', '$name')->delete();
+		Ads::where('fk_name','=', $name)->delete();
 	}
 
 	public static function truncateUserJSON($target){
