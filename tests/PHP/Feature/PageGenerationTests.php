@@ -39,13 +39,25 @@ class PageGenerationTests extends TestCase
         Storage::fake('public/image');
         $img = UploadedFile::fake()->image('ad.jpg',500,90);
 
-	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);	
+	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://www.test.com/?asd=123"]);	
 	$response->assertStatus(200)->assertJson(['log'=>'Ad Created']);
 
 	$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
-	$this->assertEquals('https://test.com', $info[0]['url']);
-	$this->assertDatabaseHas("ads", ['fk_name'=>'test', 'url'=>'https://test.com']);
-    }          
+	$this->assertEquals('https://www.test.com/?asd=123', $info[0]['url']);
+	$this->assertDatabaseHas("ads", ['fk_name'=>'test', 'url'=>'https://www.test.com/?asd=123']);
+	Storage::disk('local')->assertExists($info[0]['uri']);  
+
+
+	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com/"]);	
+	$response->assertStatus(200)->assertJson(['log'=>'Ad Created']);
+
+	$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
+	$this->assertEquals('https://test.com/', $info[1]['url']);
+	$this->assertDatabaseHas("ads", ['fk_name'=>'test', 'url'=>'https://test.com/']);
+	Storage::disk('local')->assertExists($info[1]['uri']);  
+
+    }      
+
     public function test_ad_page_generation(){
 	Storage::fake('local');
 	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
