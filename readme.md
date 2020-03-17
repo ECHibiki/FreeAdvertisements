@@ -1,4 +1,4 @@
-# Community Banners
+# Community Banners 
 <img src="https://api.travis-ci.org/ECHibiki/FreeBanners.svg?branch=dev" /><br/>
 BITCOIN: 14K6kHgpRvgKPnktf4e2UVfEaarYEe64n4<br/>
 ETHEREUM: 0xf590a2cdd900eae8a680ed199e97f59d3718457a<br/>
@@ -36,13 +36,13 @@ Tested to work on:
 
 A more detailed explanation can be found on the <a href="">Wiki</a>.
 
-- Modify the .env file to hold your database information, mailgun API keys, email addresses and site MIX variables.
-- Using node, ```npm run production``` will update the javascript files based on your configurations
-- Run the shell file ```./SETUP``` and it will set up Laravel for your project creating database tables and installing dependances.
-    - Note, Composer is a memory hog and in the case you do not have a large bank of memory you may need to upload the Vendor file manually.
+- Create a file called .env to hold your database information, using .env.example as your template, mailgun API keys, email addresses and site MIX variables.
+- Using node, after running npm install, ```npm run production``` will update the javascript files based on your configurations
+- Run the shell file ```./SETUP``` and it will set up Laravel for your project creating database tables and installing dependancies.
+    - Note, Composer is a memory hog and in the case you do not have a large bank of memory you may need to upload the Vendor directory manually.
 - Routing through NGINX is prefered, be sure to add an HTTP_X_REAL_IP header. A sample is given in the wiki.
 
-Emails can be sent to individuals specified in the .env file. When a new banner is created you will get an email. This was found to easily deal with a spammer and his pool of IPs. A primary email will be listed to all and extras are blind CC so this could potentially act as a mailing list, albeit a bit tedious to set up and requiring of a cache reload every time.
+Emails can be sent to individuals specified in the .env file. This uses a mailgun account which you will need to setup and place keys into the .env file. When a new banner is created you will get an email. This was found to easily deal with a spammer and his pool of IPs. A primary email will be listed to all and extras are blind CC so this could potentially act as a mailing list, albeit a bit tedious to set up and requiring of a cache reload every time.
 
 Custom Dimensions may be set up in the .env. This will require an NPM rebuild.
 

@@ -17,7 +17,7 @@ class MailSendController extends Controller
 		if(Storage::disk('local')->exists('mail.json')){
 			$json = json_decode(Storage::disk('local')->get('mail/mail.json'), true);
 		}
-		$json['cooldown'] = time();
+		$json['cooldown'] = time() + env('MAIL_COOLDOWN', 5);
 		Storage::disk('local')->put('mail/mail.json', json_encode($json));
 	}
 

@@ -73,7 +73,8 @@ $_SERVER['HTTP_X_REAL_IP'] = 1;
         	$img = UploadedFile::fake()->image('ad.jpg',500,90);
 		$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
 
-		
+sleep(1);
+
 		$response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 		$response->assertStatus(200);
 		$response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
