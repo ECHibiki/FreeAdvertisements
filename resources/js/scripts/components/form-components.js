@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {DataStore, APICalls} from '../network/api';
 import Popup from "reactjs-popup";
 
-import {dimensions_w, dimensions_h,dimensions_small_w, dimensions_small_h} from '../settings'
+import {dimensions_w, dimensions_h,dimensions_small_w, dimensions_small_h,rules,rules_small} from '../settings'
 
 export class SignInButton extends Component{
 	constructor(props){
@@ -101,7 +101,8 @@ export class AdCreationForm extends Component{
 					<input onChange={this.handleFileChange} value={this.state.file_input}  type="file" className="form-control-file" id="image-ad-c" accept="image/*" />
 					<small  className="form-text text-muted">Must be&nbsp;
 						{ (this.state.hide_url ? dimensions_small_w : dimensions_w) }x
-						{ (this.state.hide_url ? dimensions_small_h : dimensions_h) } and SFW</small>
+						{ (this.state.hide_url ? dimensions_small_h : dimensions_h) }<br/>
+						Rules: { (this.state.hide_url ? rules_small : rules) }</small>
 				</div>
 				 <div className="form-group" style={{display:(this.state.hide_url ? "none" : "initial")}}>
 					<label htmlFor="ad-url-c">URL</label>
@@ -155,7 +156,7 @@ export class SignInAPIButton extends Component{
 			}
 			else{
 				this.setState({
-					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_text:<span>{response['message']}<br/></span>,
 					info_class:"text-danger"
 				});
 			}
@@ -203,7 +204,7 @@ export class CreateAPIButton extends Component{
 			}
 			else{
 				this.setState({
-					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_text:<span>{response['message']}<br/></span>,
 					info_class:"text-danger"
 				});
 			}
@@ -228,7 +229,7 @@ export class CreateAPIButton extends Component{
 				}
 				else{
 					this.setState({
-						info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+						info_text:<span>{response['message']}<br/></span>,
 						info_class:"text-danger"
 					});
 				}
@@ -277,7 +278,7 @@ export class AdCreateAPIButton extends Component{
 			}
 			else{
 				this.setState({
-					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_text:<span>{response['message']}<br/></span>,
 					info_class:"text-danger"
 				});
 			}
@@ -382,7 +383,7 @@ export class AdRemovalAPIButton extends Component{
 			}
 			else{
 				this.setState({
-					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_text:<span>{response['message']}<br/></span>,
 					info_class:"text-danger"
 				});
 			}
@@ -430,7 +431,7 @@ export class ModIndividualRemovalAPIButton extends Component{
 			}
 			else{
 				this.setState({
-					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_text:<span>{response['message']}<br/></span>,
 					info_class:"text-danger"
 				});
 			}
@@ -478,7 +479,7 @@ export class ModCompleteRemovalAPIButton extends Component{
 			}
 			else{
 				this.setState({
-					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_text:<span>{response['message']}<br/></span>,
 					info_class:"text-danger"
 				});
 			}
@@ -524,7 +525,7 @@ export class ModSoftBanAPIButton extends Component{
 			}
 			else{
 				this.setState({
-					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_text:<span>{response['message']}<br/></span>,
 					info_class:"text-danger"
 				});
 			}
@@ -571,7 +572,7 @@ export class ModHardBanAPIButton extends Component{
 			}
 			else{
 				this.setState({
-					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
+					info_text:<span>{response['message']}<br/></span>,
 					info_class:"text-danger"
 				});
 			}

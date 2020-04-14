@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Carbon\Carbon;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -8,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\UploadedFile;
 
 use App\Ads;
+use App\AntiSpam;
 use JWTAuth;
 use App\Http\Controllers\PageGenerationController;
 use App\Http\Controllers\MailSendController;
@@ -30,13 +32,38 @@ class ConfidentialInfoController extends Controller
 		];
 	}
 
+	public function doAntiSpam($name){
+		return DB::table('antispam')
+			->where('name','=',$name)
+			->where('unix', '>=',
+				Carbon::now()->subSeconds(intval(env('cooldown',60)))->timestamp);
+	}
+	public function updateAntiSpam($name){
+		DB::table('antispam')
+			->where('unix', '<',
+				Carbon::now()->subSeconds(intval(env('cooldown',60)))->timestamp)
+			->delete();
+		AntiSpam::create(['name'=>$name, 'unix' => 	Carbon::now()->timestamp]);
+	}
+
 	public function createInfo(Request $request){
-		if($request->input('size') == "true"){
-			return $this->createSmallInfo($request);
+		$response ="";
+		$name = auth()->user()->name;
+		$antispam_response = $this->doAntiSpam($name);
+	  if ($antispam_response->count() > 0){
+			return ['warn'=>'posting too fast('.
+				($antispam_response->first()->unix - Carbon::now()->subSeconds(intval(env('cooldown',60)))->timestamp) .' seconds)'];
 		}
 		else{
-			return $this->createWideInfo($request);
+			if($request->input('size') == "true"){
+				$response = $this->createSmallInfo($request);
+			}
+			else{
+				$response = $this->createWideInfo($request);
+			}
 		}
+		$this->updateAntiSpam($name);
+		return $response;
 	}
 
 	public function createSmallInfo(Request $request){
@@ -44,12 +71,12 @@ class ConfidentialInfoController extends Controller
 			'image'=>'required|image|dimensions:width='. env('MIX_IMAGE_DIMENSIONS_SMALL_W', '300') .',height=' . env('MIX_IMAGE_DIMENSIONS_SMALL_H', '140'),
 		]);
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
-		$this->addUserJSON($fname, env('MIX_APP_URL'));
-		$this->addAdSQL($fname, env('MIX_APP_URL'));
+		$this->addUserJSON($fname, env('MIX_APP_URL', 'https://kissu.moe'));
+		$this->addAdSQL($fname, env('MIX_APP_URL', 'https://kissu.moe'));
 		$t = MailSendController::getCooldown();
 
 		if($t < time()){
-			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:i:s',time()), "url"=> $request->input('url')],
+			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:i:s',time()), "url"=> $request->input('url'), 'fname'=>$fname],
 				['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
 			MailSendController::updateCooldown();
 			if(!$err){
@@ -73,7 +100,7 @@ class ConfidentialInfoController extends Controller
 		$t = MailSendController::getCooldown();
 
 		if($t < time()){
-			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:i:s',time()), "url"=> $request->input('url')],
+			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:i:s',time()), "url"=> $request->input('url'), 'fname'=>$fname],
 				['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
 			MailSendController::updateCooldown();
 			if(!$err){
