@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {DataStore, APICalls} from '../network/api';
 import Popup from "reactjs-popup";
 
-import {dimensions_w, dimensions_h} from '../settings'
+import {dimensions_w, dimensions_h,dimensions_small_w, dimensions_small_h} from '../settings'
 
 export class SignInButton extends Component{
 	constructor(props){
@@ -71,7 +71,7 @@ export class CreationForm extends Component{
 export class AdCreationForm extends Component{
 	constructor(props){
 		super(props);
-		this.state = {file_input: "", url_input: ""}
+		this.state = {file_input: "", url_input: "", hide_url:false}
 
 		this.unsetFormFields = this.unsetFormFields.bind(this);
 		this.handleFileChange = this.handleFileChange.bind(this);
@@ -92,12 +92,18 @@ export class AdCreationForm extends Component{
 
 	render(){
 		return(<div style={{visibility: this.props.visibility, height: this.props.height, opacity: this.props.opacity}} id="ad-create-form">
+		<label>Banner Type: </label>
+			<input id="img-size-wide" type="radio" name="size" onClick={()=>this.setState({hide_url:false})} defaultChecked/>Wide &nbsp;
+			<input id="img-size-small" type="radio" name="size" onClick={()=>this.setState({hide_url:true})}/>Small <br/>
+				<input type="hidden" id="img-size" value={this.state.hide_url}/>
 				<div className="form-group">
 					<label htmlFor="image-ad-c">Image</label>
 					<input onChange={this.handleFileChange} value={this.state.file_input}  type="file" className="form-control-file" id="image-ad-c" accept="image/*" />
-					<small  className="form-text text-muted">Must be { dimensions_w }x{ dimensions_h } and SFW</small>
+					<small  className="form-text text-muted">Must be&nbsp;
+						{ (this.state.hide_url ? dimensions_small_w : dimensions_w) }x
+						{ (this.state.hide_url ? dimensions_small_h : dimensions_h) } and SFW</small>
 				</div>
-				<div className="form-group">
+				 <div className="form-group" style={{display:(this.state.hide_url ? "none" : "initial")}}>
 					<label htmlFor="ad-url-c">URL</label>
 					<input onChange={this.handleURLChange} value={this.state.url_input} type="url" pattern="/^http(|s):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|]+$/i" className="form-control" id="ad-url-c" placeholder="http/https urls only" />
 				</div>
@@ -113,7 +119,7 @@ export class AdRemovalForm extends Component{
 		this.state = {display: "none", height: "10em"};
 	}
 	render(){
-		return(<div style={{display: this.state.display, height: this.state.height}} id="ad-create-form">
+		return(<div style={{display: this.state.display, height: this.state.height}} id="ad-remove-form">
 			<form>
 				<input type="hidden" id="r-uri" required/>
 				<input type="hidden" id="r-url" required/>
@@ -144,13 +150,13 @@ export class SignInAPIButton extends Component{
 				var key_ind = 0;
 				this.setState({
 					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 			else{
 				this.setState({
 					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 		}
@@ -192,13 +198,13 @@ export class CreateAPIButton extends Component{
 				var key_ind = 0;
 				this.setState({
 					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 			else{
 				this.setState({
 					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 		}
@@ -217,13 +223,13 @@ export class CreateAPIButton extends Component{
 					var key_ind = 0;
 					this.setState({
 						info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
-						info_class:"text-danger" 
+						info_class:"text-danger"
 					});
 				}
 				else{
 					this.setState({
 						info_text:<span>Authorization Failed, Please Refresh<br/></span>,
-						info_class:"text-danger" 
+						info_class:"text-danger"
 					});
 				}
 			}
@@ -255,7 +261,8 @@ export class AdCreateAPIButton extends Component{
 	async SendNewBanner(e){
 		var image = document.getElementById("image-ad-c").files[0];
 		var url = document.getElementById("ad-url-c").value;
-		var response = await APICalls.callCreateNewAd(image, url);
+		var size = document.getElementById("img-size").value;
+		var response = await APICalls.callCreateNewAd(image, url,size);
 		if("message" in response){
 			if("errors" in response){
 				var reasons_arr = []
@@ -265,13 +272,13 @@ export class AdCreateAPIButton extends Component{
 				var key_ind = 0;
 				this.setState({
 					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 			else{
 				this.setState({
 					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 		}
@@ -370,13 +377,13 @@ export class AdRemovalAPIButton extends Component{
 				var key_ind = 0;
 				this.setState({
 					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 			else{
 				this.setState({
 					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 		}
@@ -418,13 +425,13 @@ export class ModIndividualRemovalAPIButton extends Component{
 				var key_ind = 0;
 				this.setState({
 					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 			else{
 				this.setState({
 					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 		}
@@ -432,7 +439,7 @@ export class ModIndividualRemovalAPIButton extends Component{
 			this.setState({info_text:response['warn'], info_class:"text-warning bg-dark"});
 		}
 		else{
-			this.setState({info_text:response['log'], info_class:"text-success"});			
+			this.setState({info_text:response['log'], info_class:"text-success"});
 			this.props.updateDetailsCallback();
 			this.props.onClickCallBack();
 
@@ -466,13 +473,13 @@ export class ModCompleteRemovalAPIButton extends Component{
 				var key_ind = 0;
 				this.setState({
 					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 			else{
 				this.setState({
 					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 		}
@@ -512,13 +519,13 @@ export class ModSoftBanAPIButton extends Component{
 				var key_ind = 0;
 				this.setState({
 					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 			else{
 				this.setState({
 					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 		}
@@ -559,13 +566,13 @@ export class ModHardBanAPIButton extends Component{
 				var key_ind = 0;
 				this.setState({
 					info_text:reasons_arr.map((r) => <span key={key_ind++}>{r}<br/></span> ),
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 			else{
 				this.setState({
 					info_text:<span>Authorization Failed, Please Refresh<br/></span>,
-					info_class:"text-danger" 
+					info_class:"text-danger"
 				});
 			}
 		}
@@ -573,7 +580,7 @@ export class ModHardBanAPIButton extends Component{
 			this.setState({info_text:response['warn'], info_class:"text-warning bg-dark"});
 		}
 		else{
-			this.setState({info_text:response['log'], info_class:"text-success"});			
+			this.setState({info_text:response['log'], info_class:"text-success"});
 			this.props.updateDetailsCallback();
 			this.props.onClickCallBack();
 
@@ -586,4 +593,3 @@ export class ModHardBanAPIButton extends Component{
 			</div>);
 	}
 }
-

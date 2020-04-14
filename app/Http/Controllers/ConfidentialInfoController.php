@@ -31,6 +31,38 @@ class ConfidentialInfoController extends Controller
 	}
 
 	public function createInfo(Request $request){
+		if($request->input('size') == "true"){
+			return $this->createSmallInfo($request);
+		}
+		else{
+			return $this->createWideInfo($request);
+		}
+	}
+
+	public function createSmallInfo(Request $request){
+		$request->validate([
+			'image'=>'required|image|dimensions:width='. env('MIX_IMAGE_DIMENSIONS_SMALL_W', '300') .',height=' . env('MIX_IMAGE_DIMENSIONS_SMALL_H', '140'),
+		]);
+		$fname = PageGenerationController::StoreAdImage($request->file('image'));
+		$this->addUserJSON($fname, env('MIX_APP_URL'));
+		$this->addAdSQL($fname, env('MIX_APP_URL'));
+		$t = MailSendController::getCooldown();
+
+		if($t < time()){
+			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:i:s',time()), "url"=> $request->input('url')],
+				['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
+			MailSendController::updateCooldown();
+			if(!$err){
+					return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>'no email'];
+			}
+			if (gettype($err) != 'boolean')
+				return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>$err];
+
+		}
+		return ['log'=>'Ad Created', 'fname'=>$fname];
+	}
+
+	public function createWideInfo(Request $request){
 		$request->validate([
 			'image'=>'required|image|dimensions:width='. env('MIX_IMAGE_DIMENSIONS_W', '500') .',height=' . env('MIX_IMAGE_DIMENSIONS_H', '90'),
 			'url'=>['required','url','regex:/^http(|s):\/\/[A-Z0-9+&@#\/%?=~_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|?\-]+$/i']
@@ -43,12 +75,12 @@ class ConfidentialInfoController extends Controller
 		if($t < time()){
 			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:i:s',time()), "url"=> $request->input('url')],
 				['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
-			MailSendController::updateCooldown();	
+			MailSendController::updateCooldown();
 			if(!$err){
-			    return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>'no email']; 
+			    return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>'no email'];
 			}
 			if (gettype($err) != 'boolean')
-				return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>$err]; 
+				return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>$err];
 
 		}
 		return ['log'=>'Ad Created', 'fname'=>$fname];
@@ -56,7 +88,7 @@ class ConfidentialInfoController extends Controller
 
 	public function removeInfo(Request $request){
 		$uri = str_replace("storage/image", "public/image", $request->input('uri'));
-		$url = $request->input('url');	
+		$url = $request->input('url');
 		// slightly dangerous
 		if(!ConfidentialInfoController::affirmImageIsOwned($uri)){
 			return response(['warn'=>'This banner isn\'t owned'], 401);
@@ -101,7 +133,7 @@ class ConfidentialInfoController extends Controller
 		$ad = new Ads(['fk_name'=>$name, 'uri'=>$uri, 'url'=>$url, 'ip'=>ConfidentialInfoController::getBestIPSource()]);
 		$ad->save();
 	}
-	
+
 	public static function removeAdSQL(string $uri, string $url){
 		$name = auth()->user()->name;
 		DB::table('ads')->where('fk_name', $name)->where('uri', $uri)->where('url', $url)->delete();
@@ -117,7 +149,7 @@ class ConfidentialInfoController extends Controller
 	}
 
 	public static function getBestIPSource(){
-		return isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER['HTTP_X_REAL_IP'] : \Request::ip(); 
+		return isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER['HTTP_X_REAL_IP'] : \Request::ip();
 	}
 
 
