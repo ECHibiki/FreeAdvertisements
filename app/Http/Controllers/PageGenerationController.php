@@ -94,7 +94,7 @@ class PageGenerationController extends Controller
 									catch(\Exception $e){
 													$name = "";
 			}
-									return DB::table('ads')
+			return DB::table('ads')
 				->leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')
 				->where('ads.size', '=', 'small')
 				->Where(function($query) use ($name){

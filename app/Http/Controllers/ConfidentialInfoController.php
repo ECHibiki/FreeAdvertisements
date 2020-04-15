@@ -55,7 +55,7 @@ class ConfidentialInfoController extends Controller
 				($antispam_response->first()->unix - Carbon::now()->subSeconds(intval(env('COOLDOWN',60)))->timestamp) . ' seconds)'];
 		}
 		else{
-			if($request->input('size') == "true"){
+			if($request->input('size') == "small"){
 				$response = $this->createSmallInfo($request);
 			}
 			else{
@@ -72,7 +72,7 @@ class ConfidentialInfoController extends Controller
 		]);
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
 		$this->addUserJSON($fname, env('MIX_APP_URL', 'https://kissu.moe'));
-		$this->addAdSQL($fname, env('MIX_APP_URL', 'https://kissu.moe'));
+		$this->addAdSQL($fname, env('MIX_APP_URL', 'https://kissu.moe'), 'small');
 		$t = MailSendController::getCooldown();
 
 		if($t < time()){
@@ -96,7 +96,7 @@ class ConfidentialInfoController extends Controller
 		]);
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
 		$this->addUserJSON($fname, $request->input('url'));
-		$this->addAdSQL($fname, $request->input('url'));
+		$this->addAdSQL($fname, $request->input('url'), 'wide');
 		$t = MailSendController::getCooldown();
 
 		if($t < time()){
@@ -155,9 +155,9 @@ class ConfidentialInfoController extends Controller
 		return json_decode(Storage::disk('local')->get("$name.json"), true);
 	}
 
-	public static function addAdSQL(string $uri, string $url){
+	public static function addAdSQL(string $uri, string $url, string $size='wide'){
 		$name = auth()->user()->name;
-		$ad = new Ads(['fk_name'=>$name, 'uri'=>$uri, 'url'=>$url, 'ip'=>ConfidentialInfoController::getBestIPSource()]);
+		$ad = new Ads(['fk_name'=>$name, 'uri'=>$uri, 'url'=>$url, 'ip'=>ConfidentialInfoController::getBestIPSource(), 'size'=>$size]);
 		$ad->save();
 	}
 

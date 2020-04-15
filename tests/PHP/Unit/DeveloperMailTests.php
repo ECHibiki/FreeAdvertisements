@@ -29,16 +29,17 @@ class DeveloperMailTests extends TestCase
         $this->assertTrue(true);
     }
     //test email view exists
-    // testing this automatically is probably not worthwhile
-    /*
+    // Determining if an email is embeded or not is hard, but at least it should stay same character length
 	public function test_email_view_propper(){
-		$this->assertEquals('<h2>New Banner @ 20</h2>
-<p style="color:green">Name:  testname</p><br/>
-<p style="color:blue">URL: http://sdf.com</p>
-Banner:
-<img src="cid:f947223fe2e0c9e17cc3c8332588cc82@swift.generated">\n', (new \App\Mail\BannerNotification(["name"=>"testname", "time"=>date('y',time()), "url"=>"http://sdf.com", 'err'=>'',  'fname'=>'notimage']))->render());
+
+    //var_dump((new \App\Mail\BannerNotification(["name"=>"testname", "time"=>date('y',time()), "url"=>"http://sdf.com", 'err'=>'',  'fname'=>'notimage']))
+    //    ->render());
+    // It's known from ^ that the email body will be 200 characters long
+		$this->assertEquals(strlen((new \App\Mail\BannerNotification(["name"=>"testname", "time"=>date('y',time()), "url"=>"http://sdf.com", 'err'=>'',  'fname'=>'notimage']))
+        ->render()) , 200
+    );
 	}
-  */
+
 	//test sending email
 	public function test_sending_email(){
 		Mail::fake();

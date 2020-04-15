@@ -92,10 +92,10 @@ export class AdCreationForm extends Component{
 
 	render(){
 		return(<div style={{visibility: this.props.visibility, height: this.props.height, opacity: this.props.opacity}} id="ad-create-form">
-		<label>Banner Type: </label>
-			<input id="img-size-wide" type="radio" name="size" onClick={()=>this.setState({hide_url:false})} defaultChecked/>Wide &nbsp;
-			<input id="img-size-small" type="radio" name="size" onClick={()=>this.setState({hide_url:true})}/>Small <br/>
-				<input type="hidden" id="img-size" value={this.state.hide_url}/>
+		<label>Banner Type:&nbsp;</label>
+			<label><input id="img-size-wide" type="radio" name="size" onClick={()=>this.setState({hide_url:false})} defaultChecked/>&nbsp;Wide</label>&nbsp;
+			<label><input id="img-size-small" type="radio" name="size" onClick={()=>this.setState({hide_url:true})}/>&nbsp;Small</label><br/>
+				<input type="hidden" id="img-size" value={(this.state.hide_url ? "small" : "wide")}/>
 				<div className="form-group">
 					<label htmlFor="image-ad-c">Image</label>
 					<input onChange={this.handleFileChange} value={this.state.file_input}  type="file" className="form-control-file" id="image-ad-c" accept="image/*" />

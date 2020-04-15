@@ -7,5 +7,5 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 class Ads extends Model
 {
-    protected $fillable=['fk_name', 'uri', 'url', 'ip'];
+    protected $fillable=['fk_name', 'uri', 'url', 'ip', 'size'];
 }
