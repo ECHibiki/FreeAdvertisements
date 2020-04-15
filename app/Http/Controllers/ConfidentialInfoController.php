@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Carbon\Carbon;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -8,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\UploadedFile;
 
 use App\Ads;
+use App\AntiSpam;
 use JWTAuth;
 use App\Http\Controllers\PageGenerationController;
 use App\Http\Controllers\MailSendController;
@@ -30,25 +32,82 @@ class ConfidentialInfoController extends Controller
 		];
 	}
 
+	public function doAntiSpam($name){
+		return DB::table('antispam')
+			->where('name','=',$name)
+			->where('unix', '>=',
+				Carbon::now()->subSeconds(intval(env('COOLDOWN',60)))->timestamp);
+	}
+	public function updateAntiSpam($name){
+		DB::table('antispam')
+			->where('unix', '<',
+				Carbon::now()->subSeconds(intval(env('COOLDOWN',60)))->timestamp)
+			->delete();
+		AntiSpam::create(['name'=>$name, 'unix' => 	Carbon::now()->timestamp]);
+	}
+
 	public function createInfo(Request $request){
+		$response ="";
+		$name = auth()->user()->name;
+		$antispam_response = $this->doAntiSpam($name);
+	  if ($antispam_response->count() > 0){
+			return ['warn'=>'posting too fast('.
+				($antispam_response->first()->unix - Carbon::now()->subSeconds(intval(env('COOLDOWN',60)))->timestamp) . ' seconds)'];
+		}
+		else{
+			if($request->input('size') == "small"){
+				$response = $this->createSmallInfo($request);
+			}
+			else{
+				$response = $this->createWideInfo($request);
+			}
+		}
+		$this->updateAntiSpam($name);
+		return $response;
+	}
+
+	public function createSmallInfo(Request $request){
+		$request->validate([
+			'image'=>'required|image|dimensions:width='. env('MIX_IMAGE_DIMENSIONS_SMALL_W', '300') .',height=' . env('MIX_IMAGE_DIMENSIONS_SMALL_H', '140'),
+		]);
+		$fname = PageGenerationController::StoreAdImage($request->file('image'));
+		$this->addUserJSON($fname, env('MIX_APP_URL', 'https://kissu.moe'));
+		$this->addAdSQL($fname, env('MIX_APP_URL', 'https://kissu.moe'), 'small');
+		$t = MailSendController::getCooldown();
+
+		if($t < time()){
+			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:i:s',time()), "url"=> $request->input('url'), 'fname'=>$fname],
+				['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
+			MailSendController::updateCooldown();
+			if(!$err){
+					return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>'no email'];
+			}
+			if (gettype($err) != 'boolean')
+				return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>$err];
+
+		}
+		return ['log'=>'Ad Created', 'fname'=>$fname];
+	}
+
+	public function createWideInfo(Request $request){
 		$request->validate([
 			'image'=>'required|image|dimensions:width='. env('MIX_IMAGE_DIMENSIONS_W', '500') .',height=' . env('MIX_IMAGE_DIMENSIONS_H', '90'),
 			'url'=>['required','url','regex:/^http(|s):\/\/[A-Z0-9+&@#\/%?=~_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|?\-]+$/i']
 		]);
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
 		$this->addUserJSON($fname, $request->input('url'));
-		$this->addAdSQL($fname, $request->input('url'));
+		$this->addAdSQL($fname, $request->input('url'), 'wide');
 		$t = MailSendController::getCooldown();
 
 		if($t < time()){
-			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:i:s',time()), "url"=> $request->input('url')],
+			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:i:s',time()), "url"=> $request->input('url'), 'fname'=>$fname],
 				['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
-			MailSendController::updateCooldown();	
+			MailSendController::updateCooldown();
 			if(!$err){
-			    return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>'no email']; 
+			    return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>'no email'];
 			}
 			if (gettype($err) != 'boolean')
-				return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>$err]; 
+				return ['log'=>'Ad Created', 'fname'=>$fname, 'errors'=>$err];
 
 		}
 		return ['log'=>'Ad Created', 'fname'=>$fname];
@@ -56,7 +115,7 @@ class ConfidentialInfoController extends Controller
 
 	public function removeInfo(Request $request){
 		$uri = str_replace("storage/image", "public/image", $request->input('uri'));
-		$url = $request->input('url');	
+		$url = $request->input('url');
 		// slightly dangerous
 		if(!ConfidentialInfoController::affirmImageIsOwned($uri)){
 			return response(['warn'=>'This banner isn\'t owned'], 401);
@@ -96,12 +155,12 @@ class ConfidentialInfoController extends Controller
 		return json_decode(Storage::disk('local')->get("$name.json"), true);
 	}
 
-	public static function addAdSQL(string $uri, string $url){
+	public static function addAdSQL(string $uri, string $url, string $size='wide'){
 		$name = auth()->user()->name;
-		$ad = new Ads(['fk_name'=>$name, 'uri'=>$uri, 'url'=>$url, 'ip'=>ConfidentialInfoController::getBestIPSource()]);
+		$ad = new Ads(['fk_name'=>$name, 'uri'=>$uri, 'url'=>$url, 'ip'=>ConfidentialInfoController::getBestIPSource(), 'size'=>$size]);
 		$ad->save();
 	}
-	
+
 	public static function removeAdSQL(string $uri, string $url){
 		$name = auth()->user()->name;
 		DB::table('ads')->where('fk_name', $name)->where('uri', $uri)->where('url', $url)->delete();
@@ -117,7 +176,7 @@ class ConfidentialInfoController extends Controller
 	}
 
 	public static function getBestIPSource(){
-		return isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER['HTTP_X_REAL_IP'] : \Request::ip(); 
+		return isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER['HTTP_X_REAL_IP'] : \Request::ip();
 	}
 
 

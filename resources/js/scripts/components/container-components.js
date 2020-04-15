@@ -91,13 +91,13 @@ export class MasterPage extends Component{
 	}
 }
 export class LoginContainer extends Component{
-	constructor(props){ 
+	constructor(props){
 		super(props);
 		this.state = {si_visibility:"unset", si_height:"0em", si_opacity:"0", c_visibility:"unset", c_height:"0em", c_opacity:"0"};
 
 		this.SignInOnClick = this.SignInOnClick.bind(this);
 		this.CreateOnClick = this.CreateOnClick.bind(this);
-		
+
 	}
 
 	SignInOnClick(){
@@ -147,13 +147,13 @@ export class UserContainer extends Component{
 
 	AdCreateOnClick(){
 		if(this.state.AdCVisibility == "unset")
-			this.setState({AdCVisibility:"initial", AdCHeight:"16.4em", AdCOpacity:"1"});
+			this.setState({AdCVisibility:"initial", AdCHeight:"19.4em", AdCOpacity:"1"});
 		else
 			this.setState({AdCVisibility:"unset", AdCHeight:"0em", AdCOpacity:"0"});
 	}
 
 	async UpdateDetails(){
-		var d_response = await APICalls.callRetrieveUserAds();	
+		var d_response = await APICalls.callRetrieveUserAds();
 		if("message" in d_response){
 			if("errors" in d_response){
 				var reasons_arr = []
@@ -171,7 +171,7 @@ export class UserContainer extends Component{
 			this.setState({war_text:d_response['warn']});
 		}
 		else{
-			this.setState({AdArray:d_response['ads'], mod:d_response['mod']});	
+			this.setState({AdArray:d_response['ads'], mod:d_response['mod']});
 		}
 
 	}
@@ -181,7 +181,7 @@ export class UserContainer extends Component{
 			var mod_button = (<span className="mod-link"><Link to="/mod">Mod Mode</Link></span>);
 		}
 		return (<div id="user-container">
-				<h2>Your Banners</h2>				
+				<h2>Your Banners</h2>
 				{mod_button}
 				<span className="all-link"><Link to="/all">View All</Link></span>
 
@@ -278,10 +278,10 @@ export class ModContainer extends Component{
 		this.setState(state_obj);
 	}
 	async UpdateDetails(){
-		APICalls.callRetrieveModAds(this.setAllDetails, 'AdArray');	
+		APICalls.callRetrieveModAds(this.setAllDetails, 'AdArray');
 	}
 
-	render(){	
+	render(){
 		return (<div id="mod-container">
 			<h2>Mod Mode</h2>
 			<span className="mod-link"><Link to="/">Back</Link></span>

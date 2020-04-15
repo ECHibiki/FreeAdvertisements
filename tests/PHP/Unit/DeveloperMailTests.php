@@ -29,17 +29,21 @@ class DeveloperMailTests extends TestCase
         $this->assertTrue(true);
     }
     //test email view exists
+    // Determining if an email is embeded or not is hard, but at least it should stay same character length
 	public function test_email_view_propper(){
-		$this->assertEquals('<h2>New Banner @ 20</h2>
-<p style="color:green">Name:  testname</p><br/>
-<p style="color:blue">URL: http://sdf.com</p>
-', (new \App\Mail\BannerNotification(["name"=>"testname", "time"=>date('y',time()), "url"=>"http://sdf.com", 'err'=>'']))->render());
+
+    //var_dump((new \App\Mail\BannerNotification(["name"=>"testname", "time"=>date('y',time()), "url"=>"http://sdf.com", 'err'=>'',  'fname'=>'notimage']))
+    //    ->render());
+    // It's known from ^ that the email body will be 200 characters long
+		$this->assertEquals(strlen((new \App\Mail\BannerNotification(["name"=>"testname", "time"=>date('y',time()), "url"=>"http://sdf.com", 'err'=>'',  'fname'=>'notimage']))
+        ->render()) , 200
+    );
 	}
 
 	//test sending email
 	public function test_sending_email(){
 		Mail::fake();
-		$re = \App\Http\Controllers\MailSendController::sendMail(["name"=>"testname", "time"=>date('yM d-h:m:s',time()), "url"=>"http://sdf.com"], 
+		$re = \App\Http\Controllers\MailSendController::sendMail(["name"=>"testname", "time"=>date('yM d-h:m:s',time()), "url"=>"http://sdf.com", 'fname'=>'notimage'],
 			['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
 		$this->assertEquals($re, true);
 		Mail::assertSent(BannerNotification::class);
@@ -61,12 +65,12 @@ class DeveloperMailTests extends TestCase
 		$this->assertEquals($cd, 0);
 	}
 
-	// not having an email doesn't cause error 
+	// not having an email doesn't cause error
 	public function test_email_does_not_error_when_no_emails_listed(){
 		Mail::fake();
-		$re = \App\Http\Controllers\MailSendController::sendMail(["name"=>"testname", "time"=>date('yMd-h:m:s',time()), "url"=>"http://sdf.com"], 
+		$re = \App\Http\Controllers\MailSendController::sendMail(["name"=>"testname", "time"=>date('yMd-h:m:s',time()), "url"=>"http://sdf.com"],
 			['primary_email'=>null, 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
 		$this->assertEquals($re, false);
 		Mail::assertNothingSent();
-	}	
+	}
 }

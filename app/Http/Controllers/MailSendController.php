@@ -41,21 +41,21 @@ class MailSendController extends Controller
 				$mail = str_replace("\n", "", $mail);
 
 				if(preg_match('/[^@]+@[^@\.]+\.[^@]+/', $mail)){
-					$msg->bcc($mail);	
+					$msg->bcc($mail);
 				}
 				else if($mail == ""){}
 				else{
-					$errors .= '|E: ' . $mail; 
+					$errors .= '|E: ' . $mail;
 				}
 			}
 		}
 
-		$msg->send(new BannerNotification(['name'=>$data['name'], 'time'=>$data['time'], 'url'=>$data['url'], 'err'=>$bcc_errors]));
+		$msg->send(new BannerNotification(['name'=>$data['name'], 'time'=>$data['time'], 'url'=>$data['url'], 'fname'=>$data['fname'], 'err'=>$bcc_errors]));
 		return true;
 	    }
 	}catch(\Exception $e){
 		return $e->getMessage();
 	}
 	return false;
-   }		
+   }
 }

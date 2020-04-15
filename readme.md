@@ -1,5 +1,5 @@
 # Community Banners 
-<img src="https://api.travis-ci.org/ECHibiki/FreeBanners.svg?branch=dev" /><br/>
+<img src="https://travis-ci.com/ECHibiki/Community-Banners.svg?branch=dev" /><br/>
 BITCOIN: 14K6kHgpRvgKPnktf4e2UVfEaarYEe64n4<br/>
 ETHEREUM: 0xf590a2cdd900eae8a680ed199e97f59d3718457a<br/>
 BITCOIN CASH: 1DrBJ3TWGDjmKX4VKfaXTcMvq8UJBZyiEu<br/>
@@ -7,7 +7,7 @@ DOGECOIN: DDVEFppYykougRWhEaWN7oAYXu2Lw3bk5i<br/>
 LITECOIN: LPjzwQjCjMT55W79SPifztGppdbfQQymkP<br/>
 MONERO: 49wbxUahfiyCQWtpJefQWVJofKPXj7pjohgmGeTChRJRCYMyUPeZe7fMdoK5MLbsvHS3A3QoB1hWTQ4D8FZFQsh445Gp93K<br/>
 <a href="https://www.patreon.com/ECVerniy"><img width="20%" src="https://banners.kissu.moe/static/Patreon_Navy.png" /></a>
-
+<br/><a href="https://blog.verniy.ca">Blog</a>
 ## About
 In the early days of 4chan, moot released his advertising program where individuals could create banners to troll or advertise something to users. In 2016 4chan had a banner contest that generated interest in designing advertisements for boards done by the pass holding community. Myself, looking at an alternative to the moderated submission of art and paywalling features, decided to create an alternative that allows for any user to submit and then if need be, remove/ban them after.
 The use of banners in the community has been interesting and kissu's decent size community has found fun in creating them. Vichan also has some poor ways of handling banners that don't offer much in the way of encouragement for the artists on sites.

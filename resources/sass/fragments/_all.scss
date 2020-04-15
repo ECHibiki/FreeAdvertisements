@@ -48,7 +48,7 @@ hr{
 		}
 
 	}
-	
+
 }
 
 #upper-master{
@@ -92,7 +92,7 @@ hr{
 #mid-master, #lower-master{
 	&-login, &-waiting, &-user, &-mod{
 		min-height:33%;
-	}	
+	}
 }
 
 #login-container, #user-container, #ad-create-container,#all-container, #mod-container{
@@ -134,6 +134,7 @@ hr{
 		padding:1vh;
 	}
 	&finish{
+		padding-top: 0.2em;
 	}
 }
 
@@ -150,7 +151,6 @@ hr{
 	margin: auto;
 	margin-top: 0.25em;
 	margin-bottom: 0.1em;
-
 }
 #sample-banner{
 	padding-bottom:1em;
@@ -185,7 +185,7 @@ hr{
 	.ad-td-img img{
 	 	display:block;
 	       	margin:auto;
-		max-width:100%	
+		max-width:100%
 	}
 }
 
@@ -196,7 +196,7 @@ hr{
 	}
 }
 
-	
+
 #mod-details-table{
     table{
     	width:90%;
@@ -229,7 +229,7 @@ hr{
 }
 
 .code{
-	font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace;	
+	font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace;
 	font-size: 0.9em;
 	margin: auto;
 	display: block;
@@ -265,6 +265,3 @@ hr{
 .ad-td-name, .ad-td-ban{
 	text-align:center;
 }
-
-
-

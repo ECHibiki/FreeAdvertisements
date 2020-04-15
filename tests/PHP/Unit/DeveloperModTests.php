@@ -58,7 +58,7 @@ class DeveloperModTests extends TestCase
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://a.com"]);
-
+sleep(env('COOLDOWN',60)+1);
          $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
          $response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
          Storage::fake('public/image');
@@ -66,7 +66,7 @@ class DeveloperModTests extends TestCase
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://b.com"]);
 	 $ban = new Bans(['fk_name'=>'test2', 'hardban'=>0]);
 	 $ban->save();
-
+sleep(env('COOLDOWN',60)+1+0.5);
 	    $res = \App\Http\Controllers\ModeratorActivityController::GetAllEntries();
 	 $this->assertEquals(json_decode('[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test2","uri":"b","url":"b", "hardban":0}]', true)[0]['fk_name'],json_decode($res, true)[0]['fk_name']);
 	 $this->assertEquals(json_decode('[{"fk_name":"test","uri":"a","url":"a"},{"fk_name":"test2","uri":"b","url":"b", "hardban":0}]', true)[1]['hardban'],json_decode($res, true)[1]['hardban']);
@@ -95,9 +95,9 @@ class DeveloperModTests extends TestCase
         Storage::fake('image');
         $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
-	$fname = $response->json()['fname'];	
+	$fname = $response->json()['fname'];
 	$info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON("test");
-
+sleep(env('COOLDOWN',60)+1);
 
 		\App\Http\Controllers\ModeratorActivityController::removeIndividualBannerFromDB($fname);
 
@@ -114,15 +114,15 @@ class DeveloperModTests extends TestCase
 	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 	$token = $response->getOriginalContent()['access_token'];
         Storage::fake('image');
-	
+
 	$img = UploadedFile::fake()->image('ad.jpg',500,90);
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
-	$fname3 = $response->json()['fname'];	
-
+	$fname3 = $response->json()['fname'];
+sleep(env('COOLDOWN',60)+1);
         $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
-	$fname = $response->json()['fname'];	
-	
+	$fname = $response->json()['fname'];
+sleep(env('COOLDOWN',60)+1);
 		\App\Http\Controllers\ModeratorActivityController::removeIndividualBannerFromJSON("test",$fname, 'https://test.com');
 	$info = \app\Http\Controllers\ModeratorActivityController::getSelectJSON("test");
 
@@ -142,12 +142,12 @@ class DeveloperModTests extends TestCase
 
 	$img1 = UploadedFile::fake()->image('ad.jpg',500,90);
 	$response1 = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img1, 'url'=>"https://test.com"]);
-	$fname1 = $response1->json()['fname'];	
-
+	$fname1 = $response1->json()['fname'];
+sleep(env('COOLDOWN',60)+1);
 	$img2 = UploadedFile::fake()->image('ad2.jpg',500,90);
 	$response2 = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img2, 'url'=>"https://test.com"]);
-	$fname2 = $response2->json()['fname'];	
-
+	$fname2 = $response2->json()['fname'];
+sleep(env('COOLDOWN',60)+1);
 		\App\Http\Controllers\ModeratorActivityController::removeIndividualBannerFromImages($fname1);
 		Storage::disk('local')->assertMissing($fname1);
 		Storage::disk('local')->assertExists($fname2);
@@ -160,30 +160,31 @@ class DeveloperModTests extends TestCase
 				$_SERVER['HTTP_X_REAL_IP'] = 1;
 
 				// to be destroyed
-     		$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);		
+     		$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 		$token = $response->getOriginalContent()['access_token'];
 		Storage::fake('public/image');
 
 		$img1 = UploadedFile::fake()->image('ad.jpg',500,90);
 		$response1 = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img1, 'url'=>"https://test.com"]);
-		$fname1 = $response1->json()['fname'];	
+		$fname1 = $response1->json()['fname'];
 		$response1->assertStatus(200);
+		sleep(env('COOLDOWN',60)+1);
 		$img2 = UploadedFile::fake()->image('ad2.jpg',500,90);
 		$response2 = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img2, 'url'=>"https://test.com"]);
-		$fname2 = $response2->json()['fname'];	
-
+		$fname2 = $response2->json()['fname'];
+sleep(env('COOLDOWN',60)+1);
 		// saftey test
-		
-     		$response = $this->call('POST', 'api/create', ['name'=>'test1', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);		
+
+     		$response = $this->call('POST', 'api/create', ['name'=>'test1', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 		$response = $this->call('POST', 'api/login', ['name'=>'test1', 'pass'=>'hardpass']);
 		$tokenf = $response->getOriginalContent()['access_token'];
 
 		$imgf = UploadedFile::fake()->image('ad.jpg',500,90);
 		$responsef = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $tokenf, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$imgf, 'url'=>"https://test.com"]);
-		$fnamef = $responsef->json()['fname'];	
+		$fnamef = $responsef->json()['fname'];
 		$responsef->assertStatus(200);
-
+sleep(env('COOLDOWN',60)+1);
 
 		\App\Http\Controllers\ModeratorActivityController::removeUserFromDatabase("test");
 
@@ -196,19 +197,19 @@ class DeveloperModTests extends TestCase
 	public function test_complete_json_removal(){
 				$_SERVER['HTTP_X_REAL_IP'] = 1;
 
-	     	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);	
+	     	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 		$token = $response->getOriginalContent()['access_token'];
 		Storage::fake('public/image');
 
 		$img1 = UploadedFile::fake()->image('ad.jpg',500,90);
 		$response1 = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img1, 'url'=>"https://test.com"]);
-		$fname1 = $response1->json()['fname'];	
-
+		$fname1 = $response1->json()['fname'];
+sleep(env('COOLDOWN',60)+1);
 		$img2 = UploadedFile::fake()->image('ad2.jpg',500,90);
 		$response2 = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img2, 'url'=>"https://test.com"]);
-		$fname2 = $response2->json()['fname'];	
-
+		$fname2 = $response2->json()['fname'];
+sleep(env('COOLDOWN',60)+1);
 		\App\Http\Controllers\ModeratorActivityController::truncateUserJSON("test");
 
 		$this->assertEquals(Storage::disk('local')->get('test.json'),'[]');
@@ -217,19 +218,20 @@ class DeveloperModTests extends TestCase
 	// test images removed
 	public function test_complete_image_removal(){
 		$_SERVER['HTTP_X_REAL_IP'] = 1;
-	     	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);	
+	     	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
 		$token = $response->getOriginalContent()['access_token'];
 		Storage::fake('public/image');
 
 		$img1 = UploadedFile::fake()->image('ad.jpg',500,90);
 		$response1 = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img1, 'url'=>"https://test.com"]);
-		$fname1 = $response1->json()['fname'];	
+		$fname1 = $response1->json()['fname'];
 		$response1->assertStatus(200);
+		sleep(env('COOLDOWN',60)+1);
 		$img2 = UploadedFile::fake()->image('ad2.jpg',500,90);
 		$response2 = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img2, 'url'=>"https://test.com"]);
-		$fname2 = $response2->json()['fname'];	
-
+		$fname2 = $response2->json()['fname'];
+sleep(env('COOLDOWN',60)+1);
 		\App\Http\Controllers\ModeratorActivityController::removeAllUserImages("test");
 
 		Storage::fake('public/image')->assertMissing($fname1);
@@ -237,6 +239,6 @@ class DeveloperModTests extends TestCase
 
 	}
 
-	
+
 
 }
