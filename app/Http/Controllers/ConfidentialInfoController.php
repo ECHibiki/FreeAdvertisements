@@ -36,12 +36,12 @@ class ConfidentialInfoController extends Controller
 		return DB::table('antispam')
 			->where('name','=',$name)
 			->where('unix', '>=',
-				Carbon::now()->subSeconds(intval(env('cooldown',60)))->timestamp);
+				Carbon::now()->subSeconds(intval(env('COOLDOWN',60)))->timestamp);
 	}
 	public function updateAntiSpam($name){
 		DB::table('antispam')
 			->where('unix', '<',
-				Carbon::now()->subSeconds(intval(env('cooldown',60)))->timestamp)
+				Carbon::now()->subSeconds(intval(env('COOLDOWN',60)))->timestamp)
 			->delete();
 		AntiSpam::create(['name'=>$name, 'unix' => 	Carbon::now()->timestamp]);
 	}
@@ -52,7 +52,7 @@ class ConfidentialInfoController extends Controller
 		$antispam_response = $this->doAntiSpam($name);
 	  if ($antispam_response->count() > 0){
 			return ['warn'=>'posting too fast('.
-				($antispam_response->first()->unix - Carbon::now()->subSeconds(intval(env('cooldown',60)))->timestamp) .' seconds)'];
+				($antispam_response->first()->unix - Carbon::now()->subSeconds(intval(env('COOLDOWN',60)))->timestamp) . ' seconds)'];
 		}
 		else{
 			if($request->input('size') == "true"){
