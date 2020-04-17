@@ -8,4 +8,5 @@ use Illuminate\Notifications\Notifiable;
 class Ads extends Model
 {
     protected $fillable=['fk_name', 'uri', 'url', 'ip', 'size', 'clicks'];
+    protected $dateFormat = 'Y-m-d H:i:s';
 }

@@ -147,44 +147,48 @@ export class ModDetailsEntry extends Component{
 	}
 }
 export class AllDetailsTable extends Component{
+
 	constructor(props){
 		super(props);
 		this.state = {row_data:[]}
 	}
 
-	JSXRowData(adData){
+	JSXRowData(adData_const){
+		var adData = [ ...adData_const];
+
 		var JSX_var = [];
 		//sort it
-		if(this.props.sortByDetails == "none"){}
+		if(this.props.sortingDetails == "none"){}
 		else{
-			for(var index_i in adData){
-				for(var index_j in adData){
+			for(var index_i = 0; index_i < adData.length; index_i++){
+				for(var index_j = 0; index_j < adData.length; index_j++){
 					if(adData[index_i]['clicks'] > adData[index_j]['clicks']){
-						let ad_tmp = adData[index_i]['clicks'];
-						adData[index_i] =  adData[index_j];
-					  adData[index_j] = ad_tmp
+						let ad_tmp = adData[index_i];
+						adData[index_i] = adData[index_j];
+					  adData[index_j] = ad_tmp;
 					}
 				}
 			}
 		}
-		if(this.props.sortByDetails == "desc"){
-			adData = reverse(adData);
+		if(this.props.sortingDetails == "asc"){
+			adData = adData.reverse();
 		}
 		else{}
 
 		//asign it
 		for(var index in adData){
 			var entry = adData[index];
-			if(entry['size'] != this.props.filterDetails){
+			if(this.props.filterDetails == "none" || entry['size'] == this.props.filterDetails){
 				entry['uri'] = entry['uri'].replace('public/image/', 'storage/image/');
 				JSX_var.push(<AllDetailsEntry updateDetailsCallback={this.props.updateDetailsCallback}
-					id={"banner-" + index} key={"banner-"+index} name={entry['fk_name']} ad_src={entry['uri']} url={entry['url']} click_count={0}/>);
+					id={"banner-" + index} key={"banner-"+index} name={entry['fk_name']} ad_src={entry['uri']} url={entry['url']} click_count={entry['clicks']}/>);
 			}
 		}
 		return JSX_var;
 	}
 
 	render(){
+		const row_data = this.props.adData;
 		return (<div id="ad-details-table" className="table table-striped table-responsive">
 			<table>
 				<caption>ありがとうございます!</caption>
@@ -196,8 +200,8 @@ export class AllDetailsTable extends Component{
 						<th className="ad-th-clicks">Clicks</th>
 					</tr>
 				</thead>
-				<tbody className="">
-				{this.JSXRowData(this.props.adData)}
+				<tbody className="" data-sorting={this.props.sortingDetails}>
+					{this.JSXRowData(row_data)}
 				</tbody>
 			</table>
 			</div>);
@@ -213,7 +217,7 @@ export class AllDetailsEntry extends Component{
 				<td className="ad-td-name"><span className="ad-td-name-text">{this.props.name}</span></td>
 				<td className="ad-td-img"><a href={this.props.ad_src} ><img src={this.props.ad_src}/></a></td>
 				<td className="ad-td-url"><a href={this.props.url}>{this.props.url}</a></td>
-				<td className="ad-td-clicks"><span className="ad-td-clicks-text">{this.props.clicks}</span></td>
+				<td className="ad-td-clicks"><span className="ad-td-clicks-text">{this.props.click_count}</span></td>
 			</tr>);
 	}
 }

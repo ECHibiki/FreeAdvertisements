@@ -42485,6 +42485,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _settings__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../settings */ "./resources/js/scripts/settings.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -42804,14 +42812,16 @@ function (_Component7) {
 
   _createClass(AllDetailsTable, [{
     key: "JSXRowData",
-    value: function JSXRowData(adData) {
+    value: function JSXRowData(adData_const) {
+      var adData = _toConsumableArray(adData_const);
+
       var JSX_var = []; //sort it
 
-      if (this.props.sortByDetails == "none") {} else {
-        for (var index_i in adData) {
-          for (var index_j in adData) {
+      if (this.props.sortingDetails == "none") {} else {
+        for (var index_i = 0; index_i < adData.length; index_i++) {
+          for (var index_j = 0; index_j < adData.length; index_j++) {
             if (adData[index_i]['clicks'] > adData[index_j]['clicks']) {
-              var ad_tmp = adData[index_i]['clicks'];
+              var ad_tmp = adData[index_i];
               adData[index_i] = adData[index_j];
               adData[index_j] = ad_tmp;
             }
@@ -42819,15 +42829,15 @@ function (_Component7) {
         }
       }
 
-      if (this.props.sortByDetails == "desc") {
-        adData = reverse(adData);
+      if (this.props.sortingDetails == "asc") {
+        adData = adData.reverse();
       } else {} //asign it
 
 
       for (var index in adData) {
         var entry = adData[index];
 
-        if (entry['size'] != this.props.filterDetails) {
+        if (this.props.filterDetails == "none" || entry['size'] == this.props.filterDetails) {
           entry['uri'] = entry['uri'].replace('public/image/', 'storage/image/');
           JSX_var.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AllDetailsEntry, {
             updateDetailsCallback: this.props.updateDetailsCallback,
@@ -42836,7 +42846,7 @@ function (_Component7) {
             name: entry['fk_name'],
             ad_src: entry['uri'],
             url: entry['url'],
-            click_count: 0
+            click_count: entry['clicks']
           }));
         }
       }
@@ -42846,6 +42856,7 @@ function (_Component7) {
   }, {
     key: "render",
     value: function render() {
+      var row_data = this.props.adData;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "ad-details-table",
         className: "table table-striped table-responsive"
@@ -42860,8 +42871,9 @@ function (_Component7) {
       }, "URL"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", {
         className: "ad-th-clicks"
       }, "Clicks"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", {
-        className: ""
-      }, this.JSXRowData(this.props.adData))));
+        className: "",
+        "data-sorting": this.props.sortingDetails
+      }, this.JSXRowData(row_data))));
     }
   }]);
 
@@ -42902,7 +42914,7 @@ function (_Component8) {
         className: "ad-td-clicks"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "ad-td-clicks-text"
-      }, this.props.clicks)));
+      }, this.props.click_count)));
     }
   }]);
 
