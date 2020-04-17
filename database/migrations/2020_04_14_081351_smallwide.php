@@ -13,9 +13,10 @@ class Smallwide extends Migration
      */
     public function up()
     {
-      Schema::table('ads', function (Blueprint $table){
-    		  $table->string('size')->default("big");
-    	});
+        Schema::table('ads', function (Blueprint $table){
+          if (!Schema::hasColumn('ads', 'size'))
+      		  $table->string('size')->default("wide");
+      	});
     }
 
     /**

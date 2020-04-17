@@ -219,8 +219,10 @@ export class AllPage extends Component{
 export class AllContainer extends Component{
 	constructor(props){
 		super(props);
-		this.state = {AdArray:[]}
+		this.state = {AdArray:[],filter:'none', sorting:'none'};
 		this.setAllDetails = this.setAllDetails.bind(this);
+		this.filterOnChange = this.filterOnChange.bind(this);
+		this.sortByOnChange = this.sortByOnChange.bind(this);
 	}
 
 	componentDidMount(){
@@ -231,11 +233,38 @@ export class AllContainer extends Component{
 		this.setState(state_obj);
 	}
 
+  filterOnChange(response){
+    this.setState({filter:response.target.value});
+  }
+  sortByOnChange(response){
+    this.setState({sorting:response.target.value});
+  }
+
 	render(){
 			return (<div id="all-container">
 				<h2>All Banners</h2>
-				<span className="all-link"><Link to="/">Back</Link></span>
-				  <AllDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.setAllDetails}/>
+				<span className="all-link"><Link to="/">Back</Link></span><br/>
+
+        <div id="select-fields">
+          <span id="filter-selections">Banner Size:
+            <select value={this.state.filter} onChange={this.filterOnChange}>
+              <option value='none'>All</option>
+              <option value='small'>Small</option>
+              <option value='wide'>Wide</option>
+            </select>
+          </span>
+          <span id="sortby-selections"> Sort By:
+            <select value={this.state.sorting} onChange={this.sortByOnChange}>
+              <option value='none'>Chronological</option>
+              <option value='asc'>Ascending</option>
+              <option value='desc'>Descending</option>
+            </select>
+          </span>
+        </div>
+
+				  <AllDetailsTable adData={this.state.AdArray} updateDetailsCallback={this.setAllDetails}
+            filterDetails={this.state.filter}
+            sortingDetails={this.state.sorting}/>
 							</div>);
 	}
 }

@@ -154,13 +154,33 @@ export class AllDetailsTable extends Component{
 
 	JSXRowData(adData){
 		var JSX_var = [];
+		//sort it
+		if(this.props.sortByDetails == "none"){}
+		else{
+			for(var index_i in adData){
+				for(var index_j in adData){
+					if(adData[index_i]['clicks'] > adData[index_j]['clicks']){
+						let ad_tmp = adData[index_i]['clicks'];
+						adData[index_i] =  adData[index_j];
+					  adData[index_j] = ad_tmp
+					}
+				}
+			}
+		}
+		if(this.props.sortByDetails == "desc"){
+			adData = reverse(adData);
+		}
+		else{}
+
+		//asign it
 		for(var index in adData){
 			var entry = adData[index];
-			entry['uri'] = entry['uri'].replace('public/image/', 'storage/image/');
-			JSX_var.push(<AllDetailsEntry updateDetailsCallback={this.props.updateDetailsCallback}
-				id={"banner-" + index} key={"banner-"+index} name={entry['fk_name']} ad_src={entry['uri']} url={entry['url']}/>);
+			if(entry['size'] != this.props.filterDetails){
+				entry['uri'] = entry['uri'].replace('public/image/', 'storage/image/');
+				JSX_var.push(<AllDetailsEntry updateDetailsCallback={this.props.updateDetailsCallback}
+					id={"banner-" + index} key={"banner-"+index} name={entry['fk_name']} ad_src={entry['uri']} url={entry['url']} click_count={0}/>);
+			}
 		}
-		// reverse ASC selector because DESC is messy
 		return JSX_var;
 	}
 
@@ -173,6 +193,7 @@ export class AllDetailsTable extends Component{
 						<th className="ad-th-name">Name</th>
 						<th className="ad-th-img">Image</th>
 						<th className="ad-th-url">URL</th>
+						<th className="ad-th-clicks">Clicks</th>
 					</tr>
 				</thead>
 				<tbody className="">
@@ -192,6 +213,7 @@ export class AllDetailsEntry extends Component{
 				<td className="ad-td-name"><span className="ad-td-name-text">{this.props.name}</span></td>
 				<td className="ad-td-img"><a href={this.props.ad_src} ><img src={this.props.ad_src}/></a></td>
 				<td className="ad-td-url"><a href={this.props.url}>{this.props.url}</a></td>
+				<td className="ad-td-clicks"><span className="ad-td-clicks-text">{this.props.clicks}</span></td>
 			</tr>);
 	}
 }

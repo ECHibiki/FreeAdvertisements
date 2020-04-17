@@ -13,8 +13,7 @@
 
 
 Route::get('banner', 'PageGenerationController@GenerateAdPage');
-
+Route::get('req', 'RedirectController@RedirectSiteRequest');
 Route::get('/{path?}', function () {
     return view('index');
 });
-
