@@ -11,16 +11,17 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
 	protected $fillable=['name','pass'];
+	protected $table = 'users';
 
 	use Notifiable;
 
 	public function getAuthPassword() {
        		return $this->pass;
-    	}     
+    	}
 
 	public function username() {
        		return "name";
-    	}     
+    	}
 
      /**
      * Get the identifier that will be stored in the subject claim of the JWT.
@@ -39,18 +40,18 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-	    return 
+	    return
 	    [
 		    'is_mod'=> $this->isMod()
 	    ];
     }
 
     public function isMod(){
-    	return Mods::where('fk_name','=', $this->name)->count() > 0;
+    	return Mod::where('fk_name','=', $this->name)->count() > 0;
     }
 
     public function isBanned(){
-    	return Bans::where('fk_name','=', $this->name)->where('hardban','=', '1')->count() > 0;
+    	return Ban::where('fk_name','=', $this->name)->where('hardban','=', '1')->count() > 0;
 
     }
 

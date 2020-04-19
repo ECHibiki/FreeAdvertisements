@@ -10,15 +10,12 @@ use Illuminate\Support\Facades\Hash;
 
 class UserCreationController extends Controller
 {
-
-
-
 	public function createNewUser(Request $request){
 		$request->validate([
 			'name' => 'required|max:30',
 			'pass' => 'required|confirmed|min:5'
 		]);
-                  		
+
 
 		$response_msg = UserCreationController::addNewUserToDB($request->input('name'), $request->input('pass'));
 		if($response_msg === 1){
@@ -29,9 +26,9 @@ class UserCreationController extends Controller
 		else{
 			return $response_msg;
 		}
-	
+
 	}
-	
+
 	public static function addNewUserToDB(string $name, string $hashedpass){
 		if(preg_match('/(\\.|\\/|;)/', $name)){
 			return response(json_encode(["warn"=>"Name has invalid characters"]), 422)->header('Content-Type', 'text/plain');

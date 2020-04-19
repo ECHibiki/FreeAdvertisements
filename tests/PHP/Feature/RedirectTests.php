@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 
-use App\Bans;
+use App\Ban;
 
 class RedirectTests extends TestCase
 {

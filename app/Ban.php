@@ -4,7 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Bans extends Model
+class Ban extends Model
 {
     protected $fillable=['fk_name', 'hardban'];
+  	protected $table = 'bans';
 }

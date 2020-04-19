@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
-use App\Mods;
-use App\Bans;
+use App\Mod;
+use App\Ban;
 use DB;
 
 use JWTAuth;
@@ -36,9 +36,9 @@ class UserSignInController extends Controller
 			return response()->json(['warn'=>'You\'ve been banned...'], 401);
 		}
 		else{
-			$token_arr = [           
-		       		'access_token' => $token,
-            			'token_type' => 'bearer',
+			$token_arr = [
+     		'access_token' => $token,
+  			'token_type' => 'bearer',
 				'expires_in' => auth()->factory()->getTTL() * 60,
 				'log' => "Successfully Logged In"
 			];
@@ -62,7 +62,7 @@ class UserSignInController extends Controller
 			return response()->json(['warn'=>'Username or Password Incorrect'], 401);
 		}
 		else{
-			$token_arr = [           
+			$token_arr = [
 		       		'access_token' => $token,
             			'token_type' => 'bearer',
 				'expires_in' => auth()->factory()->getTTL() * 60,
@@ -76,9 +76,9 @@ class UserSignInController extends Controller
 		$token = auth()->attempt(["name"=>$name, "password"=>$pass]);
 		return $token;
 	}
-	
+
 	public function checkIfBanned($name){
-		return Bans::query()
+		return Ban::query()
 			->where("hardban", "=", "1")
 			->where("fk_name", "=", $name)->count() > 0;
 	}

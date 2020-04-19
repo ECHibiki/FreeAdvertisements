@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
-use App\Bans;
-use App\Ads;
-use App\Mods;
+use App\Ban;
+use App\Ad;
+use App\Mod;
 use App\Http\Controllers\ConfidentialInfoController;
 use App\Http\Controllers\PageGenerationController;
 use Storage;
@@ -30,11 +30,11 @@ class ModeratorActivityController extends Controller
 		]);
 		$hard = ($request->input("hard"));
 		$target = ($request->input("target"));
-		
+
 		$this->createNewBan($request->input("target"), $request->input("hard"));
-		if($hard == 1) 
+		if($hard == 1)
 			$hard = "hard";
-		else 
+		else
 			$hard = "soft";
 		return response(json_encode(["log"=>"user $target was $hard banned"]), 200);
 	}
@@ -75,7 +75,7 @@ class ModeratorActivityController extends Controller
 	public function createNewBan($target, $hard){
 		if($ban = ModeratorActivityController::GetBanInfo($target)){}
 		else{
-			$ban = new Bans();
+			$ban = new Ban();
 		}
 		$ban->fk_name = $target;
 		$ban->hardban = $hard;
@@ -86,7 +86,7 @@ class ModeratorActivityController extends Controller
 	}
 
 	public static function removeIndividualBannerFromDB($uri){
-		Ads::where('uri', '=', $uri)->delete();
+		Ad::where('uri', '=', $uri)->delete();
 	}
 
 	public static function removeIndividualBannerFromImages($uri){
@@ -94,16 +94,16 @@ class ModeratorActivityController extends Controller
 	}
 
 	public static function GetBanInfo($name){
-		return Bans::query()->where('fk_name', '=', $name)->first();
+		return Ban::query()->where('fk_name', '=', $name)->first();
 	}
 
 	public static function createMod($name){
-		$mod = new Mods(['fk_name'=>$name]);
+		$mod = new Mod(['fk_name'=>$name]);
 		$mod->save();
 	}
 
 	public static function removeUserFromDatabase($name){
-		Ads::where('fk_name','=', $name)->delete();
+		Ad::where('fk_name','=', $name)->delete();
 	}
 
 	public static function truncateUserJSON($target){

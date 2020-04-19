@@ -10,8 +10,8 @@ require "app/Http/Controllers/ModeratorActivityController.php";
 
 use Tests\TestCase;
 use App\User;
-use App\Bans;
-use App\Mods;
+use App\Ban;
+use App\Mod;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -64,7 +64,7 @@ sleep(env('COOLDOWN',60)+1);
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $response->getOriginalContent()['access_token'], 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://b.com"]);
-	 $ban = new Bans(['fk_name'=>'test2', 'hardban'=>0]);
+	 $ban = new Ban(['fk_name'=>'test2', 'hardban'=>0]);
 	 $ban->save();
 sleep(env('COOLDOWN',60)+1+0.5);
 	    $res = \App\Http\Controllers\ModeratorActivityController::GetAllEntries();
@@ -77,7 +77,7 @@ sleep(env('COOLDOWN',60)+1+0.5);
 	public function test_get_user_ban_info(){
 		$u = new User(['name'=>'test', 'pass'=>'123']);
 		$u->save();
-		$b = new Bans(['fk_name'=>'test', 'hard'=>1]);
+		$b = new Ban(['fk_name'=>'test', 'hard'=>1]);
 		$b->save();
 		$in = \App\Http\Controllers\ModeratorActivityController::GetBanInfo("test");
 		$this->assertEquals($in->hardban, 1);
