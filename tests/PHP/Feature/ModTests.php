@@ -15,7 +15,8 @@ use GuzzleHttp\Client;
 
 use Auth;
 
-use App\Bans;
+use App\Ban;
+
 class ModTests extends TestCase
 {
 	use RefreshDatabase;
@@ -83,7 +84,7 @@ sleep(env('COOLDOWN',60)+1);
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
-	    $b = new Bans(['fk_name'=>'test','hardban'=>1]);
+	    $b = new Ban(['fk_name'=>'test','hardban'=>1]);
 	    $b->save();
 sleep(env('COOLDOWN',60)+1);
          $response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
@@ -92,7 +93,7 @@ sleep(env('COOLDOWN',60)+1);
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
-	    $b = new Bans(['fk_name'=>'test2','hardban'=>1]);
+	    $b = new Ban(['fk_name'=>'test2','hardban'=>1]);
 	    $b->save();
 sleep(env('COOLDOWN',60)+1);
          $response = $this->call('POST', 'api/create', ['name'=>'test3', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
@@ -101,7 +102,7 @@ sleep(env('COOLDOWN',60)+1);
          Storage::fake('public/image');
          $img = UploadedFile::fake()->image('ad.jpg',500,90);
 	 $response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details',['image'=>$img, 'url'=>"https://test.com"]);
-	    $b = new Bans(['fk_name'=>'test3', 'hardban'=>0]);
+	    $b = new Ban(['fk_name'=>'test3', 'hardban'=>0]);
 	    $b->save();
 sleep(env('COOLDOWN',60)+1);
 	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass','pass_confirmation'=>'hardpass']);

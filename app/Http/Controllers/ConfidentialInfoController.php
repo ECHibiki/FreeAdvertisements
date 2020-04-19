@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\UploadedFile;
 
-use App\Ads;
+use App\Ad;
 use App\AntiSpam;
 use JWTAuth;
 use App\Http\Controllers\PageGenerationController;
@@ -157,7 +157,7 @@ class ConfidentialInfoController extends Controller
 
 	public static function addAdSQL(string $uri, string $url, string $size='wide'){
 		$name = auth()->user()->name;
-		$ad = new Ads(['fk_name'=>$name, 'uri'=>$uri, 'url'=>$url, 'ip'=>ConfidentialInfoController::getBestIPSource(), 'size'=>$size]);
+		$ad = new Ad(['fk_name'=>$name, 'uri'=>$uri, 'url'=>$url, 'ip'=>ConfidentialInfoController::getBestIPSource(), 'size'=>$size]);
 		$ad->save();
 	}
 

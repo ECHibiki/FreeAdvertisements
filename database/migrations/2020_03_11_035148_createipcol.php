@@ -13,9 +13,10 @@ class Createipcol extends Migration
      */
     public function up()
     {
-	Schema::table('ads', function (Blueprint $table){
+	       Schema::table('ads', function (Blueprint $table){
+           if (!Schema::hasColumn('ads', 'ip'))
 		         $table->string('ip')->nullable();
-	});
+	      });
     }
 
     /**

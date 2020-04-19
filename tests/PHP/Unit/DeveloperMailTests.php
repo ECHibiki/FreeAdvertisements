@@ -5,8 +5,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\User;
-use App\Bans;
-use App\Mods;
+use App\Ban;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;

@@ -13,13 +13,14 @@ class CreateFreeAdUsersTable extends Migration
      */
     public function up()
     {
-    Schema::create('users', function (Blueprint $table) {
-	    $table->bigIncrements('id');
+      if (!Schema::hasTable('users'))
+        Schema::create('users', function (Blueprint $table) {
+  	        $table->bigIncrements('id');
             $table->string('name',30)->unique();
-	    $table->string('pass',100);
-	    $table->date('updated_at');
-	    $table->date('created_at');
-        });
+      	    $table->string('pass',100);
+      	    $table->date('updated_at');
+      	    $table->date('created_at');
+          });
     }
 
     /**

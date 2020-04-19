@@ -34,6 +34,7 @@ class BannerNotification extends Mailable // implements ShouldQueue
      */
     public function build()
     {
+      $this->fname =  public_path() . "/" .  str_replace("public", "storage", $this->fname);
 	    return $this->from('banner@mail.notice')
 		    	->view('banner-mail-notice')->with(["name"=>$this->name, "time"=>$this->time, "url"=>$this->url, "err"=>$this->error, "fname"=>$this->fname]);
     }

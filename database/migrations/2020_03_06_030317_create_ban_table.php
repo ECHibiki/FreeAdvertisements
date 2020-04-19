@@ -14,14 +14,13 @@ class CreateBanTable extends Migration
     public function up()
     {
 	    Schema::create('bans', function (Blueprint $table) {
-		$table->bigIncrements('id');
-		$table->string('fk_name')->unique();
-		$table->boolean('hardban')->default(true);
-		$table->timestamps();
+    		$table->bigIncrements('id');
+    		$table->string('fk_name')->unique();
+    		$table->boolean('hardban')->default(true);
+    		$table->timestamps();
 
-		$table->foreign('fk_name')->references('name')->on('users')->onDelete('cascade');
-		
-        });
+    		$table->foreign('fk_name')->references('name')->on('users')->onDelete('cascade');
+      });
     }
 
     /**

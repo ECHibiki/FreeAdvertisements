@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Mods extends Model {
+class Mod extends Model {
 	protected $fillable=['fk_name'];
+		protected $table = 'mods';
 }

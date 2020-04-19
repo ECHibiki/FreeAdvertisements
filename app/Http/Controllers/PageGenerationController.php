@@ -47,8 +47,10 @@ class PageGenerationController extends Controller
 		if($rand_ad == null){
 			return "asdf no ads";
 		}
-		else
-			return view('banner', ['url'=>$rand_ad->url, 'uri'=>str_replace('public','storage',$rand_ad->uri), 'name'=>$rand_ad->fk_name]);
+		else{
+      $url = env('MIX_APP_URL') . '/req?s=' . $rand_ad->url . '&f=' . substr($rand_ad->uri, strrpos($rand_ad->uri, '/') + 1);
+			return view('banner', ['url'=>$url , 'uri'=>str_replace('public','storage',$rand_ad->uri), 'name'=>$rand_ad->fk_name, 'size'=>$rand_ad->size, 'clicks'=>$rand_ad->clicks]);
+		}
 	}
 
 	public function GenerateAdJSON(Request $request){
@@ -63,10 +65,12 @@ class PageGenerationController extends Controller
 					$rand_ad = $this->GetRandomAdEntry();
 		}
 		if($rand_ad == null){
-			return json_encode([['url'=>'', 'uri'=>'', 'name'=>'asdf no ads']]);
+			return json_encode([['url'=>'', 'uri'=>'', 'name'=>'asdf no ads', 'size'=>'', 'clicks'=>'']]);
 		}
-		else
-			return json_encode([['url'=>$rand_ad->url, 'uri'=>str_replace('public','storage',$rand_ad->uri), 'name'=>$rand_ad->fk_name]]);
+		else{
+      $url = env('MIX_APP_URL') . '/req?s=' . $rand_ad->url . '&f=' . substr($rand_ad->uri, strrpos($rand_ad->uri, '/') + 1);
+			return json_encode([['url'=>$url , 'uri'=>str_replace('public','storage',$rand_ad->uri),  'name'=>$rand_ad->fk_name, 'size'=>$rand_ad->size, 'clicks'=>$rand_ad->clicks]]);
+		}
 	}
 
 	// banned users will not show up in rotation
@@ -82,7 +86,7 @@ class PageGenerationController extends Controller
 			->whereNull('bans.hardban')
 			->orWhere('ip','=', PageGenerationController::getBestIPSource())
 			->orWhere('bans.fk_name','=',$name)
-			->select("ads.fk_name", "uri", "url")
+			->select("ads.fk_name", "uri", "url", "size", "clicks")
 			->inRandomOrder()->first();
 
 		}
@@ -102,7 +106,7 @@ class PageGenerationController extends Controller
 					->orWhere('ip','=', PageGenerationController::getBestIPSource())
 					->orWhere('bans.fk_name','=',$name);
 				})
-				->select("ads.fk_name", "uri", "url")
+				->select("ads.fk_name", "uri", "url", "size", "clicks")
 				->inRandomOrder()->first();
 
 			}
@@ -123,7 +127,7 @@ class PageGenerationController extends Controller
 						->orWhere('ip','=', PageGenerationController::getBestIPSource())
 						->orWhere('bans.fk_name','=',$name);
 					})
-					->select("ads.fk_name", "uri", "url")
+					->select("ads.fk_name", "uri", "url", "size", "clicks")
 					->inRandomOrder()->first();
 
 				}
@@ -143,7 +147,7 @@ class PageGenerationController extends Controller
 					->orWhere('ip','=', PageGenerationController::getBestIPSource())
 					->orWhere('bans.fk_name','=',$name);
 			})
-			->select("ads.fk_name", "uri", "url")
+			->select("ads.fk_name", "uri", "url", "size", "clicks")
 			->orderBy('ads.created_at', 'ASC')->get();
                 }
 

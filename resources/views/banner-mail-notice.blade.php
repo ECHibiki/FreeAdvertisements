@@ -2,7 +2,7 @@
 <p style="color:green">Name:  {{ $name }}</p><br/>
 <p style="color:blue">URL: {{$url}}</p>
 <br/>
-Banner:
+Banner:<br/>
   <img src="{{ $message->embed($fname) }}">
 @if ($err)
 <hr/>

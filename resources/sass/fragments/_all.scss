@@ -189,6 +189,10 @@ hr{
 	}
 }
 
+#ad-details-table{
+	overflow-x: initial;
+	margin-top:3em;
+}
 
 #details-table {
 	table{
@@ -262,6 +266,23 @@ hr{
 		word-break:break-word;
 	}
 }
-.ad-td-name, .ad-td-ban{
+.ad-td-name, .ad-td-ban, .ad-td-clicks{
 	text-align:center;
+}
+#donation{
+	word-wrap: anywhere;
+}
+#select-fields{
+	display:block;
+	margin:auto;
+	width:65%;
+}
+#filter-selections{
+	float:left;
+}
+#sortby-selections{
+	float:right;
+	@media (max-width:585px){
+		float:left;
+	}
 }
