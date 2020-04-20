@@ -71,7 +71,7 @@ class ConfidentialInfoController extends Controller
 			'image'=>'required|image|dimensions:width='. env('MIX_IMAGE_DIMENSIONS_SMALL_W', '300') .',height=' . env('MIX_IMAGE_DIMENSIONS_SMALL_H', '140'),
 		]);
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
-		$this->addUserJSON($fname, env('MIX_APP_URL', 'https://kissu.moe'));
+		$this->addUserJSON($fname, env('MIX_APP_URL', 'https://kissu.moe'), 'small');
 		$this->addAdSQL($fname, env('MIX_APP_URL', 'https://kissu.moe'), 'small');
 		$t = MailSendController::getCooldown();
 
@@ -92,10 +92,10 @@ class ConfidentialInfoController extends Controller
 	public function createWideInfo(Request $request){
 		$request->validate([
 			'image'=>'required|image|dimensions:width='. env('MIX_IMAGE_DIMENSIONS_W', '500') .',height=' . env('MIX_IMAGE_DIMENSIONS_H', '90'),
-			'url'=>['required','url','regex:/^http(|s):\/\/[A-Z0-9+&@#\/%?=~_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|?\-]+$/i']
+			'url'=>['required','url','regex:/^http(|s):\/\/[A-Z0-9+&@#\/%?=~\-_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|?\-]+$/i']
 		]);
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
-		$this->addUserJSON($fname, $request->input('url'));
+		$this->addUserJSON($fname, $request->input('url'), 'wide');
 		$this->addAdSQL($fname, $request->input('url'), 'wide');
 		$t = MailSendController::getCooldown();
 
@@ -128,10 +128,10 @@ class ConfidentialInfoController extends Controller
 		}
 	}
 
-	public static function addUserJSON(string $uri, string $url){
+	public static function addUserJSON(string $uri, string $url, string $size){
 		$name = auth()->user()->name;
 		$combined = json_decode(Storage::disk('local')->get("$name.json"), true);
-		$combined[] = ['uri'=>$uri, 'url'=>$url];
+		$combined[] = ['uri'=>$uri, 'url'=>$url, 'size'=> $size, 'clicks'=>($size == 'small' ? '-' : '0')];
 			Storage::disk('local')->put("$name.json", json_encode($combined));
 	}
 
