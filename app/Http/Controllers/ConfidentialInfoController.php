@@ -131,8 +131,8 @@ class ConfidentialInfoController extends Controller
 	public static function addUserJSON(string $uri, string $url, string $size){
 		$name = auth()->user()->name;
 		$combined = json_decode(Storage::disk('local')->get("$name.json"), true);
-		$combined[] = ['uri'=>$uri, 'url'=>$url, 'size'=> $size, 'clicks'=>($size == 'small' ? '-' : '0')];
-			Storage::disk('local')->put("$name.json", json_encode($combined));
+		$combined[] = ['uri'=>$uri, 'url'=>$url, 'size'=> $size, 'clicks'=>'0'];
+		Storage::disk('local')->put("$name.json", json_encode($combined));
 	}
 
 	public static function removeUserJSON(string $uri, string $url){
@@ -152,7 +152,22 @@ class ConfidentialInfoController extends Controller
 
 	public static function getUserJSON(){
 		$name = auth()->user()->name;
-		return json_decode(Storage::disk('local')->get("$name.json"), true);
+		$translated = [];
+		$combined = json_decode(Storage::disk('local')->get("$name.json"), true);
+		foreach($combined as $entry){
+			if(!isset($entry['size'])){
+				$data = DB::table('ads')->where('fk_name', $name)->where('uri', $entry['uri'])->where('url',$entry['url'])->first();
+				$entry['size'] = $data->size;
+				if($entry['size'] == 'small'){
+					$entry['clicks'] = '-';
+				}
+				else {
+					$entry['clicks'] = $data->clicks;
+				}
+			}
+			$translated[] = $entry;
+		}
+		return $translated;
 	}
 
 	public static function addAdSQL(string $uri, string $url, string $size='wide'){

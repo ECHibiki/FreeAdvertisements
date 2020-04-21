@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 export class AllDetailsTable extends Component{
 	constructor(props){
 		super(props);
-		this.state = {row_data:[],filter:'none', sorting:'none'}
+
+		this.state = {row_data:[]}
 	}
 
 	JSXRowData(adData_const){

@@ -35,11 +35,9 @@ class RedirectController extends Controller
       $new = [];
       foreach($combined as $entry){
         if($entry['uri'] == $uri && $entry['url'] == $url){
-          $new[] = ['uri' => $entry['uri'], 'url' => $entry['url'], 'clicks' => $clicks + 1];
+          $entry['clicks'] = $clicks + 1;
         }
-        else{
           $new[] = $entry;
-        }
       }
       Storage::disk('local')->put("$name.json", json_encode($new));
     }
