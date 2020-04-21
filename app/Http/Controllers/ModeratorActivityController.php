@@ -69,7 +69,7 @@ class ModeratorActivityController extends Controller
 	}
 
 	public static function GetAllEntries(){
-		return DB::table('ads')->leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')->select('ads.fk_name', 'url', 'uri', 'bans.hardban')->orderBy('ads.created_at', 'ASC')->get();
+		return DB::table('ads')->leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')->select('ads.fk_name', 'url', 'uri', 'bans.hardban', 'size', 'clicks')->orderBy('ads.created_at', 'ASC')->get();
 	}
 
 	public function createNewBan($target, $hard){

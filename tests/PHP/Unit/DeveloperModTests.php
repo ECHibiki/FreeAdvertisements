@@ -106,28 +106,27 @@ sleep(env('COOLDOWN',60)+1);
 	}
 	//
 	// test json ad removal from mod
-	public function test_json_removal_on_individual(){
-				$_SERVER['HTTP_X_REAL_IP'] = 1;
+	public function test_json_removal_on_individual_generic(){
+		$_SERVER['HTTP_X_REAL_IP'] = 1;
 
-			Storage::fake('local');
-	$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
-	$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
-	$token = $response->getOriginalContent()['access_token'];
-        Storage::fake('image');
+		Storage::fake('local');
+		$response = $this->call('POST', 'api/create', ['name'=>'test', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hardpass']);
+		$token = $response->getOriginalContent()['access_token'];
+		Storage::fake('image');
 
-	$img = UploadedFile::fake()->image('ad.jpg',500,90);
-	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
-	$fname3 = $response->json()['fname'];
-sleep(env('COOLDOWN',60)+1);
-        $img = UploadedFile::fake()->image('ad.jpg',500,90);
-	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
-	$fname = $response->json()['fname'];
-sleep(env('COOLDOWN',60)+1);
+		$img = UploadedFile::fake()->image('ad.jpg',500,90);
+		$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
+		$fname3 = $response->json()['fname'];
+		sleep(env('COOLDOWN',60)+1);
+		$img = UploadedFile::fake()->image('ad.jpg',500,90);
+		$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
+		$fname = $response->json()['fname'];
+		sleep(env('COOLDOWN',60)+1);
 		\App\Http\Controllers\ModeratorActivityController::removeIndividualBannerFromJSON("test",$fname, 'https://test.com');
-	$info = \app\Http\Controllers\ModeratorActivityController::getSelectJSON("test");
+		$info = \app\Http\Controllers\ModeratorActivityController::getSelectJSON("test");
 
-		$this->assertEquals($info, '[{"uri":"'. str_replace("/", "\/", $fname3) .'","url":"https:\/\/test.com"}]');
-
+		$this->assertEquals($info, '[{"uri":"'. str_replace("/", "\/", $fname3) .'","url":"https:\/\/test.com","size":"wide","clicks":"0"}]');
 	}
 
 	// test file removal

@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 export class AllDetailsTable extends Component{
 	constructor(props){
 		super(props);
-		this.state = {row_data:[],filter:'none', sorting:'none'}
+
+		this.state = {row_data:[]}
 	}
 
 	JSXRowData(adData_const){
@@ -33,7 +34,7 @@ export class AllDetailsTable extends Component{
 			if(this.props.filterDetails == "none" || entry['size'] == this.props.filterDetails){
 				entry['uri'] = entry['uri'].replace('public/image/', 'storage/image/');
 				JSX_var.push(<AllDetailsEntry updateDetailsCallback={this.props.updateDetailsCallback}
-					id={"banner-" + index} key={"banner-"+index} name={entry['fk_name']} ad_src={entry['uri']} url={entry['url']} click_count={entry['clicks']}/>);
+					id={"banner-" + index} key={"banner-"+index} name={entry['fk_name']} ad_src={entry['uri']} url={entry['url']} click_count={(entry['size'] == "wide" ? entry['clicks'] : "-")}/>);
 			}
 		}
 		return JSX_var;

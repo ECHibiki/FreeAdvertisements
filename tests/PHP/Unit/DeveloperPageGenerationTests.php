@@ -77,28 +77,28 @@ class DeveloperPageGenerationTests extends TestCase
    //json
    public function test_add_sample_json_data(){
 	//redundant but easy
-	Storage::fake('local');
-	$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
-	$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
+		Storage::fake('local');
+		$response = $this->call('POST', 'api/create', ['name'=>'hardtest', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
+		$response = $this->call('POST', 'api/login', ['name'=>'hardtest', 'pass'=>'hardpass']);
 
-	$token = $response->getOriginalContent()['access_token'];
- 	$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token])->get('api/details');
+		$token = $response->getOriginalContent()['access_token'];
+		$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token])->get('api/details');
 
-        Storage::fake('image');
-        $img = UploadedFile::fake()->image('ad.jpg');
-	$fname = \app\Http\Controllers\PageGenerationController::StoreAdImage($img);
+		Storage::fake('image');
+		$img = UploadedFile::fake()->image('ad.jpg');
+		$fname = \app\Http\Controllers\PageGenerationController::StoreAdImage($img);
 
 
-	\app\Http\Controllers\ConfidentialInfoController::addUserJSON($fname, "https://test.com");
-	$this->assertEquals([['uri'=>$fname, 'url'=>'https://test.com']], json_decode(Storage::disk('local')->get("hardtest.json"), true));
-	return $fname;
+		\app\Http\Controllers\ConfidentialInfoController::addUserJSON($fname, "https://test.com", "wide");
+		$this->assertEquals([['uri'=>$fname, 'url'=>'https://test.com', 'size'=>'wide', 'clicks'=>'0']], json_decode(Storage::disk('local')->get("hardtest.json"), true));
+		return $fname;
    }
 
 
    public function test_get_user_json_data(){
       $fname = $this->test_add_sample_json_data();
       $info = \app\Http\Controllers\ConfidentialInfoController::getUserJSON();
-      $this->assertEquals([['uri'=>$fname, 'url'=>'https://test.com']], $info);
+      $this->assertEquals([['uri'=>$fname, 'url'=>'https://test.com', 'size'=>'wide', 'clicks'=>'0']], $info);
    }
 
    public function test_remove_user_json_data(){

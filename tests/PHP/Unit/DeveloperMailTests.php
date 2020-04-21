@@ -35,7 +35,7 @@ class DeveloperMailTests extends TestCase
     //    ->render());
     // It's known from ^ that the email body will be 200 characters long
 		$this->assertEquals(strlen((new \App\Mail\BannerNotification(["name"=>"testname", "time"=>date('y',time()), "url"=>"http://sdf.com", 'err'=>'',  'fname'=>'notimage']))
-        ->render()) , 200
+        ->render()) , 205
     );
 	}
 
