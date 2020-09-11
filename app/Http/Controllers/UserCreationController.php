@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Hash;
 
 class UserCreationController extends Controller
 {
+
+
+	public function rejectUserCreation(){
+			return response(json_encode(["warn"=>"Pool Closed - Come back later"]), 200)->header('Content-Type', 'text/plain');
+	}
+
 	public function createNewUser(Request $request){
 		$request->validate([
 			'name' => 'required|max:30',

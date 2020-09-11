@@ -8,8 +8,8 @@ use App\Http\Controllers\UserSignInController;
 
 use Tests\TestCase;
 use App\User;
-use App\Mod;
-use App\Ban;
+use App\Mods;
+use App\Bans;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -28,7 +28,7 @@ class DeveloperUserAccessTests extends TestCase
      * @return void
      */
     public function testExample()
-    {
+    {   
         $this->assertTrue(true);
     }
 
@@ -77,27 +77,27 @@ class DeveloperUserAccessTests extends TestCase
 
     //db tests
     public function test_user_in_DB(){
-			$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
-			$user->save();
-			$this->assertTrue(Auth::attempt(['name'=>'test', 'password'=>'hashedpass']) != false
-				&& Auth::attempt(['name'=>'test', 'password'=>'hashedpass222']) == false);
-		    }
-		    public function test_user_not_in_DB(){
-			$this->expectException(\PDOException::class);
-			$user = new User (['name' => "test"]);
-			$user->save();
+	$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
+	$user->save();
+	$this->assertTrue(Auth::attempt(['name'=>'test', 'password'=>'hashedpass']) != false
+		&& Auth::attempt(['name'=>'test', 'password'=>'hashedpass222']) == false);
+    }
+    public function test_user_not_in_DB(){
+	$this->expectException(\PDOException::class);
+	$user = new User (['name' => "test"]);
+	$user->save();
     }
 
-    // jwt auth tests
+    // jwt auth tests 
     public function test_JWT_return_fail_not_existant(){
 	    $this->assertTrue(App\Http\Controllers\UserSignInController::returnJWT("testname", "pass") == false);
     }
-        // jwt auth tests
+        // jwt auth tests 
     public function test_JWT_return_fail_missing_param_name(){
 	    $this->expectException(ArgumentCountError::class);
 	    $this->assertTrue(App\Http\Controllers\UserSignInController::returnJWT("pass") == false);
     }
-        // jwt auth tests
+        // jwt auth tests 
     public function test_JWT_return_fail_empty_param_pass(){
 	    $this->assertTrue(App\Http\Controllers\UserSignInController::returnJWT("testname", "") == false);
     }
@@ -111,59 +111,59 @@ class DeveloperUserAccessTests extends TestCase
 	public function test_a_user_is_mod(){
 	    	$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
 		$user->save();
-		$mod = new Mod(['fk_name'=>'test']);
+		$mod = new Mods(['fk_name'=>'test']);
 		$mod->save();
-
+		
 		$this->assertTrue($user->isMod());
 	}
     	public function test_a_user_is_banned(){
 	    	$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
 		$user->save();
-		$b = new Ban(['fk_name'=>'test']);
+		$b = new Bans(['fk_name'=>'test']);
 		$b->save();
-
+		
 		$this->assertTrue($user->isBanned());
 	}
 
 	public function test_can_not_access_user_details_api_natural(){
-
+		
 		$response = $this->json('GET', 'api/details', ['name'=>'test', 'pass'=>'hashedpass']);
 
-		$this->assertEquals(json_decode($response->getContent(), true), ['message'=>"Unauthenticated."]);
+		$this->assertEquals(json_decode($response->getContent(), true), ['message'=>"Unauthenticated."]);	
 	}
 
 	public function test_can_not_access_user_ad_create_api_natural(){
-
+		
 		$response = $this->json('POST', 'api/details', ['name'=>'test', 'pass'=>'hashedpass']);
 
-		$this->assertEquals(json_decode($response->getContent(), true), ['message'=>"Unauthenticated."]);
+		$this->assertEquals(json_decode($response->getContent(), true), ['message'=>"Unauthenticated."]);		
 	}
 
 	public function test_can_not_access_user_removal_api_natural(){
-
+		
 		$response = $this->json('POST', 'api/removal', ['name'=>'test', 'pass'=>'hashedpass']);
-		$this->assertEquals(json_decode($response->getContent(), true), ['message'=>"Unauthenticated."]);
+		$this->assertEquals(json_decode($response->getContent(), true), ['message'=>"Unauthenticated."]);	
 	}
 
 	public function test_can_not_access_user_login_api_banned(){
-
+		
 		$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
 		$user->save();
-		$b = new Ban(['fk_name'=>'test']);
+		$b = new Bans(['fk_name'=>'test']);
 		$b->save();
-
+		
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hashedpass']);
 		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You've been banned..."]);
 	}
 
 	public function test_can_not_access_user_details_api_banned(){
 		$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
-		$user->save();
+		$user->save();		
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hashedpass']);
-
-		$b = new Ban(['fk_name'=>'test']);
+	
+		$b = new Bans(['fk_name'=>'test']);
 		$b->save();
-
+		
 		$response = $this->call('GET', 'api/details', ['name'=>'test', 'pass'=>'hashedpass']);
 
 		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You've been banned..."]);
@@ -172,11 +172,11 @@ class DeveloperUserAccessTests extends TestCase
 	public function test_can_not_access_user_ad_create_api_banned(){
 		$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
 		$user->save();
-
+		
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hashedpass']);
-		$b = new Ban(['fk_name'=>'test']);
+		$b = new Bans(['fk_name'=>'test']);
 		$b->save();
-
+		
 		$response = $this->call('POST', 'api/details', ['name'=>'test', 'pass'=>'hashedpass']);
 
 		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You've been banned..."]);
@@ -185,30 +185,30 @@ class DeveloperUserAccessTests extends TestCase
 	public function test_can_not_access_user_removal_api_banned(){
 		$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
 		$user->save();
-
+		
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hashedpass']);
 
-		$b = new Ban(['fk_name'=>'test']);
+		$b = new Bans(['fk_name'=>'test']);
 		$b->save();
-
+		
 		$response = $this->call('POST', 'api/removal', ['name'=>'test', 'pass'=>'hashedpass']);
 
-		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You've been banned..."]);
+		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You've been banned..."]);	
 	}
 
 	public function test_can_not_access_mod_login_api_normal(){
 		$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
 		$user->save();
-
+		
 		$response = $this->call('POST', 'api/mod/login', ['name'=>'test', 'pass'=>'hashedpass']);
 		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You are not a moderator"]);
 	}
 
 	public function test_can_not_access_mod_all_api_normal(){
 		$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
-		$user->save();
+		$user->save();		
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hashedpass']);
-
+		
 		$response = $this->call('GET', 'api/mod/all', ['name'=>'test', 'pass'=>'hashedpass']);
 
 		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You are not a moderator"]);
@@ -217,9 +217,9 @@ class DeveloperUserAccessTests extends TestCase
 	public function test_can_not_access_mod_ban_api_normal(){
 		$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
 		$user->save();
-
+		
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hashedpass']);
-
+		
 		$response = $this->call('POST', 'api/mod/ban', ['name'=>'test', 'pass'=>'hashedpass']);
 
 		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You are not a moderator"]);
@@ -228,20 +228,20 @@ class DeveloperUserAccessTests extends TestCase
 	public function test_can_not_access_mod_remove_all_api_unmod(){
 		$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
 		$user->save();
-
+		
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hashedpass']);
 		$response = $this->call('POST', 'api/mod/purge', ['name'=>'test', 'pass'=>'hashedpass']);
 
-		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You are not a moderator"]);
+		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You are not a moderator"]);	
 	}
 	public function test_can_not_access_mod_remove_ind_api_unmod(){
 		$user = new User (['name' => "test", 'pass' => bcrypt("hashedpass")]);
 		$user->save();
-
+		
 		$response = $this->call('POST', 'api/login', ['name'=>'test', 'pass'=>'hashedpass']);
 		$response = $this->call('POST', 'api/mod/individual', ['name'=>'test', 'pass'=>'hashedpass']);
 
-		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You are not a moderator"]);
+		$this->assertEquals(json_decode($response->getContent(), true), ['warn'=>"You are not a moderator"]);	
 	}
 
 

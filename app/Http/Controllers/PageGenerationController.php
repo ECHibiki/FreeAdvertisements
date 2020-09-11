@@ -48,7 +48,7 @@ class PageGenerationController extends Controller
 			return "asdf no ads";
 		}
 		else{
-      $url = env('MIX_APP_URL') . '/req?s=' . $rand_ad->url . '&f=' . substr($rand_ad->uri, strrpos($rand_ad->uri, '/') + 1);
+      $url = env('MIX_APP_URL') . '/req?s=' . urlencode($rand_ad->url) . '&f=' . substr($rand_ad->uri, strrpos($rand_ad->uri, '/') + 1);
 			return view('banner', ['url'=>$url , 'uri'=>str_replace('public','storage',$rand_ad->uri), 'name'=>$rand_ad->fk_name, 'size'=>$rand_ad->size, 'clicks'=>$rand_ad->clicks]);
 		}
 	}
@@ -68,7 +68,7 @@ class PageGenerationController extends Controller
 			return json_encode([['url'=>'', 'uri'=>'', 'name'=>'asdf no ads', 'size'=>'', 'clicks'=>'']]);
 		}
 		else{
-      $url = env('MIX_APP_URL') . '/req?s=' . $rand_ad->url . '&f=' . substr($rand_ad->uri, strrpos($rand_ad->uri, '/') + 1);
+      $url = env('MIX_APP_URL') . '/req?s=' . urlencode($rand_ad->url) . '&f=' . substr($rand_ad->uri, strrpos($rand_ad->uri, '/') + 1);
 			return json_encode([['url'=>$url , 'uri'=>str_replace('public','storage',$rand_ad->uri),  'name'=>$rand_ad->fk_name, 'size'=>$rand_ad->size, 'clicks'=>$rand_ad->clicks]]);
 		}
 	}

@@ -33,6 +33,9 @@ class ConfidentialInfoController extends Controller
 	}
 
 	public function doAntiSpam($name){
+		// expand into cooldown and optionally set phashing algorithm.
+		// return false or true
+		// for phash, new column will store hash data and evaluate for simularities
 		return DB::table('antispam')
 			->where('name','=',$name)
 			->where('unix', '>=',
@@ -53,7 +56,6 @@ class ConfidentialInfoController extends Controller
 	  if ($antispam_response->count() > 0){
 			return ['warn'=>'posting too fast('.
 				($antispam_response->first()->unix - Carbon::now()->subSeconds(intval(env('COOLDOWN',60)))->timestamp) . ' seconds)'];
-		}
 		else{
 			if($request->input('size') == "small"){
 				$response = $this->createSmallInfo($request);
@@ -73,8 +75,8 @@ class ConfidentialInfoController extends Controller
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
 		$this->addUserJSON($fname, env('MIX_APP_URL', 'https://kissu.moe'), 'small');
 		$this->addAdSQL($fname, env('MIX_APP_URL', 'https://kissu.moe'), 'small');
+		
 		$t = MailSendController::getCooldown();
-
 		if($t < time()){
 			$err = MailSendController::sendMail(["name"=>auth()->user()->name, "time"=>date('yMd-h:i:s',time()), "url"=> $request->input('url'), 'fname'=>$fname],
 				['primary_email'=>env('PRIMARY_MOD_EMAIL'), 'secondary_emails'=>env('SECONDARY_MOD_EMAIL_LIST')]);
@@ -92,7 +94,7 @@ class ConfidentialInfoController extends Controller
 	public function createWideInfo(Request $request){
 		$request->validate([
 			'image'=>'required|image|dimensions:width='. env('MIX_IMAGE_DIMENSIONS_W', '500') .',height=' . env('MIX_IMAGE_DIMENSIONS_H', '90'),
-			'url'=>['required','url','regex:/^http(|s):\/\/[A-Z0-9+&@#\/%?=~\-_|!:,.;]+\.[A-Z0-9+&@#\/%=~_|?\-]+$/i']
+			'url'=>['required','url','regex:/^http(|s):\/\/[A-Z0-9+&@#\/%?=~\-_|!:,.;]+\.[A-Z0-9:+&@#\/%=~_|?\.\-"\']+$/i']
 		]);
 		$fname = PageGenerationController::StoreAdImage($request->file('image'));
 		$this->addUserJSON($fname, $request->input('url'), 'wide');
