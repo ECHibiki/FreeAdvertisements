@@ -62,7 +62,7 @@ class PageGenerationController extends Controller
 			$rand_ad = $this->GetWideRandomAdEntry();
 		}
 		else{
-					$rand_ad = $this->GetRandomAdEntry();
+			$rand_ad = $this->GetRandomAdEntry();
 		}
 		if($rand_ad == null){
 			return json_encode([['url'=>'', 'uri'=>'', 'name'=>'asdf no ads', 'size'=>'', 'clicks'=>'']]);
@@ -76,12 +76,11 @@ class PageGenerationController extends Controller
 	// banned users will not show up in rotation
 	public static function GetRandomAdEntry(){
 		try{
-                        $name = auth()->setToken($_COOKIE['freeadstoken'])->user()->name;
-                }
-                catch(\Exception $e){
-                        $name = "";
+      $name = auth()->setToken($_COOKIE['freeadstoken'])->user()->name;
+    } catch(\Exception $e){
+			$name = "";
 		}
-                return DB::table('ads')
+    return DB::table('ads')
 			->leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')
 			->whereNull('bans.hardban')
 			->orWhere('ip','=', PageGenerationController::getBestIPSource())
@@ -113,10 +112,10 @@ class PageGenerationController extends Controller
 			// banned users will not show up in rotation
 			public static function GetWideRandomAdEntry(){
 				try{
-														$name = auth()->setToken($_COOKIE['freeadstoken'])->user()->name;
-										}
-										catch(\Exception $e){
-														$name = "";
+					$name = auth()->setToken($_COOKIE['freeadstoken'])->user()->name;
+				}
+				catch(\Exception $e){
+					$name = "";
 				}
 
 			 return DB::table('ads')
@@ -135,10 +134,10 @@ class PageGenerationController extends Controller
 	public static function GetLimitedEntries($name = null, $env_skip = false){
 		try{
 			if(!$name)
-                        	$name = auth()->setToken($_COOKIE['freeadstoken'])->user()->name;
-                }
-                catch(\Exception $e){
-                        $name = "";
+				$name = auth()->setToken($_COOKIE['freeadstoken'])->user()->name;
+			}
+		catch(\Exception $e){
+			$name = "";
 		}
 		return DB::table('ads')
 			->leftJoin('bans', 'ads.fk_name', '=', 'bans.fk_name')

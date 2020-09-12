@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AntispamCd extends Migration
+class AdsHash extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class AntispamCd extends Migration
      */
     public function up()
     {
-      if(!Schema::hasTable('antispam')){
-        Schema::create('antispam', function (Blueprint $table) {
-          $table->string('name',30);
-          $table->integer('unix');
-          $table->date('updated_at');
-          $table->date('created_at');
-        });
-      }
+      Schema::table('ads', function (Blueprint $table){
+        if (!Schema::hasColumn('ads', 'hash'))
+          $table->string('hash');
+      });
     }
 
     /**
@@ -30,6 +26,8 @@ class AntispamCd extends Migration
      */
     public function down()
     {
-        //
+      Schema::table('ads', function (Blueprint $table){
+          $table->dropColumn('hash');
+      });
     }
 }

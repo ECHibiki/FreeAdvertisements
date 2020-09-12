@@ -15,15 +15,13 @@ use GuzzleHttp\Client;
 
 use Auth;
 
-use App\User;
-use App\Bans;
-use App\Mods;
+use App\Ban;
 
 class MailTests extends TestCase
 {
 
 		use RefreshDatabase;
-	
+
 
     /**
      * A basic feature test example.
@@ -56,9 +54,9 @@ $_SERVER['HTTP_X_REAL_IP'] = 1;
 
 		Mail::assertSent(BannerNotification::class, 1);
 
-	}	
-	
-	// method doesn't fire during cooldown for banner creation 
+	}
+
+	// method doesn't fire during cooldown for banner creation
 	public function test_email_caller_does_not_fire_on_cooldown(){
 		Mail::fake();
 		Storage::fake('local');
@@ -73,7 +71,8 @@ $_SERVER['HTTP_X_REAL_IP'] = 1;
         	$img = UploadedFile::fake()->image('ad.jpg',500,90);
 		$response = $this->withHeaders(['Accept' => 'application/json', 'Authorization'=>'bearer ' . $token, 'enctype'=>'multipart/form-data'])->post('api/details', ['image'=>$img, 'url'=>"https://test.com"]);
 
-		
+sleep(1);
+
 		$response = $this->call('POST', 'api/create', ['name'=>'test2', 'pass'=>'hardpass', 'pass_confirmation'=>'hardpass']);
 		$response->assertStatus(200);
 		$response = $this->call('POST', 'api/login', ['name'=>'test2', 'pass'=>'hardpass']);
@@ -88,9 +87,9 @@ $_SERVER['HTTP_X_REAL_IP'] = 1;
 
 		Mail::assertSent(BannerNotification::class, 1);
 
-	}	
+	}
 
-	// method fires after cooldown for banner creation 
+	// method fires after cooldown for banner creation
 	public function test_email_caller_fires_after_cooldown(){
 		Mail::fake();
 		Storage::fake('local');

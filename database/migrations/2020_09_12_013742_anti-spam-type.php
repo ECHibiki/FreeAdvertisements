@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AntispamCd extends Migration
+class AntiSpamType extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class AntispamCd extends Migration
      */
     public function up()
     {
-      if(!Schema::hasTable('antispam')){
-        Schema::create('antispam', function (Blueprint $table) {
-          $table->string('name',30);
-          $table->integer('unix');
-          $table->date('updated_at');
-          $table->date('created_at');
-        });
-      }
+      Schema::table('antispam', function (Blueprint $table){
+        if (!Schema::hasColumn('antispam', 'type'))
+          $table->string('type')->default("ad");
+      });
     }
 
     /**
