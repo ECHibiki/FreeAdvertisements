@@ -1121,9 +1121,6 @@
                 "md",
                 "parser"
             ],
-<<<<<<< HEAD
-            "time": "2020-08-18T01:19:12+00:00"
-=======
             "funding": [
                 {
                     "url": "https://github.com/colinodell",
@@ -1139,7 +1136,6 @@
                 }
             ],
             "time": "2020-02-28T18:53:50+00:00"
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
         },
         {
             "name": "league/flysystem",
@@ -1488,9 +1484,6 @@
                 "datetime",
                 "time"
             ],
-<<<<<<< HEAD
-            "time": "2020-09-10T12:16:42+00:00"
-=======
             "funding": [
                 {
                     "url": "https://opencollective.com/Carbon",
@@ -1502,7 +1495,6 @@
                 }
             ],
             "time": "2020-03-01T11:11:58+00:00"
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
         },
         {
             "name": "nikic/php-parser",
@@ -2247,9 +2239,6 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
-            "time": "2020-09-02T07:07:21+00:00"
-=======
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -2265,7 +2254,6 @@
                 }
             ],
             "time": "2020-02-24T13:10:00+00:00"
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
         },
         {
             "name": "symfony/css-selector",
@@ -2375,8 +2363,6 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
-=======
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -2391,7 +2377,6 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
             "time": "2020-08-10T07:47:39+00:00"
         },
         {
@@ -2449,8 +2434,6 @@
             ],
             "description": "Symfony ErrorHandler Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
-=======
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -2465,7 +2448,6 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
             "time": "2020-08-17T09:56:45+00:00"
         },
         {
@@ -2536,8 +2518,6 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
-=======
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -2552,7 +2532,6 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
             "time": "2020-08-13T14:18:44+00:00"
         },
         {
@@ -2615,8 +2594,7 @@
                 "interoperability",
                 "standards"
             ],
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -2631,7 +2609,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-07-06T13:19:58+00:00"
         },
         {
@@ -2681,9 +2659,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
-            "time": "2020-08-17T09:56:45+00:00"
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -2699,7 +2675,7 @@
                 }
             ],
             "time": "2020-02-14T07:42:58+00:00"
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
         },
         {
             "name": "symfony/http-foundation",
@@ -2754,8 +2730,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -2770,7 +2745,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-08-17T07:39:58+00:00"
         },
         {
@@ -2862,8 +2837,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -2878,7 +2852,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-09-02T08:09:29+00:00"
         },
         {
@@ -2942,8 +2916,7 @@
                 "mime",
                 "mime-type"
             ],
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -2958,7 +2931,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-08-17T10:01:29+00:00"
         },
         {
@@ -3021,8 +2994,7 @@
                 "polyfill",
                 "portable"
             ],
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -3037,7 +3009,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-07-14T12:35:20+00:00"
         },
         {
@@ -3172,8 +3144,7 @@
                 "portable",
                 "shim"
             ],
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -3188,7 +3159,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-08-04T06:02:08+00:00"
         },
         {
@@ -3256,8 +3227,7 @@
                 "portable",
                 "shim"
             ],
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -3272,7 +3242,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-07-14T12:35:20+00:00"
         },
         {
@@ -3336,8 +3306,7 @@
                 "portable",
                 "shim"
             ],
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -3352,7 +3321,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-07-14T12:35:20+00:00"
         },
         {
@@ -3612,8 +3581,7 @@
                 "portable",
                 "shim"
             ],
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -3628,7 +3596,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-07-14T12:35:20+00:00"
         },
         {
@@ -3691,8 +3659,7 @@
                 "portable",
                 "shim"
             ],
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -3707,7 +3674,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-07-14T12:35:20+00:00"
         },
         {
@@ -3774,8 +3741,7 @@
                 "portable",
                 "shim"
             ],
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -3790,7 +3756,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-07-14T12:35:20+00:00"
         },
         {
@@ -3896,9 +3862,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
-            "time": "2020-07-23T08:31:43+00:00"
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -3914,7 +3878,7 @@
                 }
             ],
             "time": "2020-02-07T20:06:44+00:00"
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
         },
         {
             "name": "symfony/routing",
@@ -3990,9 +3954,7 @@
                 "uri",
                 "url"
             ],
-<<<<<<< HEAD
-            "time": "2020-08-10T07:27:51+00:00"
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -4008,7 +3970,7 @@
                 }
             ],
             "time": "2020-02-25T12:41:09+00:00"
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
         },
         {
             "name": "symfony/service-contracts",
@@ -4146,9 +4108,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-<<<<<<< HEAD
-            "time": "2020-08-17T09:56:45+00:00"
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -4164,7 +4124,7 @@
                 }
             ],
             "time": "2020-02-04T09:32:40+00:00"
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
         },
         {
             "name": "symfony/translation-contracts",
@@ -4302,8 +4262,7 @@
                 "debug",
                 "dump"
             ],
-<<<<<<< HEAD
-=======
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -4318,7 +4277,7 @@
                     "type": "tidelift"
                 }
             ],
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
             "time": "2020-08-17T07:31:35+00:00"
         },
         {
@@ -4442,9 +4401,7 @@
                 "jwt",
                 "laravel"
             ],
-<<<<<<< HEAD
-            "time": "2020-09-08T12:29:20+00:00"
-=======
+
             "funding": [
                 {
                     "url": "https://www.patreon.com/seantymon",
@@ -4452,7 +4409,7 @@
                 }
             ],
             "time": "2020-03-04T11:21:28+00:00"
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
         },
         {
             "name": "vlucas/phpdotenv",
@@ -4629,9 +4586,7 @@
                 "flare",
                 "reporting"
             ],
-<<<<<<< HEAD
-            "time": "2020-08-26T18:06:23+00:00"
-=======
+
             "funding": [
                 {
                     "url": "https://www.patreon.com/spatie",
@@ -4639,7 +4594,7 @@
                 }
             ],
             "time": "2020-03-02T15:52:04+00:00"
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
         },
         {
             "name": "facade/ignition",
@@ -5901,9 +5856,7 @@
                 "highlight.php",
                 "syntax"
             ],
-<<<<<<< HEAD
-            "time": "2020-08-27T03:24:44+00:00"
-=======
+
             "funding": [
                 {
                     "url": "https://github.com/allejo",
@@ -5911,7 +5864,7 @@
                 }
             ],
             "time": "2020-03-02T05:59:21+00:00"
->>>>>>> 91ccd7530f7f9a9d0c4b71393d4ff2b536b946e8
+
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
